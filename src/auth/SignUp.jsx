@@ -104,108 +104,25 @@ const municipalities = {
     "Mag-atubang", "Maghan-ay", "Mangga", "Marmol", "Molobolo", "Montealegre", "Putat",
     "San Juan", "Sandayong", "Santo Niño", "Siotes", "Sumon", "Tominjao", "Tomugpa"
   ]
-
-
 };
 
 const SignUp = () => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    role: "",
-    district: "",
-    municipality: "",
-    barangay: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  const [errors, setErrors] = useState({});
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    
-    setFormData((prevData) => {
-      let updatedData = { ...prevData, [name]: value };
   
-      // Reset fields when switching roles
-      if (name === "role") {
-        updatedData = {
-          ...updatedData,
-          district: value === "Authorities" ? prevData.district : "",
-          municipality: value === "Municipalities" ? prevData.municipality : "",
-          barangay: value === "Municipalities" ? prevData.barangay : "",
-        };
-      }
-  
-      // Reset barangay if municipality changes
-      if (name === "municipality") {
-        updatedData.barangay = "";
-      }
-  
-      return updatedData;
-    });
-  };
-  
-
-
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-  
-    try {
-      let customUsername = formData.username.toLowerCase().replace(/\s+/g, '');
-  
-      if (formData.role === "Authorities" && formData.district) {
-        customUsername = `authD${formData.district}-${customUsername}`;
-      } else if (formData.role === "Barangay" && formData.barangay) {
-        customUsername = `brgy${formData.barangay.replace(/\s+/g, '')}-${customUsername}`;
-      } else if (formData.role === "Admin") {
-        customUsername = `ad-${customUsername}`;
-      }
-  
-      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
-      const user = userCredential.user;
-  
-      await setDoc(doc(db, "users", customUsername), {
-        uid: user.uid,
-        username: customUsername,
-        email: formData.email,
-        role: formData.role,
-        district: formData.district || null,
-        municipality: formData.municipality || null,
-        barangay: formData.barangay || null,
-        createdAt: new Date(),
-      });
-  
-      alert(`Registration successful! Your username is: ${customUsername}`);
-      navigate('/');
-    } catch (error) {
-      console.error("Error signing up:", error.message);
-      alert(error.message);
-    }
-  };
-  
-
   return (
     <div className="flex h-screen">
-    <div className="w-1/3 bg-[#242289] flex flex-col justify-center items-center text-white p-8">
-      <img src="/logo.png" alt="StreetSafe Logo" className="h-32 mb-4" />
-      <h1 className="text-3xl font-bold mb-8">SIGN UP</h1>
-        <form className="w-full max-w-sm items-center space-y-4" onSubmit={handleSubmit}>
-           <div className="relative">
-             <FontAwesomeIcon icon={faUser} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+      <div className="w-1/3 bg-[#242289] flex flex-col justify-center items-center text-white p-8">
+        <img src="/logo.png" alt="StreetSafe Logo" className="h-32 mb-4" />
+        <h1 className="text-3xl font-bold mb-8">SIGN UP</h1>
+        <form className="w-full max-w-sm items-center space-y-4">
+          <div className="relative">
+            <FontAwesomeIcon icon={faUser} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               name="username"
               placeholder="Username"
               className="w-full p-3 pl-10 rounded-md text-black"
-              value={formData.username}
-              onChange={handleChange}
             />
-            {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
+          
           </div>
 
           <div className="relative">
@@ -215,68 +132,24 @@ const SignUp = () => {
               name="email"
               placeholder="Enter email address"
               className="w-full p-3 pl-10 rounded-md text-black"
-              value={formData.email}
-              onChange={handleChange}
             />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
           </div>
-
-          <select name="role" className="w-full p-3 rounded-md text-black" value={formData.role} onChange={handleChange}>
+          <select name="role" className="w-full p-3 rounded-md text-black">
             <option value="">Select Role</option>
             <option value="Admin">Admin</option>
             <option value="Authorities">Authorities</option>
             <option value="Municipalities">Municipalities</option>
           </select>
-          {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
-
-          {formData.role === "Authorities" && (
-            <select name="district" className="w-full p-3 rounded-md text-black" value={formData.district} onChange={handleChange}>
-              <option value="">Select District</option>
-              {[...Array(7)].map((_, i) => (
-                <option key={i + 1} value={i + 1}>
-                  District {i + 1}
-                </option>
-              ))}
-            </select>
-          )}
-
-          {formData.role === "Municipalities" && (
-            <select name="municipality" className="w-full p-3 rounded-md text-black" value={formData.municipality} onChange={handleChange}>
-              <option value="">Select Municipality</option>
-              {Object.keys(municipalities).map((municipality, index) => (
-                <option key={index} value={municipality}>
-                  {municipality}
-                </option>
-              ))}
-            </select>
-          )}
-
-          {formData.municipality && (
-            <select name="barangay" className="w-full p-3 rounded-md text-black" value={formData.barangay} onChange={handleChange}>
-              <option value="">Select Barangay</option>
-              {municipalities[formData.municipality].map((barangay, index) => (
-                <option key={index} value={barangay}>
-                  {barangay}
-                </option>
-              ))}
-            </select>
-          )}
-
-        <div className="relative">
-                  <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input type="password" name="password" placeholder="Enter password" className="w-full p-3 pl-10 rounded-md text-black" value={formData.password} onChange={handleChange} />
-                  {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
-                  </div>
-
-
-                  <div className="relative"> 
-                  <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input type="password" name="confirmPassword" placeholder="Confirm password" className="w-full p-3 pl-10 rounded-md text-black" value={formData.confirmPassword} onChange={handleChange} />
-                  {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
-                  </div>
-                  
-
-                  <button type="submit" className="bg-yellow-400 text-black py-2 px-14 rounded-full font-bold text-lg">
+          <div className="relative">
+            <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input type="password" name="password" placeholder="Enter password" className="w-full p-3 pl-10 rounded-md text-black"/>
+           
+          </div>
+          <div className="relative"> 
+            <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input type="password" name="confirmPassword" placeholder="Confirm password" className="w-full p-3 pl-10 rounded-md text-black"/>
+          </div>
+          <button type="submit" className="bg-yellow-400 text-black py-2 px-14 rounded-full font-bold text-lg">
             Register
           </button>
         </form>
