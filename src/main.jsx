@@ -2,6 +2,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+//TODO: import pages
 import SignIn from './auth/SignIn'; // Sign In component
 import Dashboard from './pages/Dashboard'; // Dashboard component
 import SignUp from './auth/SignUp'; // Sign Up component
@@ -10,6 +14,7 @@ import Notification from './pages/Notification';
 import Admin_Dashboard from './admin/Admin_Dashboard';
 import Admin_HazardReport from './admin/Admin_HazardReport';
 import Admin_AccessControl from './admin/Admin_AccessControl';
+
 // src/App.jsx
 import {app} from './firebase/firebase';
 import './index.css';
@@ -30,5 +35,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/admin_hazardreport" element={<Admin_HazardReport />} /> 
       </Routes>
     </BrowserRouter>
+    <ToastContainer 
+      position="top-right"
+      autoClose={3000}
+      hideProgressBar={false}
+      closeOnClick
+      pauseOnHover
+      draggable
+      theme="colored"
+    />
   </React.StrictMode>
 );
