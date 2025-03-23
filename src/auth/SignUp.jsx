@@ -53,8 +53,7 @@ const SignUp = () => {
     if (!email) newErrors.email = "Email is required";
     if (!role) newErrors.role = "Role is required";
     if (!password) newErrors.password = "Password is required";
-    if (password !== confirmPassword)
-      newErrors.confirmPassword = "Passwords do not match";
+    if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match";
     setErrors(newErrors);
     if (!username || !email || !role || !password || !confirmPassword || 
         (role === "1" && !district) || 
@@ -84,8 +83,8 @@ const SignUp = () => {
           toast.error(response.message);
       }
     } catch (error) {
-      throw error;
       toast.error("Something went wrong. Please try again.");
+      throw error;
     }
   }
   
