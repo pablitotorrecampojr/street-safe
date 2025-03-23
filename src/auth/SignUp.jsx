@@ -122,7 +122,6 @@ const SignUp = () => {
               placeholder="Username"
               className="w-full p-3 pl-10 rounded-md text-black"
             />
-          
           </div>
 
           <div className="relative">
@@ -143,7 +142,6 @@ const SignUp = () => {
           <div className="relative">
             <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input type="password" name="password" placeholder="Enter password" className="w-full p-3 pl-10 rounded-md text-black"/>
-           
           </div>
           <div className="relative"> 
             <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />

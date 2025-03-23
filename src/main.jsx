@@ -3,10 +3,10 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './auth/App'; // Sign In component
-import Dashboard from './auth/Dashboard'; // Dashboard component
+import Dashboard from './pages/Dashboard'; // Dashboard component
 import SignUp from './auth/SignUp'; // Sign Up component
-import HazardReport from './auth/HazardReport'; 
-import Notification from './auth/Notification';
+import HazardReport from './pages/HazardReport'; 
+import Notification from './pages/Notification';
 import Admin_Dashboard from './admin/Admin_Dashboard';
 import Admin_HazardReport from './admin/Admin_HazardReport';
 import Admin_AccessControl from './admin/Admin_AccessControl';
