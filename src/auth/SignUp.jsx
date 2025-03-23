@@ -79,11 +79,12 @@ const SignUp = () => {
       const response = await signUp(formData);
       if (response.status === 200) {
           toast.success(response.message);
-          navidate("/dhasboard");
+          navigate("/dashboard");
       } else {
           toast.error(response.message);
       }
     } catch (error) {
+      throw error;
       toast.error("Something went wrong. Please try again.");
     }
   }
