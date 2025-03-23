@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; // ✅ Import useNavigate
-import './index.css';
 
 const HazardReport = () => {
   const navigate = useNavigate(); // ✅ useNavigate inside the component
