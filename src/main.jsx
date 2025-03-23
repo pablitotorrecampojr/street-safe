@@ -11,7 +11,7 @@ import Admin_Dashboard from './admin/Admin_Dashboard';
 import Admin_HazardReport from './admin/Admin_HazardReport';
 import Admin_AccessControl from './admin/Admin_AccessControl';
 // src/App.jsx
-import {app} from './firebase';
+import {app} from './firebase/firebase';
 
 console.log("Firebase App Initialized:", app);
 
