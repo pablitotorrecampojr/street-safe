@@ -14,6 +14,7 @@ import Notification from './pages/Notification';
 import Admin_Dashboard from './admin/Admin_Dashboard';
 import Admin_HazardReport from './admin/Admin_HazardReport';
 import Admin_AccessControl from './admin/Admin_AccessControl';
+import PageNotFound from './pages/PageNotFound';
 
 // src/App.jsx
 import {app} from './firebase/firebase';
@@ -26,13 +27,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<SignIn />} /> 
-        <Route path="/dashboard" element={<Dashboard />} /> 
         <Route path="/sign-up" element={<SignUp />} /> 
-        <Route path="/hazardreport" element={<HazardReport />} /> 
+        <Route path="/dashboard" element={<Dashboard />} /> 
+        <Route path="/hazard-report" element={<HazardReport />} /> 
         <Route path="/notification" element={<Notification />} /> 
-        <Route path="/admin_dashboard" element={<Admin_Dashboard />} /> 
-        <Route path="/admin_accesscontrol" element={<Admin_AccessControl />} />
-        <Route path="/admin_hazardreport" element={<Admin_HazardReport />} /> 
+        <Route path="/admin-dashboard" element={<Admin_Dashboard />} /> 
+        <Route path="/admin-accesscontrol" element={<Admin_AccessControl />} />
+        <Route path="/admin-hazardreport" element={<Admin_HazardReport />} /> 
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>
     <ToastContainer 
