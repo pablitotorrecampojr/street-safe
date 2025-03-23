@@ -4,6 +4,9 @@ import { doc, setDoc } from 'firebase/firestore';
 
 export const signUp = async (formData) => { 
     try {
+        if (!formData || !formData.username || !formData.email || !formData.password) {
+            return { status: 400, message: "Invalid form data. Please provide all required fields." };
+        }
         const { username, email, role, district, municipality, barangay, password } = formData;
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
@@ -15,7 +18,7 @@ export const signUp = async (formData) => {
             district,
             municipality,
             barangay,
-            uid: user.uid,
+            uid: user.uid, 
             createdAt: new Date()
         });
 
