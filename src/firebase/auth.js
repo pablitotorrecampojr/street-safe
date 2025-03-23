@@ -1,5 +1,5 @@
 import { auth, db } from './firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 
 export const signUp = async (formData) => { 
@@ -40,6 +40,15 @@ export const signIn = async (email, password) => {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         return { status: 200, message: "User signed in successfully!", user };
+    } catch (error) {
+        return { status: 400, message: error.message };
+    }
+}
+
+export const signOut = async () => { 
+    try {
+        await firebaseSignOut(auth);
+        return { status: 200, message: "User signed out successfully!" };
     } catch (error) {
         return { status: 400, message: error.message };
     }

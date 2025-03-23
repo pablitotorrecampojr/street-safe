@@ -1,11 +1,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from "react-toastify";
+import {signOut} from '../firebase/auth';
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    navigate('/'); // Redirect to Sign In page
+  const handleLogout = async () => {
+    const response = await signOut();
+    if (response.status === 200) {
+        toast.success(response.message);
+        navigate("/"); // Redirect to login page
+    } else {
+        toast.error(response.message);
+    }
   };
 
 
