@@ -2,110 +2,45 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faUser, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-// import { auth, db, createUserWithEmailAndPassword, setDoc, doc } from "../firebase/firebase";
-
-const municipalities = {
-  Alcantara: ["Cabadiangan", "Cabil-isan", "Candabong", "Lawis", "Palanas", "Poblacion", "San Agustin"],
-  Alcoy: ["Atabay", "Daan-Lungsod", "Guiwang", "Nug-as", "Pasol", "Poblacion", "Pugalo", "San Agustin"],
-  Alegria: ["Ampongol", "Balaas", "Compostela", "Legaspi", "Lepanto", "Madridejos", "Montpeller", "Poblacion", "Santa Filomena", "Valencia"],
-  Aloguinsan: ["Angilan", "Bojo", "Bonbon", "Esperanza", "Kandingan", "Olango", "Poblacion", "Rosario", "Saksak", "Tampaan", "Zamora"],
-  Argao: ["Alambijud", "Anajao", "Apo", "Balaas", "Binlod", "Bogo", "Bugas", "Bulasa", "Calagasan", "Canbanua", "Casay", "Conalum", "Guiwanon", "Jampang", "Langtad", "Lapay", "Linut-od", "Mabasa", "Mandilikit", "Mompeller", "Poblacion", "Sua", "Talo-ot", "Tiguib", "Tulang", "Usmad"],
-  Asturias: ["Agtugop", "Bago", "Bairan", "Banban", "Baye", "Bog-o", "Buli", "Kaluangan", "Kambayog", "Kan-ipa", "Lanao", "Langub", "Looc Norte", "Looc Sur", "Lunas", "Magcalape", "Manguiao", "New Bago", "Owak", "Poblacion", "Saksak", "San Isidro", "San Roque", "Santa Lucia", "Tag-amakan", "Tubigagmanok"],
-  Badian: ["Banhigan", "Basak", "Basiao", "Bato", "Bugas", "Calangcang", "Candiis", "Doldol", "Ginablan", "Lambug", "Malabago", "Malhiao", "Manduyong", "Matutinao", "Patong", "Poblacion", "Santicon", "Sohoton", "Talayong", "Tiguib", "Tingko", "Tupas"],
-  Balamban: ["Abucayan", "Aliwanay", "Arpili", "Baliwagan", "Bayong", "Biasong", "Buanoy", "Cabagdalan", "Cambuhawe", "Cantuod", "Cantu-od", "Gaas", "Ginatilan", "Hingatmonan", "Lamesa", "Liki", "Lupo", "Magsaysay", "Matun-og", "Nangka", "Pondol", "Prenza", "Santa Cruz", "Singsing", "Sumon", "Sunog", "Vito"],
-  Bantayan: ["Atop-atop", "Baigad", "Binaobao", "Botigues", "Cabacongan", "Kabangi", "Cabayugan", "Guiwanon", "Lipayran", "Madridejos", "Maalat", "Omagieca", "Poblacion", "Sillon", "Suba", "Sulangan", "Tami-ao", "Ticad"],
-  Barili: ["Bagakay", "Bolocboloc", "Bugtong Kawayan", "Cadamitan", "Campangga", "Can-aban", "Cawayan", "Dakitan", "Guintabo-an", "Gunting", "Hilasgasan", "Japitan", "Luhod", "Mantayupan", "Mantalongon", "Mayana", "Nangka", "Pitalo", "Poblacion", "San Rafael", "Santa Ana", "Santa Lucia", "Sibonga", "Talaga", "Tayasan"],
-  Boljoon: ["Arbor", "Balian", "El Pardo", "Granada", "Lunop", "Lower Becerril", "Nangka", "Poblacion", "San Antonio", "San Isidro", "San Miguel", "Upper Becerril"],
-  Bogo: [
-    "Anonang Norte", "Anonang Sur", "Banban", "Binabag", "Cayang", "Cogon", "Dakit",
-    "Gairan", "Guadalupe", "La Paz", "Lapaz", "Libertad", "Libaong", "Malingin",
-    "Maria Rosario", "Marangog", "Nailon", "Pandan", "Polambato", "San Vicente",
-    "Santo Rosario", "Siocon", "Sudlonon", "Taytayan"
-  ],
-  Borbon: ["Bagacay", "Bagtic", "Bangka", "Bili", "Bongdo", "Bongoyan", "Cadaruhan", "Calambua", "Cambang-ug", "Can-ambay", "Clavera", "Dakit", "Duyan", "Gabi", "Ginatilan", "Lalay", "Liki", "Luan-luan", "Poblacion", "Sagay", "San Jose", "San Juan", "San Vicente", "Tabunan", "Tagnucan"],
-  Carmen: ["Baring", "Cogon East", "Cogon West", "Corte", "Duwangon", "Hagnaya", "Ilihan", "Luyang", "Lower Natimao-an", "Poblacion", "Triumfo", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao-an", "Upper Natimao"],
-  Carcar: [
-    "Bolocboloc", "Buenavista", "Calidngan", "Can-asujan", "Guadalupe", "Liburon",
-    "Napo", "Ocana", "Perrelos", "Poblacion I", "Poblacion II", "Poblacion III",
-    "Poblacion IV", "Poblacion V", "Poblacion VI", "Poblacion VII", "Tuyom",
-    "Valencia", "Valladolid"
-  ],
-  Catmon: ["Agsuwao", "Amancion", "Anapog", "Bactas", "Binongkalan", "Buenavista", "Cabunga-an", "Cambangkaya", "Can-ibuang", "Catmondaan", "Duyan", "Flores", "Ginabasan", "Macaas", "Poblacion", "Tabili", "Tinabyonan"],
-  Cebu_City: [
-    "Adlaon", "Agsungot", "Apas", "Babag", "Bacayan", "Banilad", "Basak Pardo",
-    "Basak San Nicolas", "Binaliw", "Bonbon", "Budlaan", "Buhisan", "Bulacao", 
-    "Buot", "Busay", "Calamba", "Cambinocot", "Capitol Site", "Carreta",
-    "Cogon Pardo", "Duljo-Fatima", "Ermita", "Guadalupe", "Guba", "Hipodromo",
-    "Inayawan", "Kalunasan", "Kamagayan", "Kasambagan", "Kinasang-an Pardo",
-    "Labangon", "Lahug", "Lorega San Miguel", "Lusaran", "Mabini", "Mabolo",
-    "Malubog", "Mambaling", "Pahina Central", "Pahina San Nicolas", "Pardo",
-    "Parian", "Pit-os", "Pulangbato", "Pung-ol Sibugay", "Quiot", "Sambag I",
-    "Sambag II", "San Antonio", "San Jose", "San Nicolas Proper", "San Roque",
-    "Santa Cruz", "Santo Niño", "Sapangdaku", "Sawang Calero", "Sinsin", 
-    "Suba", "Sudlon I", "Sudlon II", "T. Padilla", "Tabunan", "Tagbao", 
-    "Talamban", "Taptap", "Tejero", "Tinago", "To-ong", "Zapatera"
-  ],
-  Compostela: ["Bagalnga", "Basak", "Buluang", "Cabadiangan", "Cambayog", "Canamucan", "Cogon", "Dapdap", "Estaca", "Lupa", "Magay", "Mulao", "Panangban", "Poblacion", "Tag-ube", "Tamiao"],
-  Consolacion: ["Cabangahan", "Cabasagan", "Canao-an", "Casili", "Danglag", "Garing", "Jugan", "Lanipga", "Lamac", "Lapay", "Polog", "Pulpogan", "Poblacion Occidental", "Poblacion Oriental", "Sacsac", "Tayud", "Tilha-ong", "Tolotolo"],
-  Cordova: ["Alegria", "Bangbang", "Buagsong", "Catarman", "Cogon", "Day-as", "Gabi", "Gilutongan", "Ibabao", "Pilipog", "Poblacion", "San Miguel"],
-  Danao: ["Baliang", "Binaliw", "Cabungahan", "Cagat", "Cahumayan", "Cambubho", "Cambuhawe", "Cogon-Cruz", "Danasan", "Guimbawian", "Kantangkas", "Langub", "Licos", "Looc", "Magtagobtob", "Magtubog", "Mantalongon", "Masaba", "Matun-og", "Nangka", "Panadtaran", "Poblacion", "Quisol", "Rizal", "Sabang", "Sacsac", "San Roque", "Santa Rosa", "Santo Niño", "Santican", "Sibacan", "Tabok", "Tag-ubi", "Taytay", "Tuburan", "Tuburan Sur", "Tuburan Norte", "Tungkop", "Tuyom", "Ubujan"],
-  Daanbantayan: ["Agujo", "Bagay", "Bakhawan", "Bitoon", "Carnaza", "Dalingding", "Dalingding Sur", "Lanao", "Lungos", "Macaas", "Malbago", "Malingin", "Maya", "Pajo", "Poblacion", "Tapilon", "Tinubdan", "Tominjao"],
-  Dalaguete: ["Balud", "Banhigan", "Batikala", "Caliongan", "Cawayan", "Cawayan East", "Corro", "Dalinaw", "Dawis", "Garbosa", "Lanao", "Lumbang", "Mantalongon", "Manlapay", "Mantalongon Proper", "Obong", "Poblacion", "Tabon", "Tapon"],
-  Dumanjug: ["Bitoon", "Bulatukan", "Bullogan", "Cambuhawe", "Candabong", "Cantabugon", "Cogon", "Kabalaasnan", "Kang-actol", "Kanghalo", "Kangwayan", "Lambug", "Maalat", "Manlapay", "Matutinao", "Panlaan", "Poblacion", "Tapon", "Tubod", "Zaragosa"],
-  Ginatilan: ["Anao", "Bonbon", "Calabawan", "Cañorong", "Guiwanon", "Looc", "Malatbo", "Palaka", "Poblacion", "San Roque"],
-  LapuLapu: [
-    "Agus", "Babag", "Bankal", "Baring", "Basak", "Buaya", "Calawisan", "Canjulao",
-    "Caw-oy", "Cawhagan", "Gun-ob", "Ibo", "Looc", "Mactan", "Maribago", "Marigondon",
-    "Pajac", "Pajo", "Pangan-an", "Poblacion", "Pusok", "Sabang", "San Vicente",
-    "Santa Rosa", "Subabasbas", "Talima", "Tingo"
-  ],
-  Liloan: ["Cabadiangan", "Calero", "Catarman", "Cotcot", "Jubay", "Lataban", "Mulao", "Poblacion", "San Roque", "San Vicente", "Santa Cruz", "Tayud", "Yati"],
-  Mandaue: [
-    "Alang-alang", "Bakilid", "Banilad", "Basak", "Cabancalan", "Cambaro", "Canduman",
-    "Casili", "Centro", "Cubacub", "Guizo", "Ibabao-Estancia", "Jagobiao", "Labogon",
-    "Looc", "Maguikay", "Mantuyong", "Opao", "Pakna-an", "Pagsabungan", "Subangdaku",
-    "Tabok", "Tawason", "Tingub", "Tipolo", "Umapad"
-  ],
-  Madridejos: ["Bunakan", "Kangwayan", "Kaongkod", "Maalat", "Malbago", "Poblacion", "San Agustin", "Talangnan", "Tarong", "Tugas"],
-  Malabuyoc: ["Aranzana", "Balikmaya", "Biasong", "Bonbon", "Cansayahon", "Looc", "Mahanlud", "Mindanao", "Poblacion", "Salmeron"],
-  Medellin: ["Antipolo", "Caputatan Norte", "Caputatan Sur", "Curva", "Daanlungsod", "Dayhagon", "Don Virgilio Gonzales", "Kawit", "Lamintak Norte", "Lamintak Sur", "Luy-a", "Mahawak", "Maharuhay", "Poblacion", "Tindog", "Tominjao"],
-  Minglanilla: ["Cabadiangan", "Calajo-an", "Camp 7", "Cuanos", "Guindaruhan", "Linao", "Manduwang", "Pakigne", "Poblacion Ward 1", "Poblacion Ward 2", "Poblacion Ward 3", "Poblacion Ward 4", "Tulay", "Tungkop", "Tubod"],
-  Moalboal: ["Agbalanga", "Bala", "Basdiot", "Bugho", "Busay", "Lanao", "Poblacion East", "Poblacion West", "Saavedra", "Tomonoy", "Tuble"],
-  Naga: [
-    "Balirong", "Cantao-an", "Central Poblacion", "Cogon", "Colon", "East Poblacion",
-    "Inayagan", "Inoburan", "Jagobiao", "Langtad", "Lutac", "Mainit", "North Poblacion",
-    "Patag", "South Poblacion", "Tinaan", "Tungkop", "Uling", "West Poblacion"
-  ],
-  Oslob: ["Alo", "Caloon", "Canangca-an", "Cancawas", "Canjaway", "Cansaloay", "Daanlungsod", "Hagdan", "Looc", "Luka", "Mainit", "Nueva Caceres", "Poblacion", "Tan-awan", "Tumalog"],
-  Pilar: ["Bagakay", "Cagcagan", "Cansuhay", "Dapdap", "Esperanza", "Lanao", "Montaña", "Moabog", "Poblacion", "San Isidro", "San Vicente", "Suba", "Umak"],
-  Pinamungajan: ["Anislag", "Basak", "Binabag", "Busay", "Butong", "Cabiangon", "Camugao", "Da-an Lungsod", "Duangan", "Lamac", "Lut-od", "Mangoto", "Opao", "Poblacion", "Sacsac", "Sibago", "Tangub", "Tajao", "Tutay"],
-  Poro: ["Adela", "Cagcagan", "Cansabusab", "Cantucong", "Daan Paz", "Esperanza", "Libertad", "Macapaya", "Mercedes", "Poblacion", "Punay", "Rizal", "Santo Niño", "San Jose", "Santa Rita", "Sohoton", "Sumon"],
-  Ronda: ["Ilaya", "Langin", "Libo", "Malalay", "Palanas", "Poblacion", "Santa Cruz", "Tampaan"],
-  Samboan: ["Banlot", "Basak", "Bonbon", "Bulangsuran", "Calatagan", "Cambigong", "Canorong", "Colase", "Javier", "Poblacion", "San Sebastian", "Santa Monica", "Suba"],
-  San_Fernando: ["Balud", "Balungag", "Basak", "Bugho", "Cabatbatan", "Greenhills", "Ilaya", "Lantawan", "Liburon", "Magsico", "North Poblacion", "Panadtaran", "San Isidro", "South Poblacion", "Tabionan", "Tananas", "Tonggo", "Tubod", "Tulay"],
-  San_Francisco: ["Cabunga-an", "Cagcagan", "Campo", "Consuelo", "Esperanza", "Himarco", "Northern Poblacion", "San Isidro", "Santa Cruz", "Santiago", "Sonog", "Southern Poblacion", "Union", "Western Poblacion"],
-  San_Remigio: ["Argawanon", "Bagtic", "Bancasan", "Batad", "Busogon", "Calambua", "Cambanog", "Canagahan", "Dapdap", "Gawaygaway", "Hagnaya", "Kilawan", "Lambusan", "Lawis", "Looc", "Luyang", "Poblacion", "Punta", "San Miguel", "Tacup"],
-  Santa_Fe: ["Balidbid", "Hagnaya", "Hilantagaan", "Kinatarkan", "Langub", "Maricaban", "Okoy", "Poblacion", "Pooc", "Talisay"],
-  Santander: ["Bongi", "Cabutongan", "Canlumacad", "Candamiang", "Liloan", "Lip-tong", "Looc", "Pasil", "Poblacion", "Talisay"],
-  Sibonga: ["Abugon", "Bagacay", "Bahay", "Banlot", "Basak", "Bato", "Bugho", "Buli", "Candaguit", "Dugyan", "Guimbangco-an", "Lagunao", "Lipayran", "Lutac", "Magcagong", "Manatad", "Papan", "Poblacion", "Sabang", "San Isidro", "Simala", "Taytayan"],
-  Sogod: ["Ampongol", "Bagatayam", "Bawo", "Cabalawan", "Calumboyan", "Damolog", "Ibabao", "Liki", "Luyang", "Magsuhot", "Mohon", "Nahus-an", "Pansoy", "Poblacion", "Tabunok"],
-  Tabogon: ["Aroma", "Bagatayam", "Caduawan", "Camoboan", "Canlumacad", "Daan Lungsod", "Kal-anan", "Libjo", "Loong", "Manlagtang", "Maslog", "Pio", "Salag", "San Isidro", "Santo Niño", "Somosa", "Tabunok", "Taytayan"],
-  Tabuelan: ["Bongon", "Bunakan", "Kanluhangon", "Kanlim-ao", "Kantubaon", "Libo", "Mabunao", "Maravilla", "Olivo", "Poblacion", "Tabunok"],
-  Talisay: ["Biasong", "Bulacao", "Camp IV", "Cansojong", "Dumlog", "Jaclupan", "Lagtang", "Lawaan I", "Lawaan II", "Lawaan III", "Linao", "Maghaway", "Manipis", "Mohon", "Poblacion", "Pooc", "San Isidro", "San Roque", "Tabunok", "Tangke", "Tapul"],
-  Toledo: ["Awihao", "Bagakay", "Bato", "Biga", "Bulongan", "Cabitoonan", "Calongcalong", "Canlumampao", "Cantabaco", "Capitan Claudio", "Carmen", "Daan Lungsod", "Don Andres Soriano", "Dumlog", "General Climaco", "Ibo", "Ilihan", "Landahan", "Luray II", "Magdugo", "Manguiao", "Media Once", "Poblacion", "Poog", "Putingbato", "Sagay", "Sam-ang", "Sangi", "Subayon", "Tungkay", "Tubod", "Tungkay", "Tubod", "Ubogon"],
-  Tuburan: [
-    "Alegria", "Amatugan", "Antipolo", "Apalan", "Bagasawe", "Bakyawan", "Bangkito",
-    "Barangay I", "Barangay II", "Barangay III", "Barangay IV", "Barangay V", 
-    "Barangay VI", "Barangay VII", "Barangay VIII", "Bulwang", "Caridad", "Carmelo",
-    "Cogon", "Colonia", "Daan Lungsod", "Fortaliza", "Ga-ang", "Gimama-a", "Jagbuaya",
-    "Kabangkalan", "Kabkaban", "Kagba-o", "Kalangahan", "Kamansi", "Kampoot", "Kan-an",
-    "Kanlunsing", "Kansi", "Kaorasan", "Libo", "Lusong", "Macupa", "Mag-alwa", "Mag-antoy",
-    "Mag-atubang", "Maghan-ay", "Mangga", "Marmol", "Molobolo", "Montealegre", "Putat",
-    "San Juan", "Sandayong", "Santo Niño", "Siotes", "Sumon", "Tominjao", "Tomugpa"
-  ]
-};
+import accountSetting from  '../constants/account-setting.json';
+import municipalities from '../constants/munacipalities.json';
 
 const SignUp = () => {
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    role: "",
+    district: "",
+    municipality: "",
+    barangay: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    
+    setFormData((prevData) => {
+      let updatedData = { ...prevData, [name]: value };
+  
+      // Reset fields when switching roles
+      if (name === "role") {
+        updatedData = {
+          ...updatedData,
+          district: value === "Authorities" ? prevData.district : "",
+          municipality: value === "Municipalities" ? prevData.municipality : "",
+          barangay: value === "Municipalities" ? prevData.barangay : "",
+        };
+      }
+  
+      // Reset barangay if municipality changes
+      if (name === "municipality") {
+        updatedData.barangay = "";
+      }
+  
+      return updatedData;
+    });
+  };
+  
   return (
     <div className="flex h-screen">
       <div className="w-1/3 bg-[#242289] flex flex-col justify-center items-center text-white p-8">
@@ -131,12 +66,36 @@ const SignUp = () => {
               className="w-full p-3 pl-10 rounded-md text-black"
             />
           </div>
-          <select name="role" className="w-full p-3 rounded-md text-black">
+          <select name="role" className="w-full p-3 rounded-md text-black" onChange={handleChange} value={formData.role}>
             <option value="">Select Role</option>
-            <option value="Admin">Admin</option>
-            <option value="Authorities">Authorities</option>
-            <option value="Municipalities">Municipalities</option>
+            {accountSetting.role.map((role, index) => {
+              return (
+                <option key={index} value={index}>
+                  {role}
+                </option>
+              )
+            })}
           </select>
+          {formData.role === "1" && (
+            <select name="district" className="w-full p-3 rounded-md text-black" onChange={handleChange} value={formData.district}>
+              <option value="">Select District</option>
+              {[...Array(7)].map((_, i) => (
+                <option key={i + 1} value={i + 1}>
+                  District {i + 1}
+                </option>
+              ))}
+            </select>
+          )}
+          {formData.role === "2" && (
+            <select name="municipality" className="w-full p-3 rounded-md text-black" onChange={handleChange} value={formData.municipality}>
+              <option value="">Select Municipality</option>
+              {Object.keys(municipalities).map((municipality, index) => (
+                <option key={index} value={municipality}>
+                  {municipality}
+                </option>
+              ))}
+            </select>
+          )}
           <div className="relative">
             <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input type="password" name="password" placeholder="Enter password" className="w-full p-3 pl-10 rounded-md text-black"/>
