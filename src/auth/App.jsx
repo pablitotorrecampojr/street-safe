@@ -8,61 +8,25 @@ import { useNavigate } from 'react-router-dom';
 import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../firebase/auth';
 import { useAuth } from '../context/authContext';
 
-
-
 const SignIn = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
+  const { userLoggedIn } = useAuth()
 
-  const validate = () => {
-    const errors = {};
-    if (!username) errors.username = 'Username is required';
-    if (!password) errors.password = 'Password is required';
-    setErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [isSigningIn, setIsSigningIn] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validate()) return;
-  
-    try {
-      const usersRef = doc(db, "users", username); 
-      const userSnap = await getDoc(usersRef);
-  
-      if (!userSnap.exists()) {
-        setErrors({ username: "User not found" });
-        return;
-      }
-  
-      const userData = userSnap.data();
-      const email = userData.email;
-  
-      await signInWithEmailAndPassword(auth, email, password);
-      console.log("Sign-in successful!");
-  
-      const { role, district, barangay } = userData;
-  
-      if (role === "Admin") {
-        navigate('/admin_dashboard');
-      } else if (role === "Authorities" && district) {
-        // navigate(`/district${district}-dashboard`);
-         navigate(`/dashboard`);
-      } else if (role === "Barangay" && barangay) {
-        navigate(`/barangay-dashboard`);
-      } else {
-        setErrors({ role: "Invalid role" });
-      }
-    } catch (error) {
-      console.error('Error signing in:', error.message);
-      setErrors({ firebase: error.message });
+  const onSubmit = async (e) => {
+    e.preventDefault()
+    if(!isSigningIn) {
+      setIsSigningIn(true)
+      await doSignInWithEmailAndPassword(email, password)
     }
-  };
- 
+  }
+
   return (
     <div className="flex h-screen">
+      {userLoggedIn && (<Navigate to={'/dashboard'} replace={true} />)}
       <div className="w-1/3 bg-[#242289] flex flex-col justify-center items-center text-white p-8">
         <img src="/logo.png" alt="StreetSafe Logo" className="h-32 mb-4" />
         <h1 className="text-3xl font-bold mb-8">SIGN IN</h1>
@@ -75,7 +39,7 @@ const SignIn = () => {
               placeholder="Username"
               className="w-full p-3 pl-10 rounded-md text-black"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
             />
             {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
           </div>
