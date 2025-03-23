@@ -1,35 +1,33 @@
-import { createUserWithEmailAndPassword, GoogleAuthProvider, sendEmailVerification, sendPasswordResetEmail } from "firebase/auth";
-import { auth } from "./firebase";
+import { auth, db } from './firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
-export const doCreateUserWithEmailAndPassword = async (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password);
-};
+export const signUp = async (formData) => { 
+    try {
+        const { username, email, role, district, municipality, barangay, password } = formData;
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
 
-export const doSignInWithEmailAndPassword = (email, password) => {
-    return signInWithEmailAndPassword(auth, email, password);
-}
+        await setDoc(doc(db, "users", user.uid), {
+            username,
+            email,
+            role,
+            district,
+            municipality,
+            barangay,
+            uid: user.uid,
+            createdAt: new Date()
+        });
 
-export const doSignInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    
-    return result
-};
-
-export const doSignOut = () => {
-    return auth.signOut();
-}
-
-export const doPasswordReset = (email) => {
-    return sendPasswordResetEmail(auth, email);
-}
-
-export const doPasswordChange = (passowrd) => {
-    return updatePassword(auth.currentUser, password);
-}
-
-export const doSedEmailVerification = () => {
-    return sendEmailVerification(auth.currentUser, {
-        url: `${window.location.origin}/home`,
-    });
+        return {
+            status: 200,
+            message: "User registered successfully!",
+            user
+        }
+    } catch (error) {
+        if (error.code === "auth/email-already-in-use") {
+            return { status: 400, message: "This email is already registered. Please use a different one." };
+        }
+        return { status: 400, message: error.message };
+    }
 }

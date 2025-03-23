@@ -5,8 +5,10 @@ import { useNavigate } from "react-router-dom";
 import accountSetting from  '../constants/account-setting.json';
 import municipalities from '../constants/munacipalities.json';
 import { toast } from "react-toastify";
+import {signUp} from '../firebase/auth';
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -20,7 +22,6 @@ const SignUp = () => {
   const [errors, setErrors] = useState({});
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
     setFormData((prevData) => {
       let updatedData = { ...prevData, [name]: value };
   
@@ -43,7 +44,7 @@ const SignUp = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let newErrors = {};
     const { username, email, role, district, barangay, municipality, password, confirmPassword } = formData;
@@ -57,7 +58,7 @@ const SignUp = () => {
     setErrors(newErrors);
     if (!username || !email || !role || !password || !confirmPassword || 
         (role === "1" && !district) || 
-        (role === "2" && (!municipality || !barangay))) {
+        (role === "2" && (!municipality))) {
       toast.error("Please fill in all required fields!");
       return;
     } 
@@ -74,10 +75,17 @@ const SignUp = () => {
       return;
     }
 
-    Object.values(newErrors).forEach((error) => {
-      toast.error(error);
-      return;
-    });
+    try {
+      const response = await signUp(formData);
+      if (response.status === 200) {
+          toast.success(response.message);
+          navidate("/dhasboard");
+      } else {
+          toast.error(response.message);
+      }
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
+    }
   }
   
   return (
