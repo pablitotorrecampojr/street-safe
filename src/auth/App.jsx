@@ -4,7 +4,10 @@ import './index.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
-import { auth, db, signInWithEmailAndPassword, doc, getDoc } from '../firebase';
+// import { auth, db, signInWithEmailAndPassword, doc, getDoc } from '../firebase';
+import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../firebase/auth';
+import { useAuth } from '../context/authContext';
+
 
 
 const SignIn = () => {
@@ -20,12 +23,6 @@ const SignIn = () => {
     setErrors(errors);
     return Object.keys(errors).length === 0;
   };
-
-
-
-
-
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,7 +61,6 @@ const SignIn = () => {
     }
   };
  
-
   return (
     <div className="flex h-screen">
       <div className="w-1/3 bg-[#242289] flex flex-col justify-center items-center text-white p-8">
