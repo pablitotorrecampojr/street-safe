@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ProtectedRoute from './firebase/ProtectedRoute';
 
 //TODO: import pages
 import SignIn from './auth/SignIn'; // Sign In component
@@ -26,9 +27,18 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
+        //* public routes
         <Route path="/" element={<SignIn />} /> 
         <Route path="/sign-up" element={<SignUp />} /> 
-        <Route path="/dashboard" element={<Dashboard />} /> 
+        //* private routes
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/hazard-report" element={<HazardReport />} /> 
         <Route path="/notification" element={<Notification />} /> 
         <Route path="/admin-dashboard" element={<Admin_Dashboard />} /> 
