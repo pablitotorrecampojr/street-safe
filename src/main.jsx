@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProtectedRoute from './firebase/ProtectedRoute';
+import PublicRoute from './firebase/PublicRoute';
 
 //TODO: import pages
 import SignIn from './auth/SignIn'; // Sign In component
@@ -15,6 +16,7 @@ import Notification from './pages/Notification';
 import Admin_Dashboard from './admin/Admin_Dashboard';
 import Admin_HazardReport from './admin/Admin_HazardReport';
 import Admin_AccessControl from './admin/Admin_AccessControl';
+import EditProfile from './pages/EditProfile';
 import PageNotFound from './pages/PageNotFound';
 
 // src/App.jsx
@@ -27,10 +29,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        //* public routes
-        <Route path="/" element={<SignIn />} /> 
-        <Route path="/sign-up" element={<SignUp />} /> 
-        //* private routes
+        {/* public routes */}
+        <Route path="/" element={<PublicRoute><SignIn /></PublicRoute>} />
+        <Route path="/sign-up" element={<PublicRoute><SignUp /></PublicRoute>} />
+
+        {/* private routes */}
         <Route
           path="/dashboard"
           element={
@@ -39,11 +42,54 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             </ProtectedRoute>
           }
         />
-        <Route path="/hazard-report" element={<HazardReport />} /> 
-        <Route path="/notification" element={<Notification />} /> 
-        <Route path="/admin-dashboard" element={<Admin_Dashboard />} /> 
-        <Route path="/admin-accesscontrol" element={<Admin_AccessControl />} />
-        <Route path="/admin-hazardreport" element={<Admin_HazardReport />} /> 
+        <Route
+          path="/hazard-report"
+          element={
+            <ProtectedRoute>
+              <HazardReport />
+            </ProtectedRoute>
+          }
+        /> 
+        <Route
+          path="/notification"
+          element={
+            <ProtectedRoute>
+              <Notification />
+            </ProtectedRoute>
+          }
+        /> 
+        <Route
+          path="/admin-dashboard"
+          element={
+            <ProtectedRoute>
+              <Admin_Dashboard />
+            </ProtectedRoute>
+          }
+        /> 
+        <Route
+          path="/admin-accesscontrol"
+          element={
+            <ProtectedRoute>
+              <Admin_AccessControl />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin-hazardreport"
+          element={
+            <ProtectedRoute>
+              <Admin_HazardReport />
+            </ProtectedRoute>
+          }
+        /> 
+        <Route
+          path="/edit-profile"
+          element={
+            <ProtectedRoute>
+              <EditProfile />
+            </ProtectedRoute>
+          }
+        /> 
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>

@@ -3,14 +3,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faUser, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import accountSetting from  '../constants/account-setting.json';
-import municipalities from '../constants/munacipalities.json';
+import municipalities from '../constants/municipalities.json';
+import districts from '../constants/districts.json';
 import { toast } from "react-toastify";
 import {signUp} from '../firebase/auth';
 
 const SignUp = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: "",
+    fullname: "",
     email: "",
     role: "",
     district: "",
@@ -22,6 +23,7 @@ const SignUp = () => {
   const [errors, setErrors] = useState({});
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
     setFormData((prevData) => {
       let updatedData = { ...prevData, [name]: value };
   
@@ -47,17 +49,17 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     let newErrors = {};
-    const { username, email, role, district, barangay, municipality, password, confirmPassword } = formData;
+    const { fullname, email, role, district, barangay, municipality, password, confirmPassword } = formData;
 
-    if (!username) newErrors.username = "Username is required";
+    if (!fullname) newErrors.fullname = "Full name is required";
     if (!email) newErrors.email = "Email is required";
     if (!role) newErrors.role = "Role is required";
     if (!password) newErrors.password = "Password is required";
     if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match";
     setErrors(newErrors);
-    if (!username || !email || !role || !password || !confirmPassword || 
-        (role === "1" && !district) || 
-        (role === "2" && (!municipality))) {
+    if (!fullname || !email || !role || !password || !confirmPassword || 
+      (role === "1" && !district) || 
+      (role === "2" && (!municipality))) {
       toast.error("Please fill in all required fields!");
       return;
     } 
@@ -98,13 +100,13 @@ const SignUp = () => {
             <FontAwesomeIcon icon={faUser} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              name="username"
-              placeholder="Username"
+              name="fullname"
+              placeholder="Full Name"
               className="w-full p-3 pl-10 rounded-md text-black"
-              value={formData.username}
+              value={formData.fullname}
               onChange={handleChange}
             />
-            {errors.username && <p className="error">{errors.username}</p>}
+            {errors.fullname && <p className="error">{errors.fullname}</p>}
           </div>
 
           <div className="relative">
@@ -133,11 +135,11 @@ const SignUp = () => {
           {formData.role === "1" && (
             <select name="district" className="w-full p-3 rounded-md text-black" onChange={handleChange} value={formData.district}>
               <option value="">Select District</option>
-              {[...Array(7)].map((_, i) => (
-                <option key={i + 1} value={i + 1}>
-                  District {i + 1}
+              {districts.disctricts.map((district, index) => (
+                <option key={index} value={index}>
+                  {district.code} / {district.name}
                 </option>
-              ))}
+              ))};
             </select>
           )}
           {formData.role === "2" && (
@@ -146,6 +148,16 @@ const SignUp = () => {
               {Object.keys(municipalities).map((municipality, index) => (
                 <option key={index} value={municipality}>
                   {municipality}
+                </option>
+              ))}
+            </select>
+          )}
+          {formData.municipality && (
+            <select name="barangay" className="w-full p-3 rounded-md text-black" onChange={handleChange} value={formData.barangay}>
+              <option value="">Select Barangay</option>
+              {municipalities[formData.municipality].map((barangay, index) => (
+                <option key={index} value={barangay}>
+                  {barangay}
                 </option>
               ))}
             </select>

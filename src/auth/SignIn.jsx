@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import {signIn} from '../firebase/auth';
 import { toast } from "react-toastify";
@@ -49,10 +49,10 @@ const SignIn = () => {
 
         <form className="w-full max-w-sm space-y-4" onSubmit={handleSubmit}>
           <div className="relative">
-            <FontAwesomeIcon icon={faUser} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <FontAwesomeIcon icon={faEnvelope} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Username"
+              placeholder="Email"
               className="w-full p-3 pl-10 rounded-md text-black"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
