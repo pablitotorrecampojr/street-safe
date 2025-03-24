@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function Aside() {
     const navigate = useNavigate();
-    const location = useLocation(); // Get the current URL
+    const location = useLocation();
 
     const navItems = [
       { name: 'Dashboard', path: '/dashboard' },
@@ -19,10 +19,14 @@ export default function Aside() {
 
     const handleNavbarToggle = () => { 
       const htmlElement = document.getElementById("main-html");
-        if (htmlElement) {
-            htmlElement.classList.remove("light-style", "layout-menu-fixed", "layout-menu-expanded");
-        }
+      if (htmlElement) {
+          htmlElement.classList.remove("light-style", "layout-menu-fixed", "layout-menu-expanded");
+      }
     }
+
+    useEffect(() => {
+      handleNavbarToggle();
+    }, [location])
 
     return (
       <aside id="layout-menu" className="layout-menu menu-vertical menu bg-menu-theme">
@@ -43,7 +47,6 @@ export default function Aside() {
               className={`menu-item ${location.pathname === item.path ? "active" : ""}`}
             >
               <a className="menu-link" onClick={() => navigate(item.path)}>
-                {/* Dynamically set the icon */}
                 <i className={`menu-icon tf-icons ${navIcons[item.name]}`}></i>
                 <div data-i18n="Analytics">{item.name}</div>
               </a>
