@@ -1,10 +1,60 @@
+import React, { useEffect, useState } from 'react';
+import { toast } from "react-toastify";
+import { useNavigate } from 'react-router-dom';
+import { auth, db } from '../firebase/firebase';
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { doc, getDoc } from 'firebase/firestore';
+import AccountSetting from '../constants/account-setting.json';
+
 export default function Navbar() {
+    const navigate = useNavigate();
+    const [user, setUser] = useState(null);
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+          setUser(currentUser);
+    
+          if (currentUser) {
+            const userRef = doc(db, "users", currentUser.uid);
+            const userSnap = await getDoc(userRef);
+    
+            if (userSnap.exists()) {
+              console.log("User Data:", userSnap.data().role);
+              setUserData(userSnap.data());
+            } else {
+              console.log("No user document found!");
+            }
+          }
+        });
+    
+        return () => unsubscribe();
+    }, []);
+
     const handleNavbarToggle = () => {
         const htmlElement = document.getElementById("main-html");
         if (htmlElement) {
             htmlElement.classList.add("light-style", "layout-menu-fixed", "layout-menu-expanded");
         }
     };
+
+    const handleToggleUserProfile = () => { 
+        const dropdownProfile = document.getElementById('dropdown-profile');
+        if (dropdownProfile) {
+            dropdownProfile.classList.toggle('show');
+        }
+    }
+
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            toast.success("Successfully logged out");
+            navigate("/"); 
+        } catch (error) {
+            toast.error(error.message);
+        }
+    };
+
     return (
         <nav
             className="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
@@ -25,61 +75,58 @@ export default function Navbar() {
 
             <ul className="navbar-nav flex-row align-items-center ms-auto">
                 <li className="nav-item navbar-dropdown dropdown-user dropdown">
-                    <a className="nav-link dropdown-toggle hide-arrow" href="#" data-bs-toggle="dropdown">
-                        <div className="avatar avatar-online">
-                            <div className="rounded-circle bg-primary">
-                                <span className="fw-bold fs-5">R</span>
-                            </div>
+                    <a className="nav-link dropdown-toggle hide-arrow" href="#" data-bs-toggle="dropdown" onClick={handleToggleUserProfile}>
+                        <div className="avatar avatar-online bg-primary rounded-circle d-flex justify-content-center align-items-center" style={{ width: "50px", height: "50px" }}>
+                            <span className="fw-bold fs-5 text-white">
+                                {user ? user.displayName.charAt(0).toUpperCase() : "A"}
+                            </span>
                         </div>
                     </a>
-                    <ul className="dropdown-menu dropdown-menu-end">
+                    <ul className="dropdown-menu dropdown-menu-end" data-bs-popper="static" id='dropdown-profile'>
                         <li>
-                        <a className="dropdown-item" href="#">
-                            <div className="d-fle</ul>x">
-                            <div className="flex-shrink-0 me-3">
-                                <div className="avatar avatar-online">
-                                <img src="../assets/img/avatars/1.png" alt className="w-px-40 h-auto rounded-circle" />
+                            <a className="dropdown-item" href="#">
+                                <div className="d-fle</ul>x">
+                                <div className="flex-grow-1">
+                                    <span className="fw-semibold d-block">{user ? user.displayName : "User" }</span>
+                                    <small className="text-muted">
+                                        {userData ? AccountSetting.role[userData.role] : "...fetching"}
+                                    </small>
                                 </div>
-                            </div>
-                            <div className="flex-grow-1">
-                                <span className="fw-semibold d-block">John Doe</span>
-                                <small className="text-muted">Admin</small>
-                            </div>
-                            </div>
-                        </a>
+                                </div>
+                            </a>
                         </li>
                         <li>
-                        <div className="dropdown-divider"></div>
+                            <div className="dropdown-divider"></div>
                         </li>
                         <li>
-                        <a className="dropdown-item" href="#">
-                            <i className="bx bx-user me-2"></i>
-                            <span className="align-middle">My Profile</span>
-                        </a>
+                            <a className="dropdown-item" href="#">
+                                <i className="bx bx-user me-2"></i>
+                                <span className="align-middle">My Profile</span>
+                            </a>
                         </li>
                         <li>
-                        <a className="dropdown-item" href="#">
-                            <i className="bx bx-cog me-2"></i>
-                            <span className="align-middle">Settings</span>
-                        </a>
+                            <a className="dropdown-item" href="#">
+                                <i className="bx bx-cog me-2"></i>
+                                <span className="align-middle">Settings</span>
+                            </a>
                         </li>
                         <li>
-                        <a className="dropdown-item" href="#">
-                            <span className="d-flex align-items-center align-middle">
-                            <i className="flex-shrink-0 bx bx-credit-card me-2"></i>
-                            <span className="flex-grow-1 align-middle">Billing</span>
-                            <span className="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
-                            </span>
-                        </a>
+                            <a className="dropdown-item" href="#">
+                                <span className="d-flex align-items-center align-middle">
+                                <i className="flex-shrink-0 bx bx-credit-card me-2"></i>
+                                <span className="flex-grow-1 align-middle">Billing</span>
+                                <span className="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
+                                </span>
+                            </a>
                         </li>
                         <li>
-                        <div className="dropdown-divider"></div>
+                            <div className="dropdown-divider"></div>
                         </li>
                         <li>
-                        <a className="dropdown-item" href="auth-login-basic.html">
-                            <i className="bx bx-power-off me-2"></i>
-                            <span className="align-middle">Log Out</span>
-                        </a>
+                            <a className="dropdown-item" href="#" onClick={handleLogout}>
+                                <i className="bx bx-power-off me-2"></i>
+                                <span className="align-middle">Log Out</span>
+                            </a>
                         </li>
                     </ul>
                 </li>
