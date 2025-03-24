@@ -38,7 +38,7 @@ const Dashboard = () => {
           </div>
       </div>
       <div className="layout-overlay layout-menu-toggle" onClick={handleNavbarToggle}></div>
-  </div>
+    </div>
   );
 };
 

@@ -99,7 +99,7 @@ export default function Navbar() {
                             <div className="dropdown-divider"></div>
                         </li>
                         <li>
-                            <a className="dropdown-item" href="#">
+                            <a className="dropdown-item" href="/edit-profile">
                                 <i className="bx bx-user me-2"></i>
                                 <span className="align-middle">My Profile</span>
                             </a>
