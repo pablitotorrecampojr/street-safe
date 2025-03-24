@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
 import {signOut} from '../firebase/auth';
+import NavBar from '../components/NavBar';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -20,23 +21,8 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen w-full font-sans bg-gray-50">
       {/* Navbar */}
-      <nav className="flex border-b text-center shadow-md">
-        <div className="w-1/3 bg-purple-500 text-white font-bold py-4">Dashboard</div>
-        <div
-          className="w-1/3 py-4 hover:bg-gray-100 cursor-pointer"
-          onClick={() => navigate('/hazardreport')}
-        >
-          Hazard Report
-        </div>
-        <div
-          className="w-1/3 py-4 hover:bg-gray-100 cursor-pointer"
-          onClick={() => navigate('/notification')}
-        >
-          Notification
-        </div>
-      </nav>
+      <NavBar />
 
-      {/* Profile Section */}
       <div className="flex items-center py-2 px-10 bg-white shadow-md rounded-lg m-1">
         <img src="/bg.png" alt="Profile" className="w-20 h-20 rounded-full border-2 border-gray-300" />
         <div className="ml-6">

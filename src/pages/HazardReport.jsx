@@ -1,5 +1,6 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // ✅ Import useNavigate
+import { useNavigate } from 'react-router-dom';
+import NavBar from '../components/NavBar';
 
 const HazardReport = () => {
   const navigate = useNavigate(); // ✅ useNavigate inside the component
@@ -11,29 +12,7 @@ const HazardReport = () => {
 
   return (
     <div className="min-h-screen w-full font-sans bg-gray-50">
-      
-      {/* Navbar */}
-      <nav className="flex border-b text-center shadow-md">
-        <div
-          className="w-1/3 py-4 cursor-pointer"
-          onClick={() => navigate('/dashboard')} // ✅ Fixed navigation
-        >
-          Dashboard
-        </div>
-            <div className="w-1/3 bg-purple-500 text-white font-bold py-4">Hazard Report</div>
-        <div
-          className="w-1/3 py-4 hover:bg-gray-100 cursor-pointer"
-          onClick={() => navigate('/notification')} // ✅ Added working navigation
-        >
-          Notification
-        </div>
-      </nav>
-
-      
-
-
-
-
+      <NavBar />
 
       {/* Header */}
       <h1 className="text-3xl text-center font-bold my-8">Hazard Reports</h1>

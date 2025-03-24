@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import NavBar from '../components/NavBar';
 
 const Notification = () => {
   const navigate = useNavigate();
@@ -13,16 +14,7 @@ const Notification = () => {
         <div className="w-72 h-72 bg-purple-500 opacity-30 rounded-full absolute top-10 right-10"></div>
       </div>
 
-      {/* Navbar */}
-      <nav className="flex border-b text-center shadow-md">
-        <div className="w-1/3 py-4 cursor-pointer" onClick={() => navigate('/')}>
-          Dashboard
-        </div>
-        <div className="w-1/3 py-4 cursor-pointer" onClick={() => navigate('/hazardreport')}>
-          Hazard Report
-        </div>
-        <div className="w-1/3 bg-purple-500 text-white font-bold py-4">Notification</div>
-      </nav>
+      <NavBar />
 
       {/* Create Notification */}
       <div className="bg-white p-4 m-4 rounded-lg shadow-md">
