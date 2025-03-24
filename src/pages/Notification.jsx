@@ -1,52 +1,44 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import NavBar from '../components/NavBar';
+import { toast } from "react-toastify";
+import {signOut} from '../firebase/auth';
+import Aside from '../components/Aside';
+import Navbar from '../components/NavBar';
+import Profile from '../components/Profile';
 
 const Notification = () => {
   const navigate = useNavigate();
-
+  const handleNavbarToggle = () => { 
+    const htmlElement = document.getElementById("main-html");
+    if (htmlElement) {
+        htmlElement.classList.remove("light-style", "layout-menu-fixed", "layout-menu-expanded");
+    }
+  }
   return (
-    <div className="min-h-screen w-full font-sans bg-gray-50 relative overflow-hidden">
-      {/* Background Circles */}
-      <div className="absolute top-0 left-0 w-full h-full -z-10 flex flex-wrap justify-center">
-        <div className="w-72 h-72 bg-purple-500 opacity-30 rounded-full absolute top-10 left-10"></div>
-        <div className="w-96 h-96 bg-purple-500 opacity-40 rounded-full absolute top-20 left-1/3"></div>
-        <div className="w-72 h-72 bg-purple-500 opacity-30 rounded-full absolute top-10 right-10"></div>
-      </div>
+    <div className="layout-wrapper layout-content-navbar">
+      <div className="layout-container">
+          <Aside />
+          <div className="layout-page">
+          <Navbar />
 
-      <NavBar />
-
-      {/* Create Notification */}
-      <div className="bg-white p-4 m-4 rounded-lg shadow-md">
-        <h2 className="text-lg font-bold mb-4">Create Notification</h2>
-        <textarea className="w-full border rounded-lg p-2 mb-2" rows="4" placeholder="Enter notification message..."></textarea>
-        <div className="flex justify-start space-x-2">
-          <button className="bg-green-500 text-white px-4 py-1 rounded">Submit</button>
-          <button className="bg-green-300 text-white px-4 py-1 rounded">Save as Draft</button>
-        </div>
+          <div className='content-wrapper'>
+            <div className='container-xxl flex-grow-1 container-p-y'>
+              <div className='row'>
+                <div className="col-lg-12 mb-4 order-0">
+                  <div className="card">
+                    <div className="card-body">
+                      <h1 className="card-title fw-bold">Notification</h1>
+                      <p>Welcome to the Street Safe Dashboard!</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
       </div>
-
-      {/* Schedule Notification */}
-      <div className="bg-white p-4 m-4 rounded-lg shadow-md">
-        <h2 className="text-lg font-bold mb-4">Schedule Notification</h2>
-        <label className="block text-left mb-2">Start Time</label>
-        <textarea className="w-full border rounded-lg p-2 mb-2" rows="4" placeholder="Enter Schedule notification message..."></textarea>
-        <div className="flex space-x-2 mb-2">
-          <input type="time" className="border rounded-lg p-2" />
-          <input type="date" className="border rounded-lg p-2" />
-        </div>
-        <div className="flex justify-start space-x-2">
-          <button className="bg-green-500 text-white px-4 py-1 rounded">Submit</button>
-          <button className="bg-green-300 text-white px-4 py-1 rounded">Save as Draft</button>
-        </div>
-      </div>
-
-      {/* Notification History */}
-      <div className="bg-white p-4 m-4 rounded-lg shadow-md">
-        <h2 className="text-lg font-bold mb-4">Notification History</h2>
-        <textarea className="w-full border rounded-lg p-2" rows="6" readOnly placeholder="Notification history will be displayed here..."></textarea>
-      </div>
-    </div>
+      <div className="layout-overlay layout-menu-toggle" onClick={handleNavbarToggle}></div>
+  </div>
   );
 };
 
