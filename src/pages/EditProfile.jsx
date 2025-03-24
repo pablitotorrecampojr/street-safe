@@ -78,7 +78,7 @@ export default function EditProfile() {
                                 <div className="col-lg-8 col-md-8 col-12">
                                     <div className="card mb-4">
                                         <div className="card-header d-flex justify-content-between align-items-center">
-                                            <h5 className="mb-0">Profile Settings</h5>
+                                            <h5 className="mb-0">My Profile</h5>
                                             <small className="text-muted float-end">Manage your profile</small>
                                         </div>
                                         <div className="card-body">
