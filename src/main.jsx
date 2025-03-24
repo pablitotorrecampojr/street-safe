@@ -27,10 +27,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        //* public routes
+        {/* public routes */}
         <Route path="/" element={<SignIn />} /> 
         <Route path="/sign-up" element={<SignUp />} /> 
-        //* private routes
+        {/* private routes */}
         <Route
           path="/dashboard"
           element={
@@ -39,11 +39,46 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             </ProtectedRoute>
           }
         />
-        <Route path="/hazard-report" element={<HazardReport />} /> 
-        <Route path="/notification" element={<Notification />} /> 
-        <Route path="/admin-dashboard" element={<Admin_Dashboard />} /> 
-        <Route path="/admin-accesscontrol" element={<Admin_AccessControl />} />
-        <Route path="/admin-hazardreport" element={<Admin_HazardReport />} /> 
+        <Route
+          path="/hazard-report"
+          element={
+            <ProtectedRoute>
+              <HazardReport />
+            </ProtectedRoute>
+          }
+        /> 
+        <Route
+          path="/notification"
+          element={
+            <ProtectedRoute>
+              <Notification />
+            </ProtectedRoute>
+          }
+        /> 
+        <Route
+          path="/admin-dashboard"
+          element={
+            <ProtectedRoute>
+              <Admin_Dashboard />
+            </ProtectedRoute>
+          }
+        /> 
+        <Route
+          path="/admin-accesscontrol"
+          element={
+            <ProtectedRoute>
+              <Admin_AccessControl />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin-hazardreport"
+          element={
+            <ProtectedRoute>
+              <Admin_HazardReport />
+            </ProtectedRoute>
+          }
+        /> 
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>
