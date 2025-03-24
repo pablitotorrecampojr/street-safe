@@ -10,7 +10,7 @@ import {signUp} from '../firebase/auth';
 const SignUp = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: "",
+    fullname: "",
     email: "",
     role: "",
     district: "",
@@ -47,18 +47,27 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     let newErrors = {};
-    const { username, email, role, district, barangay, municipality, password, confirmPassword } = formData;
+    const { fullname, email, role, district, barangay, municipality, password, confirmPassword } = formData;
 
-    if (!username) newErrors.username = "Username is required";
+    if (!fullname) newErrors.fullname = "Full name is required";
     if (!email) newErrors.email = "Email is required";
     if (!role) newErrors.role = "Role is required";
     if (!password) newErrors.password = "Password is required";
     if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match";
     setErrors(newErrors);
-    if (!username || !email || !role || !password || !confirmPassword || 
-        (role === "1" && !district) || 
-        (role === "2" && (!municipality))) {
+    if (!fullname || !email || !role || !password || !confirmPassword || 
+      (role === "1" && !district) || 
+      (role === "2" && (!municipality))) {
       toast.error("Please fill in all required fields!");
+      console.log("Empty fields:", {
+        fullname: !fullname,
+        email: !email,
+        role: !role,
+        password: !password,
+        confirmPassword: !confirmPassword,
+        district: role === "1" && !district,
+        municipality: role === "2" && !municipality,
+      });
       return;
     } 
 
@@ -98,13 +107,13 @@ const SignUp = () => {
             <FontAwesomeIcon icon={faUser} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              name="username"
-              placeholder="Username"
+              name="fullname"
+              placeholder="Full Name"
               className="w-full p-3 pl-10 rounded-md text-black"
-              value={formData.username}
+              value={formData.fullname}
               onChange={handleChange}
             />
-            {errors.username && <p className="error">{errors.username}</p>}
+            {errors.fullname && <p className="error">{errors.fullname}</p>}
           </div>
 
           <div className="relative">
