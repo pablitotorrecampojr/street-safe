@@ -59,15 +59,6 @@ const SignUp = () => {
       (role === "1" && !district) || 
       (role === "2" && (!municipality))) {
       toast.error("Please fill in all required fields!");
-      console.log("Empty fields:", {
-        fullname: !fullname,
-        email: !email,
-        role: !role,
-        password: !password,
-        confirmPassword: !confirmPassword,
-        district: role === "1" && !district,
-        municipality: role === "2" && !municipality,
-      });
       return;
     } 
 

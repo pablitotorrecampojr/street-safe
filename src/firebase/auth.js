@@ -1,5 +1,5 @@
 import { auth, db } from './firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, updateProfile } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 
 export const signUp = async (formData) => { 
@@ -9,6 +9,7 @@ export const signUp = async (formData) => {
         }
         const { fullname, email, role, district, municipality, barangay, password } = formData;
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(userCredential.user, { displayName: fullname });
         const user = userCredential.user;
 
         await setDoc(doc(db, "users", user.uid), {
