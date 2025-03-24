@@ -13,10 +13,8 @@ import Dashboard from './pages/Dashboard'; // Dashboard component
 import SignUp from './auth/SignUp'; // Sign Up component
 import HazardReport from './pages/HazardReport'; 
 import Notification from './pages/Notification';
-import Admin_Dashboard from './admin/Admin_Dashboard';
-import Admin_HazardReport from './admin/Admin_HazardReport';
-import Admin_AccessControl from './admin/Admin_AccessControl';
 import EditProfile from './pages/EditProfile';
+import AccessControl from './pages/AccessControl';
 import PageNotFound from './pages/PageNotFound';
 import Spinners from './components/Spinners';
 
@@ -60,34 +58,18 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           }
         /> 
         <Route
-          path="/admin-dashboard"
-          element={
-            <ProtectedRoute>
-              <Admin_Dashboard />
-            </ProtectedRoute>
-          }
-        /> 
-        <Route
-          path="/admin-accesscontrol"
-          element={
-            <ProtectedRoute>
-              <Admin_AccessControl />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin-hazardreport"
-          element={
-            <ProtectedRoute>
-              <Admin_HazardReport />
-            </ProtectedRoute>
-          }
-        /> 
-        <Route
           path="/edit-profile"
           element={
             <ProtectedRoute>
               <EditProfile />
+            </ProtectedRoute>
+          }
+        /> 
+         <Route
+          path="/access-control"
+          element={
+            <ProtectedRoute>
+              <AccessControl />
             </ProtectedRoute>
           }
         /> 
