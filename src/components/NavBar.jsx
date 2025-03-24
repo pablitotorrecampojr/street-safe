@@ -105,24 +105,6 @@ export default function Navbar() {
                             </a>
                         </li>
                         <li>
-                            <a className="dropdown-item" href="#">
-                                <i className="bx bx-cog me-2"></i>
-                                <span className="align-middle">Settings</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a className="dropdown-item" href="#">
-                                <span className="d-flex align-items-center align-middle">
-                                <i className="flex-shrink-0 bx bx-credit-card me-2"></i>
-                                <span className="flex-grow-1 align-middle">Billing</span>
-                                <span className="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
-                                </span>
-                            </a>
-                        </li>
-                        <li>
-                            <div className="dropdown-divider"></div>
-                        </li>
-                        <li>
                             <a className="dropdown-item" href="#" onClick={handleLogout}>
                                 <i className="bx bx-power-off me-2"></i>
                                 <span className="align-middle">Log Out</span>
