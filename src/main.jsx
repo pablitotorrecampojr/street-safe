@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProtectedRoute from './firebase/ProtectedRoute';
+import PublicRoute from './firebase/PublicRoute';
 
 //TODO: import pages
 import SignIn from './auth/SignIn'; // Sign In component
@@ -28,8 +29,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <Routes>
         {/* public routes */}
-        <Route path="/" element={<SignIn />} /> 
-        <Route path="/sign-up" element={<SignUp />} /> 
+        <Route path="/" element={<PublicRoute><SignIn /></PublicRoute>} />
+        <Route path="/sign-up" element={<PublicRoute><SignUp /></PublicRoute>} />
+
         {/* private routes */}
         <Route
           path="/dashboard"
