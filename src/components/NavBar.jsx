@@ -27,13 +27,15 @@ export default function Navbar() {
                 <li className="nav-item navbar-dropdown dropdown-user dropdown">
                     <a className="nav-link dropdown-toggle hide-arrow" href="#" data-bs-toggle="dropdown">
                         <div className="avatar avatar-online">
-                        <img src="../assets/img/avatars/1.png" alt className="w-px-40 h-auto rounded-circle" />
+                            <div className="rounded-circle bg-primary">
+                                <span className="fw-bold fs-5">R</span>
+                            </div>
                         </div>
                     </a>
                     <ul className="dropdown-menu dropdown-menu-end">
                         <li>
                         <a className="dropdown-item" href="#">
-                            <div className="d-flex">
+                            <div className="d-fle</ul>x">
                             <div className="flex-shrink-0 me-3">
                                 <div className="avatar avatar-online">
                                 <img src="../assets/img/avatars/1.png" alt className="w-px-40 h-auto rounded-circle" />
