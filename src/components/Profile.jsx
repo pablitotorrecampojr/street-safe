@@ -30,7 +30,6 @@ export default function Profile() {
 
     return (
         <div className="flex items-center py-2 px-10 bg-white shadow-md rounded-lg m-1">
-            <img src="/bg.png" alt="Profile" className="w-20 h-20 rounded-full border-2 border-gray-300" />
             <div className="ml-6">
                 {user ? (
                     <>

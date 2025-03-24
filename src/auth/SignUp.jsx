@@ -4,6 +4,7 @@ import { faLock, faUser, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import accountSetting from  '../constants/account-setting.json';
 import municipalities from '../constants/munacipalities.json';
+import districts from '../constants/districts.json';
 import { toast } from "react-toastify";
 import {signUp} from '../firebase/auth';
 
@@ -133,11 +134,11 @@ const SignUp = () => {
           {formData.role === "1" && (
             <select name="district" className="w-full p-3 rounded-md text-black" onChange={handleChange} value={formData.district}>
               <option value="">Select District</option>
-              {[...Array(7)].map((_, i) => (
-                <option key={i + 1} value={i + 1}>
-                  District {i + 1}
+              {districts.disctricts.map((district, index) => (
+                <option key={index} value={index}>
+                  {district.code} / {district.name}
                 </option>
-              ))}
+              ))};
             </select>
           )}
           {formData.role === "2" && (
