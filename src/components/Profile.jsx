@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebase';
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import NavBar from '../components/NavBar';
+import Aside from './Aside';
 
 export default function Profile() {
     const navigate = useNavigate();

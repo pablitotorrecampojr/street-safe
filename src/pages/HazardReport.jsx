@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import NavBar from '../components/NavBar';
+import Aside from '../components/Aside';
 
 const HazardReport = () => {
   const navigate = useNavigate(); // ✅ useNavigate inside the component
@@ -12,7 +12,7 @@ const HazardReport = () => {
 
   return (
     <div className="min-h-screen w-full font-sans bg-gray-50">
-      <NavBar />
+      <Aside />
 
       {/* Header */}
       <h1 className="text-3xl text-center font-bold my-8">Hazard Reports</h1>

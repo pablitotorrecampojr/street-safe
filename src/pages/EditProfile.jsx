@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { auth } from "../firebase/firebase";
 import { updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import { toast } from "react-toastify";
-import NavBar from "../components/NavBar";
+import Aside from "../components/Aside";
 
 export default function EditProfile() {
     const [name, setName] = useState("");
@@ -60,7 +60,7 @@ export default function EditProfile() {
 
     return (
         <div className="min-h-screen w-full font-sans bg-gray-50">
-            <NavBar />
+            <Aside />
             <div className="max-w-lg mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
                 <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">Edit Profile</h1>
 

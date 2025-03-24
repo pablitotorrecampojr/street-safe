@@ -76,7 +76,7 @@ const SignUp = () => {
       return;
     }
 
-    try {git
+    try {
       const response = await signUp(formData);
       if (response.status === 200) {
           toast.success(response.message);
