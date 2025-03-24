@@ -11,6 +11,13 @@ export default function Aside() {
         { name: 'Notification', path: '/notification' },
     ];
 
+    const handleNavbarToggle = () => { 
+      const htmlElement = document.getElementById("main-html");
+        if (htmlElement) {
+            htmlElement.classList.remove("light-style", "layout-menu-fixed", "layout-menu-expanded");
+        }
+    }
+
     return (
       <aside id="layout-menu" className="layout-menu menu-vertical menu bg-menu-theme">
         <div className="app-brand demo">
@@ -18,8 +25,8 @@ export default function Aside() {
               <span className="app-brand-text demo menu-text fw-bolder ms-2">Street Safe</span>
             </a>
 
-            <a className="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
-            <i className="bx bx-chevron-left bx-sm align-middle"></i>
+            <a className="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none" onClick={handleNavbarToggle}>
+              <i className="bx bx-chevron-left bx-sm align-middle"></i>
             </a>
         </div>
         <div className="menu-inner-shadow"></div>
