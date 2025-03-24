@@ -8,7 +8,12 @@ import Profile from '../components/Profile';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-
+  const handleNavbarToggle = () => { 
+    const htmlElement = document.getElementById("main-html");
+    if (htmlElement) {
+        htmlElement.classList.remove("light-style", "layout-menu-fixed", "layout-menu-expanded");
+    }
+  }
   return (
     <div className="layout-wrapper layout-content-navbar">
       <div className="layout-container">
@@ -18,7 +23,7 @@ const Dashboard = () => {
          
           </div>
       </div>
-      <div className="layout-overlay layout-menu-toggle"></div>
+      <div className="layout-overlay layout-menu-toggle" onClick={handleNavbarToggle}></div>
   </div>
   );
 };
