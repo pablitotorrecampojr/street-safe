@@ -1,52 +1,44 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from "react-toastify";
+import {signOut} from '../firebase/auth';
 import Aside from '../components/Aside';
+import Navbar from '../components/NavBar';
+import Profile from '../components/Profile';
 
 const HazardReport = () => {
-  const navigate = useNavigate(); // ✅ useNavigate inside the component
-
-  const reports = [
-    { location: 'Main St & 5th Ave', type: 'Pothole', numberReported: 2, status: 'Pending' },
-    { location: 'Park Lane', type: 'Debris', numberReported: 10, status: 'On Progress' }
-  ];
-
+  const navigate = useNavigate();
+  const handleNavbarToggle = () => { 
+    const htmlElement = document.getElementById("main-html");
+    if (htmlElement) {
+        htmlElement.classList.remove("light-style", "layout-menu-fixed", "layout-menu-expanded");
+    }
+  }
   return (
-    <div className="min-h-screen w-full font-sans bg-gray-50">
-      <Aside />
+    <div className="layout-wrapper layout-content-navbar">
+      <div className="layout-container">
+          <Aside />
+          <div className="layout-page">
+          <Navbar />
 
-      {/* Header */}
-      <h1 className="text-3xl text-center font-bold my-8">Hazard Reports</h1>
-
-      {/* Table */}
-      <div className="flex justify-center">
-        <table className="border-collapse border border-gray-400 w-3/4">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border border-gray-400 px-6 py-3">Location</th>
-              <th className="border border-gray-400 px-6 py-3">Hazard Type</th>
-              <th className="border border-gray-400 px-6 py-3">Number Reported</th>
-              <th className="border border-gray-400 px-6 py-3">Status</th>
-              <th className="border border-gray-400 px-6 py-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reports.map((report, index) => (
-              <tr key={index} className="text-center">
-                <td className="border border-gray-400 px-6 py-3">{report.location}</td>
-                <td className="border border-gray-400 px-6 py-3">{report.type}</td>
-                <td className="border border-gray-400 px-6 py-3">{report.numberReported}</td>
-                <td className="border border-gray-400 px-6 py-3">{report.status}</td>
-                <td className="border border-gray-400 px-6 py-3 space-x-2">
-                  <button className="bg-blue-600 text-white px-4 py-1 rounded">View</button>
-                  <button className="bg-green-500 text-white px-4 py-1 rounded">Update</button>
-                  <button className="bg-red-500 text-white px-4 py-1 rounded">Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          <div className='content-wrapper'>
+            <div className='container-xxl flex-grow-1 container-p-y'>
+              <div className='row'>
+                <div className="col-lg-12 mb-4 order-0">
+                  <div className="card">
+                    <div className="card-body">
+                      <h1 className="card-title fw-bold">Hazard Report</h1>
+                      <p>Welcome to the Street Safe Dashboard!</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
       </div>
-    </div>
+      <div className="layout-overlay layout-menu-toggle" onClick={handleNavbarToggle}></div>
+  </div>
   );
 };
 
