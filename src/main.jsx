@@ -16,6 +16,7 @@ import Notification from './pages/Notification';
 import Admin_Dashboard from './admin/Admin_Dashboard';
 import Admin_HazardReport from './admin/Admin_HazardReport';
 import Admin_AccessControl from './admin/Admin_AccessControl';
+import EditProfile from './pages/EditProfile';
 import PageNotFound from './pages/PageNotFound';
 
 // src/App.jsx
@@ -78,6 +79,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           element={
             <ProtectedRoute>
               <Admin_HazardReport />
+            </ProtectedRoute>
+          }
+        /> 
+        <Route
+          path="/edit-profile"
+          element={
+            <ProtectedRoute>
+              <EditProfile />
             </ProtectedRoute>
           }
         /> 

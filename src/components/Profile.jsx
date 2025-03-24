@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebase';
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import NavBar from '../components/NavBar';
 
 export default function Profile() {
     const navigate = useNavigate();
@@ -40,9 +41,11 @@ export default function Profile() {
                     <p className="text-gray-500">Loading user info...</p>
                 )}
                 <div className="flex space-x-4">
-                    <button className="bg-green-500 text-white px-6 py-1 rounded-full text-sm font-medium hover:bg-green-600">
+                    <a className="bg-green-500 text-white px-6 py-1 rounded-full text-sm font-medium hover:bg-green-600"
+                        href="/edit-profile"
+                    >
                         Edit Profile
-                    </button>
+                    </a>
                     <button
                         onClick={handleLogout}
                         className="bg-red-500 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-red-600"
