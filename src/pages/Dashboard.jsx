@@ -12,9 +12,10 @@ const Dashboard = () => {
   return (
     <div className="layout-wrapper layout-content-navbar">
       <div className="layout-container">
-          <div className="layout-page">
           <Aside />
-          
+          <div className="layout-page">
+          <Navbar />
+         
           </div>
       </div>
       <div className="layout-overlay layout-menu-toggle"></div>
