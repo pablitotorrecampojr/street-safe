@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faUser, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import accountSetting from  '../constants/account-setting.json';
-import municipalities from '../constants/munacipalities.json';
+import municipalities from '../constants/municipalities.json';
 import districts from '../constants/districts.json';
 import { toast } from "react-toastify";
 import {signUp} from '../firebase/auth';
@@ -23,6 +23,7 @@ const SignUp = () => {
   const [errors, setErrors] = useState({});
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
     setFormData((prevData) => {
       let updatedData = { ...prevData, [name]: value };
   
@@ -147,6 +148,16 @@ const SignUp = () => {
               {Object.keys(municipalities).map((municipality, index) => (
                 <option key={index} value={municipality}>
                   {municipality}
+                </option>
+              ))}
+            </select>
+          )}
+          {formData.municipality && (
+            <select name="barangay" className="w-full p-3 rounded-md text-black" onChange={handleChange} value={formData.barangay}>
+              <option value="">Select Barangay</option>
+              {municipalities[formData.municipality].map((barangay, index) => (
+                <option key={index} value={barangay}>
+                  {barangay}
                 </option>
               ))}
             </select>
