@@ -9,6 +9,7 @@ export const signUp = async (formData) => {
         }
         const { fullname, email, role, district, municipality, barangay, password } = formData;
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await signOut(auth);
         await updateProfile(userCredential.user, { displayName: fullname });
         const user = userCredential.user;
 
