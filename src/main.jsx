@@ -18,6 +18,7 @@ import Admin_HazardReport from './admin/Admin_HazardReport';
 import Admin_AccessControl from './admin/Admin_AccessControl';
 import EditProfile from './pages/EditProfile';
 import PageNotFound from './pages/PageNotFound';
+import Login from './auth/Login';
 
 // src/App.jsx
 import {app} from './firebase/firebase';
@@ -32,7 +33,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         {/* public routes */}
         <Route path="/" element={<PublicRoute><SignIn /></PublicRoute>} />
         <Route path="/sign-up" element={<PublicRoute><SignUp /></PublicRoute>} />
-
+        <Route path="/login" element={<Login />} />
         {/* private routes */}
         <Route
           path="/dashboard"
