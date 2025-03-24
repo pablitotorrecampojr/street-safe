@@ -20,7 +20,6 @@ export default function Navbar() {
             const userSnap = await getDoc(userRef);
     
             if (userSnap.exists()) {
-              console.log("User Data:", userSnap.data().role);
               setUserData(userSnap.data());
             } else {
               console.log("No user document found!");

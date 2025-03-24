@@ -16,7 +16,6 @@ import Notification from './pages/Notification';
 import EditProfile from './pages/EditProfile';
 import AccessControl from './pages/AccessControl';
 import PageNotFound from './pages/PageNotFound';
-import Spinners from './components/Spinners';
 
 // src/App.jsx
 import {app} from './firebase/firebase';
@@ -31,7 +30,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         {/* public routes */}
         <Route path="/" element={<PublicRoute><SignIn /></PublicRoute>} />
         <Route path="/sign-up" element={<PublicRoute><SignUp /></PublicRoute>} />
-        <Route path="/test" element={<Spinners />} />
         {/* private routes */}
         <Route
           path="/dashboard"
