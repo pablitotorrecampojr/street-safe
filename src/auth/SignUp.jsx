@@ -59,7 +59,7 @@ const SignUp = () => {
     setErrors(newErrors);
     if (!fullname || !email || !role || !password || !confirmPassword || 
       (role === "1" && !district) || 
-      (role === "2" && (!municipality))) {
+      (role === "2" && (!municipality || !barangay))) {
       toast.error("Please fill in all required fields!");
       return;
     } 
@@ -76,7 +76,7 @@ const SignUp = () => {
       return;
     }
 
-    try {
+    try {git
       const response = await signUp(formData);
       if (response.status === 200) {
           toast.success(response.message);
@@ -91,104 +91,149 @@ const SignUp = () => {
   }
   
   return (
-    <div className="flex h-screen">
-      <div className="w-1/3 bg-[#242289] flex flex-col justify-center items-center text-white p-8">
-        <img src="/logo.png" alt="StreetSafe Logo" className="h-32 mb-4" />
-        <h1 className="text-3xl font-bold mb-8">SIGN UP</h1>
-        <form className="w-full max-w-sm items-center space-y-4" onSubmit={handleSubmit}>
-          <div className="relative">
-            <FontAwesomeIcon icon={faUser} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              name="fullname"
-              placeholder="Full Name"
-              className="w-full p-3 pl-10 rounded-md text-black"
-              value={formData.fullname}
-              onChange={handleChange}
-            />
-            {errors.fullname && <p className="error">{errors.fullname}</p>}
-          </div>
+    <div className="container-xxl">
+      <div className="authentication-wrapper authentication-basic container-p-y">
+          <div className="authentication-inner">
+              <div className="card">
+                <div className="card-body">
+                    <div className="app-brand justify-content-center">
+                    <a href="/" className="app-brand-link gap-2">
+                        <span className="app-brand-text demo text-body fw-bolder">Street Safe</span>
+                    </a>
+                    </div>
+                    <h4 className="mb-2">Adventure starts here 🚀</h4>
 
-          <div className="relative">
-            <FontAwesomeIcon icon={faEnvelope} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter email address"
-              className="w-full p-3 pl-10 rounded-md text-black"
-              value={formData.email}
-              onChange={handleChange}
-            />
-            {errors.email && <p className="error">{errors.email}</p>}
+                    <form id="formAuthentication" className="mb-3" onSubmit={handleSubmit}>
+                      <div className="mb-3">
+                          <label className="form-label">Full name</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="fullname"
+                            name="fullname"
+                            placeholder="Enter your full name"
+                            value={formData.fullname}
+                            onChange={handleChange}
+                          />
+                          {errors.fullname && <p className="error">{errors.fullname}</p>}
+                      </div>
+                      <div className="mb-3">
+                          <label className="form-label">Email</label>
+                          <input 
+                            type="text" 
+                            className="form-control" 
+                            id="email" 
+                            name="email" 
+                            placeholder="Enter your email"
+                            value={formData.email}
+                            onChange={handleChange}
+                          />
+                          {errors.email && <p className="error">{errors.email}</p>}
+                      </div>
+                      <div className="mb-3">
+                        <label className="form-label">Select Role</label>
+                        <select 
+                          className="form-select" 
+                          name="role"
+                          value={formData.role}
+                          onChange={handleChange}
+                        > 
+                          {accountSetting.role.map((role, index) => {
+                            return (
+                              <option key={index} value={index}>
+                                {role}
+                              </option>
+                            )
+                          })}
+                        </select>
+                        {errors.role && <p className="error">{errors.role}</p>}
+                      </div>
+
+                      {formData.role === "1" && (
+                        <div className="mb-3"> 
+                          <label className="form-label">Select District</label>
+                          <select name="district" className="form-select" onChange={handleChange} value={formData.district}>
+                            <option value="">Select District</option>
+                            {districts.disctricts.map((district, index) => (
+                              <option key={index} value={index}>
+                                {district.code} / {district.name}
+                              </option>
+                            ))};
+                          </select>
+                        </div>
+                      )}
+                      {formData.role === "2" && (
+                        <div className="mb-3"> 
+                          <label className="form-label">Select Municipality</label>
+                          <select name="municipality" className="form-select" onChange={handleChange} value={formData.municipality}>
+                            <option value="">Select Municipality</option>
+                            {Object.keys(municipalities).map((municipality, index) => (
+                              <option key={index} value={municipality}>
+                                {municipality}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                      {formData.municipality && (
+                        <div className="mb-3"> 
+                          <label className="form-label">Select Barangay</label>
+                          <select name="barangay" className="form-control" onChange={handleChange} value={formData.barangay}>
+                            <option value="">Select Barangay</option>
+                            {municipalities[formData.municipality].map((barangay, index) => (
+                              <option key={index} value={barangay}>
+                                {barangay}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+
+                      <div className="mb-3 form-password-toggle">
+                          <label className="form-label">Password</label>
+                          <div className="input-group input-group-merge">
+                          <input
+                              type="password"
+                              id="password"
+                              className="form-control"
+                              name="password"
+                              placeholder="Password"
+                              aria-describedby="password"
+                              value={formData.password}
+                              onChange={handleChange}
+                          />
+                          </div>
+                          {errors.password && <p className="error">{errors.password}</p>}
+                      </div>
+                      <div className="mb-3 form-password-toggle">
+                          <label className="form-label">Confirm Password</label>
+                          <div className="input-group input-group-merge">
+                          <input
+                              type="password"
+                              id="confirmPassword"
+                              className="form-control"
+                              name="confirmPassword"
+                              placeholder="Confirm Password"
+                              aria-describedby="confirmPassword"
+                              value={formData.confirmPassword}
+                              onChange={handleChange}
+                          />
+                          </div>
+                          {errors.confirmPassword && <p className="error">{errors.confirmPassword}</p>}
+                      </div>
+                      <button className="btn btn-primary d-grid w-100" type="submit">Sign up</button>
+                    </form>
+
+                    <p className="text-center">
+                    <span>Already have an account?</span>
+                    <a href="/">
+                        <span> Sign in instead</span>
+                    </a>
+                    </p>
+                </div>
+              </div>
           </div>
-          <select name="role" className="w-full p-3 rounded-md text-black" onChange={handleChange} value={formData.role}>
-            <option value="">Select Role</option>
-            {accountSetting.role.map((role, index) => {
-              return (
-                <option key={index} value={index}>
-                  {role}
-                </option>
-              )
-            })}
-          </select>
-          {errors.role && <p className="error">{errors.role}</p>}
-          {formData.role === "1" && (
-            <select name="district" className="w-full p-3 rounded-md text-black" onChange={handleChange} value={formData.district}>
-              <option value="">Select District</option>
-              {districts.disctricts.map((district, index) => (
-                <option key={index} value={index}>
-                  {district.code} / {district.name}
-                </option>
-              ))};
-            </select>
-          )}
-          {formData.role === "2" && (
-            <select name="municipality" className="w-full p-3 rounded-md text-black" onChange={handleChange} value={formData.municipality}>
-              <option value="">Select Municipality</option>
-              {Object.keys(municipalities).map((municipality, index) => (
-                <option key={index} value={municipality}>
-                  {municipality}
-                </option>
-              ))}
-            </select>
-          )}
-          {formData.municipality && (
-            <select name="barangay" className="w-full p-3 rounded-md text-black" onChange={handleChange} value={formData.barangay}>
-              <option value="">Select Barangay</option>
-              {municipalities[formData.municipality].map((barangay, index) => (
-                <option key={index} value={barangay}>
-                  {barangay}
-                </option>
-              ))}
-            </select>
-          )}
-          <div className="relative">
-            <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input type="password" name="password" placeholder="Enter password" className="w-full p-3 pl-10 rounded-md text-black"
-              value={formData.password}
-              onChange={handleChange}
-            />
-            {errors.password && <p className="error">{errors.password}</p>}
-          </div>
-          <div className="relative"> 
-            <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input type="password" name="confirmPassword" placeholder="Confirm password" className="w-full p-3 pl-10 rounded-md text-black"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-            />
-            {errors.confirmPassword && <p className="error">{errors.confirmPassword}</p>}
-          </div>
-          <div className="flex flex-col items-center space-y-4">
-            <button type="submit" className="bg-yellow-400 text-black py-2 px-14 rounded-full font-bold text-lg w-max">
-              Sign Up
-            </button>
-            <a href="/" className="text-white font-bold w-max text-center">
-              Sign In
-            </a>
-          </div>
-        </form>
       </div>
-      <div className="w-2/3 bg-cover bg-center" style={{ backgroundImage: "url('/bg.png')" }}></div>
     </div>
   );
 };
