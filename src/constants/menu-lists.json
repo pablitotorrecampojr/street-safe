@@ -1,0 +1,13 @@
+{
+    "Admin": [
+        { "name": "Dashboard", "path": "/dashboard", "icon": "bx bx-home-circle" },
+        { "name": "Hazard Report", "path": "/hazard-report", "icon": "bx bx-error-circle" },
+        { "name": "Notification", "path": "/notification", "icon":  "bx bx-bell"}
+    ],
+    "Authorities": [
+
+    ],
+    "Municipalities": [
+
+    ]
+}

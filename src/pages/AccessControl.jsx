@@ -6,7 +6,7 @@ import Aside from '../components/Aside';
 import Navbar from '../components/NavBar';
 import Profile from '../components/Profile';
 
-const Notification = () => {
+const AccessControl = () => {
   const navigate = useNavigate();
   const handleNavbarToggle = () => { 
     const htmlElement = document.getElementById("main-html");
@@ -25,7 +25,7 @@ const Notification = () => {
             <div className='container-xxl flex-grow-1 container-p-y'>
               <div className='row'>
                 <div className="col-md-3 mb-4">
-                  <h1 style={{ fontSize: '20px' }} className='fw-bold'>Notifications</h1>
+                  <h1 style={{ fontSize: '20px' }} className='fw-bold'>Access Control</h1>
                 </div>
               </div>
             </div>
@@ -33,8 +33,8 @@ const Notification = () => {
           </div>
       </div>
       <div className="layout-overlay layout-menu-toggle" onClick={handleNavbarToggle}></div>
-  </div>
+    </div>
   );
 };
 
-export default Notification;
+export default AccessControl;

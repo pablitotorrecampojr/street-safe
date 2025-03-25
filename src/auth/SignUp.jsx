@@ -53,11 +53,11 @@ const SignUp = () => {
 
     if (!fullname) newErrors.fullname = "Full name is required";
     if (!email) newErrors.email = "Email is required";
-    if (!role) newErrors.role = "Role is required";
+    // if (!role) newErrors.role = "Role is required";
     if (!password) newErrors.password = "Password is required";
     if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match";
     setErrors(newErrors);
-    if (!fullname || !email || !role || !password || !confirmPassword || 
+    if (!fullname || !email || !password || !confirmPassword || 
       (role === "1" && !district) || 
       (role === "2" && (!municipality || !barangay))) {
       toast.error("Please fill in all required fields!");
@@ -80,7 +80,7 @@ const SignUp = () => {
       const response = await signUp(formData);
       if (response.status === 200) {
           toast.success(response.message);
-          navigate("/dashboard");
+          navigate("/");
       } else {
           toast.error(response.message);
       }

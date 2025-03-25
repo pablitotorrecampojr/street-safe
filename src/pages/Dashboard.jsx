@@ -5,6 +5,7 @@ import {signOut} from '../firebase/auth';
 import Aside from '../components/Aside';
 import Navbar from '../components/NavBar';
 import Profile from '../components/Profile';
+import UsersView from '../components/UsersView';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -24,13 +25,22 @@ const Dashboard = () => {
           <div className='content-wrapper'>
             <div className='container-xxl flex-grow-1 container-p-y'>
               <div className='row'>
-                <div className="col-lg-12 mb-4 order-0">
-                  <div className="card">
-                    <div className="card-body">
-                      <h1 className="card-title fw-bold">Dashboard</h1>
-                      <p>Welcome to the Street Safe Dashboard!</p>
-                    </div>
-                  </div>
+                <div className="col-md-3 mb-4">
+                  <h1 style={{ fontSize: '20px' }} className='fw-bold'>Dashboard</h1>
+                </div>
+              </div>
+              <div className='row'>
+                <div className='col-md-3 mb-4'>
+                  <UsersView icon="faUser" color="success" role="0" />
+                </div>
+                <div className='col-md-3 mb-4'>
+                  <UsersView icon="faUsersGear" color="warning" role="1" />
+                </div>
+                <div className='col-md-3 mb-4'>
+                  <UsersView icon="faUsers" color="primary" role="2" />
+                </div>
+                <div className='col-md-3 mb-4'>
+                  <UsersView icon="faUserTie" color="danger" role="3" />
                 </div>
               </div>
             </div>

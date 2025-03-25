@@ -2,6 +2,7 @@
     "role": [
         "Admin",
         "Authorities",
-        "Municipalities"
+        "Municipalities",
+        "End User"
     ]
 }
