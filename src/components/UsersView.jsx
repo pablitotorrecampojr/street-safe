@@ -17,7 +17,6 @@ export default function UsersView({ icon = "faUser", color = "primary", role = "
                 const usersCollection = collection(db, "users");
                 const usersSnapshot = await getDocs(usersCollection);
                 const usersList = usersSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-                console.log(usersList);
                 setUserData(usersList);
             } catch (error) {
                 console.error("Error fetching users:", error);
