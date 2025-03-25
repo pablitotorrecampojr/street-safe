@@ -5,6 +5,7 @@ import {signOut} from '../firebase/auth';
 import Aside from '../components/Aside';
 import Navbar from '../components/NavBar';
 import Profile from '../components/Profile';
+import UsersView from '../components/UsersView';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -31,6 +32,20 @@ const Dashboard = () => {
                       <p>Welcome to the Street Safe Dashboard!</p>
                     </div>
                   </div>
+                </div>
+              </div>
+              <div className='row'>
+                <div className='col-md-3 mb-4'>
+                  <UsersView icon="faUser" color="success" role="0" />
+                </div>
+                <div className='col-md-3 mb-4'>
+                  <UsersView icon="faUsersGear" color="warning" role="1" />
+                </div>
+                <div className='col-md-3 mb-4'>
+                  <UsersView icon="faUsers" color="primary" role="2" />
+                </div>
+                <div className='col-md-3 mb-4'>
+                  <UsersView icon="faUserTie" color="danger" role="3" />
                 </div>
               </div>
             </div>
