@@ -44,7 +44,12 @@ const AccessControl = () => {
   fetchUsers(); // Call function on mount
   }, []);
 
-  console.log(JSON.stringify(userData));
+  let filteredUsers;
+    userData && userData.forEach((user) => { 
+       filteredUsers = user.fullname;
+    });
+
+    console.log(filteredUsers);
   return (
     <div className="layout-wrapper layout-content-navbar">
       <div className="layout-container">
@@ -74,19 +79,19 @@ const AccessControl = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {userData && userData.forEach((user, index) => {
+                     {userData && userData.map((user, index) => {
                         return (
                           <tr>
-                            <td>{index + 1}</td>
-                            <td>{user.displayName}</td>
-                            <td>{user.email}</td>
-                            <td>{accountSetting.roles[user.role]}</td>
-                            <td>{user.barangay}</td>
-                            <td>{user.district}</td>
-                            <td>{user.createdAt.toDate().toLocaleDateString()}</td>
+                            <td>{ (index) + 1 }</td>
+                            <td>{ user.fullname }</td>
+                            <td>{ user.email }</td>
+                            <td>{ user.role }</td>
+                            <td>{ user.barangay }</td>
+                            <td>{ user.district }</td>
+                            <td>{ new Date(user.createdAt.toDate()).toLocaleString() }</td>
                           </tr>
                         )
-                      })}
+                     })}
                     </tbody>
                   </table>
                 </div>
