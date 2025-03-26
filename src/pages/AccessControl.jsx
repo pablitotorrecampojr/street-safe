@@ -23,25 +23,28 @@ const AccessControl = () => {
         htmlElement.classList.remove("light-style", "layout-menu-fixed", "layout-menu-expanded");
     }
   }
+
   useEffect(() => {
     if (tableRef.current) {
       $(tableRef.current).DataTable(); // Initialize DataTable
     }
+  })
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+          const usersCollection = collection(db, "users");
+          const usersSnapshot = await getDocs(usersCollection);
+          const usersList = usersSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+          setUserData(usersList);
+      } catch (error) {
+          console.error("Error fetching users:", error);
+      }
+    };
+
+  fetchUsers(); // Call function on mount
   }, []);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const usersCollection = collection(db, "users");
-        const usersSnapshot = await getDocs(usersCollection);
-        const usersList = usersSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        setUserData(usersList);
-      } catch (error) { 
-        console.error(error);
-      }
-    }
-    fetchUserData();
-  }, []);
+  console.log(JSON.stringify(userData));
   return (
     <div className="layout-wrapper layout-content-navbar">
       <div className="layout-container">
@@ -61,22 +64,29 @@ const AccessControl = () => {
                   <table ref={tableRef} className="display">
                     <thead>
                       <tr>
-                        <th>ID</th>
+                        <th>#</th>
                         <th>Name</th>
                         <th>Email</th>
+                        <th>Role</th>
+                        <th>Barangay</th>
+                        <th>District</th>
+                        <th>Registration Date</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>1</td>
-                        <td>John Doe</td>
-                        <td>john@example.com</td>
-                      </tr>
-                      <tr>
-                        <td>2</td>
-                        <td>Jane Doe</td>
-                        <td>jane@example.com</td>
-                      </tr>
+                      {userData && userData.forEach((user, index) => {
+                        return (
+                          <tr>
+                            <td>{index + 1}</td>
+                            <td>{user.displayName}</td>
+                            <td>{user.email}</td>
+                            <td>{accountSetting.roles[user.role]}</td>
+                            <td>{user.barangay}</td>
+                            <td>{user.district}</td>
+                            <td>{user.createdAt.toDate().toLocaleDateString()}</td>
+                          </tr>
+                        )
+                      })}
                     </tbody>
                   </table>
                 </div>
