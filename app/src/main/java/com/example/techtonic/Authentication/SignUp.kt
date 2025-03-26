@@ -17,6 +17,7 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import papaya.`in`.sendmail.SendMail
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
@@ -137,29 +138,60 @@ class SignUp : AppCompatActivity() {
 
     }
 
-    private fun saveUserData(firstName: String,lastName:String,email: String, phonenumber: String) {
+    private fun saveUserData(
+        firstName: String,
+        lastName: String,
+        barangay: String,
+        district: String,
+        email: String,
+        municipality: String,
+        phoneNumber: String
+    ) {
         val userId = auth.currentUser?.uid
-        var role = "4"
-        Log.d("Firebase", "Saving data for user ID: $userId")
-
         if (userId == null) {
             Log.w("Firebase", "User ID is null. Cannot save data.")
             return
         }
 
-        val userRef = database.child("users").child(userId)
+        val role = "4" // Assigning default role
+        val createdAt = System.currentTimeMillis() // Timestamp for user creation
 
-        val userData = SignupClass(firstName,lastName, email,phonenumber)
+        // **Define user data with required fields**
+        val userData = hashMapOf(
+            "firstName" to firstName,
+            "lastName" to lastName,
+            "barangay" to barangay,
+            "createdAt" to createdAt,
+            "district" to district,
+            "email" to email,
+            "municipality" to municipality,
+            "role" to role,
+            "uid" to userId // Store UID from Realtime Database
+        )
 
-        Log.d("Firebase", "User data: $userData")
-
-        userRef.setValue(userData)
+        // **Save to Firebase Realtime Database**
+        val userRefRTDB = database.child("users").child(userId)
+        userRefRTDB.setValue(userData)
             .addOnSuccessListener {
-                Log.d("Firebase", "User data saved successfully")
+                Log.d("Firebase", "User data saved successfully in Realtime Database")
             }
             .addOnFailureListener { e ->
-                Log.w("Firebase", "Error saving user data", e)
+                Log.w("Firebase", "Error saving user data in Realtime Database", e)
+            }
+
+        // **Save to Firestore**
+        val db = FirebaseFirestore.getInstance()
+        val userRefFS = db.collection("users").document(userId)
+        userRefFS.set(userData)
+            .addOnSuccessListener {
+                Log.d("Firebase", "User data saved successfully in Firestore")
+            }
+            .addOnFailureListener { e ->
+                Log.w("Firebase", "Error saving user data in Firestore", e)
             }
     }
+
+
+
 }
 
