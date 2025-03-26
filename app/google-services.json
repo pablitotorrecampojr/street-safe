@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "810744358418",
+    "project_id": "street-safe-1c78a",
+    "storage_bucket": "street-safe-1c78a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810744358418:android:4aee284795411d1f701acb",
+        "android_client_info": {
+          "package_name": "com.example.techtonic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810744358418-ehsg14nrc7fop9bo2516gbcg6jmu633a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtfzgU-l126xCPGVpjQwm3lPJTQrLDS4M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810744358418-ehsg14nrc7fop9bo2516gbcg6jmu633a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
