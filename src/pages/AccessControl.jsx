@@ -1,4 +1,6 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
+import { doc, getDocs, collection } from "firebase/firestore";
+import { auth, db } from "../firebase/firebase";
 import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
 import {signOut} from '../firebase/auth';
@@ -8,10 +10,13 @@ import Profile from '../components/Profile';
 import $ from "jquery"; 
 import "datatables.net-dt/css/dataTables.dataTables.css"; 
 import "datatables.net";
+import accountSetting from '../constants/account-setting.json';
 
 const AccessControl = () => {
   const navigate = useNavigate();
   const tableRef = useRef(null);
+  const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState(null);
   const handleNavbarToggle = () => { 
     const htmlElement = document.getElementById("main-html");
     if (htmlElement) {
@@ -22,6 +27,20 @@ const AccessControl = () => {
     if (tableRef.current) {
       $(tableRef.current).DataTable(); // Initialize DataTable
     }
+  }, []);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const usersCollection = collection(db, "users");
+        const usersSnapshot = await getDocs(usersCollection);
+        const usersList = usersSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setUserData(usersList);
+      } catch (error) { 
+        console.error(error);
+      }
+    }
+    fetchUserData();
   }, []);
   return (
     <div className="layout-wrapper layout-content-navbar">
