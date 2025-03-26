@@ -1,71 +1,69 @@
-import React, {useEffect, useRef, useState} from 'react';
-import { doc, getDocs, collection } from "firebase/firestore";
-import { auth, db } from "../firebase/firebase";
-import { useNavigate } from 'react-router-dom';
-import { toast } from "react-toastify";
-import {signOut} from '../firebase/auth';
-import Aside from '../components/Aside';
-import Navbar from '../components/NavBar';
-import Profile from '../components/Profile';
-import $ from "jquery"; 
-import "datatables.net-dt/css/dataTables.dataTables.css"; 
+import React, { useEffect, useRef, useState } from "react";
+import { getDocs, collection } from "firebase/firestore";
+import { db } from "../firebase/firebase";
+import Aside from "../components/Aside";
+import Navbar from "../components/NavBar";
+import $ from "jquery";
+import "datatables.net-dt/css/dataTables.dataTables.css";
 import "datatables.net";
-import accountSetting from '../constants/account-setting.json';
+import accountSetting from "../constants/account-setting.json";
 
 const AccessControl = () => {
-  const navigate = useNavigate();
   const tableRef = useRef(null);
-  const [user, setUser] = useState(null);
-  const [userData, setUserData] = useState(null);
-  const handleNavbarToggle = () => { 
+  const [userData, setUserData] = useState([]);
+
+  const handleNavbarToggle = () => {
     const htmlElement = document.getElementById("main-html");
     if (htmlElement) {
-        htmlElement.classList.remove("light-style", "layout-menu-fixed", "layout-menu-expanded");
+      htmlElement.classList.remove("light-style", "layout-menu-fixed", "layout-menu-expanded");
     }
-  }
+  };
 
-  useEffect(() => {
-    if (tableRef.current) {
-      $(tableRef.current).DataTable(); // Initialize DataTable
-    }
-  })
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-          const usersCollection = collection(db, "users");
-          const usersSnapshot = await getDocs(usersCollection);
-          const usersList = usersSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-          setUserData(usersList);
+        const usersCollection = collection(db, "users");
+        const usersSnapshot = await getDocs(usersCollection);
+        const usersList = usersSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setUserData(usersList);
       } catch (error) {
-          console.error("Error fetching users:", error);
+        console.error("Error fetching users:", error);
       }
     };
 
-  fetchUsers(); // Call function on mount
+    fetchUsers();
   }, []);
 
-  let filteredUsers;
-    userData && userData.forEach((user) => { 
-       filteredUsers = user.fullname;
-    });
+  useEffect(() => {
+    if (userData.length > 0 && tableRef.current) {
+      const table = $(tableRef.current).DataTable();
+      return () => {
+        table.destroy(); // Destroy previous instance before reinitializing
+      };
+    }
+  }, [userData]);
 
-    console.log(filteredUsers);
   return (
     <div className="layout-wrapper layout-content-navbar">
       <div className="layout-container">
-          <Aside />
-          <div className="layout-page">
+        <Aside />
+        <div className="layout-page">
           <Navbar />
 
-          <div className='content-wrapper'>
-            <div className='container-xxl flex-grow-1 container-p-y'>
-              <div className='row'>
+          <div className="content-wrapper">
+            <div className="container-xxl flex-grow-1 container-p-y">
+              <div className="row">
                 <div className="col-md-3 mb-4">
-                  <h1 style={{ fontSize: '20px' }} className='fw-bold'>Access Control</h1>
+                  <h1 style={{ fontSize: "20px" }} className="fw-bold">
+                    Access Control
+                  </h1>
                 </div>
               </div>
-              <div className='card'>
-                <div className='card-body'>
+              <div className="card">
+                <div className="card-body">
                   <table ref={tableRef} className="display">
                     <thead>
                       <tr>
@@ -98,7 +96,7 @@ const AccessControl = () => {
               </div>
             </div>
           </div>
-          </div>
+        </div>
       </div>
       <div className="layout-overlay layout-menu-toggle" onClick={handleNavbarToggle}></div>
     </div>
