@@ -1,48 +1,48 @@
 {
-    "disctricts": [
-      {
-        "name": "Cebu City North Legislative name",
-        "code": "Cebu City DEO"
-      },
-      {
-        "name": "Cebu City South Legislative name",
-        "code": "Cebu City DEO"
-      },
-      {
-        "name": "Fourth Legislative name",
-        "code": "Cebu 1st DEO"
-      },
-      {
-        "name": "First Legislative name",
-        "code": "Cebu 2nd DEO"
-      },
-      {
-        "name": "Third Legislative name",
-        "code": "Cebu 3rd DEO"
-      },
-      {
-        "name": "Second Legislative name",
-        "code": "Cebu 4th DEO"
-      },
-      {
-        "name": "Fifth Legislative name",
-        "code": "Cebu 5th DEO"
-      },
-      {
-        "name": "Sixth Legislative name",
-        "code": "Cebu 6th DEO"
-      },
-      {
-        "name": "Lapu-Lapu City Lone name",
-        "code": "Cebu 6th DEO"
-      },
-      {
-        "name": "Mandaue City Lone name",
-        "code": "Cebu 6th DEO"
-      },
-      {
-        "name": "Seventh Legislative name",
-        "code": "Cebu 7th DEO"
-      }
-    ]
+  "districts": {
+    "0": {
+      "name": "Cebu City North Legislative name",
+      "code": "Cebu City DEO"
+    },
+    "1": {
+      "name": "Cebu City South Legislative name",
+      "code": "Cebu City DEO"
+    },
+    "2": {
+      "name": "Fourth Legislative name",
+      "code": "Cebu 1st DEO"
+    },
+    "3": {
+      "name": "First Legislative name",
+      "code": "Cebu 2nd DEO"
+    },
+    "4": {
+      "name": "Third Legislative name",
+      "code": "Cebu 3rd DEO"
+    },
+    "5": {
+      "name": "Second Legislative name",
+      "code": "Cebu 4th DEO"
+    },
+    "6": {
+      "name": "Fifth Legislative name",
+      "code": "Cebu 5th DEO"
+    },
+    "7": {
+      "name": "Sixth Legislative name",
+      "code": "Cebu 6th DEO"
+    },
+    "8": {
+      "name": "Lapu-Lapu City Lone name",
+      "code": "Cebu 6th DEO"
+    },
+    "9": {
+      "name": "Mandaue City Lone name",
+      "code": "Cebu 6th DEO"
+    },
+    "10": {
+      "name": "Seventh Legislative name",
+      "code": "Cebu 7th DEO"
+    }
   }
+}

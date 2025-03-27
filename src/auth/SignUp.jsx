@@ -170,11 +170,11 @@ const SignUp = () => {
                           <label className="form-label">Select District</label>
                           <select name="district" className="form-select" onChange={handleChange} value={formData.district}>
                             <option value="">Select District</option>
-                            {districts.disctricts.map((district, index) => (
-                              <option key={index} value={index}>
+                            {Object.entries(districts.districts).map(([key, district]) => (
+                              <option key={key} value={key}>
                                 {district.code} / {district.name}
                               </option>
-                            ))};
+                            ))}
                           </select>
                         </div>
                       )}

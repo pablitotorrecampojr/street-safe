@@ -7,6 +7,7 @@ import $ from "jquery";
 import "datatables.net-dt/css/dataTables.dataTables.css";
 import "datatables.net";
 import accountSetting from "../constants/account-setting.json";
+import districtLists from "../constants/districts.json";
 
 const AccessControl = () => {
   const tableRef = useRef(null);
@@ -80,13 +81,13 @@ const AccessControl = () => {
                      {userData && userData.map((user, index) => {
                         return (
                           <tr>
-                            <td>{ (index) + 1 }</td>
-                            <td>{ user.fullname }</td>
-                            <td>{ user.email }</td>
-                            <td>{ user.role }</td>
-                            <td>{ user.barangay }</td>
-                            <td>{ user.district }</td>
-                            <td>{ new Date(user.createdAt.toDate()).toLocaleString() }</td>
+                            <td>{(index) + 1}</td>
+                            <td>{user.firstname + " " + user.lastname}</td>
+                            <td>{user.email}</td>
+                            <td>{accountSetting.role[user.role]}</td>
+                            <td>{user.barangay ? user.role : "N/A"}</td>
+                            <td>{user.district ? districtLists.districts[user.district].code +", "+districtLists.districts[user.district].name : "N/A"}</td>
+                            <td>{new Date(user.createdAt.toDate()).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true })}</td>
                           </tr>
                         )
                      })}
