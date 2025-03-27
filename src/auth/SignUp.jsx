@@ -11,7 +11,8 @@ import {signUp} from '../firebase/auth';
 const SignUp = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    fullname: "",
+    firstname: "",
+    lastname: "",
     email: "",
     role: "",
     district: "",
@@ -49,15 +50,16 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     let newErrors = {};
-    const { fullname, email, role, district, barangay, municipality, password, confirmPassword } = formData;
+    const { firstname, lastname, email, role, district, barangay, municipality, password, confirmPassword } = formData;
 
-    if (!fullname) newErrors.fullname = "Full name is required";
+    if (!firstname) newErrors.firstname = "First name is required";
+    if (!lastname) newErrors.lastname = "Last name is required";
     if (!email) newErrors.email = "Email is required";
     // if (!role) newErrors.role = "Role is required";
     if (!password) newErrors.password = "Password is required";
     if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match";
     setErrors(newErrors);
-    if (!fullname || !email || !password || !confirmPassword || 
+    if (!firstname || !lastname || !email || !password || !confirmPassword || 
       (role === "1" && !district) || 
       (role === "2" && (!municipality || !barangay))) {
       toast.error("Please fill in all required fields!");
@@ -105,17 +107,30 @@ const SignUp = () => {
 
                     <form id="formAuthentication" className="mb-3" onSubmit={handleSubmit}>
                       <div className="mb-3">
-                          <label className="form-label">Full name</label>
+                          <label className="form-label">First name</label>
                           <input
                             type="text"
                             className="form-control"
-                            id="fullname"
-                            name="fullname"
-                            placeholder="Enter your full name"
-                            value={formData.fullname}
+                            id="firstname"
+                            name="firstname"
+                            placeholder="First name"
+                            value={formData.firstname}
                             onChange={handleChange}
                           />
-                          {errors.fullname && <p className="error">{errors.fullname}</p>}
+                          {errors.firstname && <p className="error">{errors.firstname}</p>}
+                      </div>
+                      <div className="mb-3">
+                          <label className="form-label">Last name</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="lastname"
+                            name="lastname"
+                            placeholder="Last name"
+                            value={formData.lastname}
+                            onChange={handleChange}
+                          />
+                          {errors.lastname && <p className="error">{errors.lastname}</p>}
                       </div>
                       <div className="mb-3">
                           <label className="form-label">Email</label>
@@ -138,6 +153,7 @@ const SignUp = () => {
                           value={formData.role}
                           onChange={handleChange}
                         > 
+                          <option value="">Choose option</option>
                           {accountSetting.role.map((role, index) => {
                             return (
                               <option key={index} value={index}>

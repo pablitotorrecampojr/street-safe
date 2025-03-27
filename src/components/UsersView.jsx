@@ -52,4 +52,4 @@ export default function UsersView({ icon = "faUser", color = "primary", role = "
         </div>
       </div>
     );
-  }
+}
