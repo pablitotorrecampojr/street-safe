@@ -29,15 +29,17 @@ const SignIn = () => {
 
     try {
       const response = await signIn(email, password);
+      
       if (response.status !== 200) {
         toast.error(response.message);
         return;
-      } 
+      }
+    
+      // Proceed to dashboard only when status is 200
       navigate("/dashboard");
-
+    
     } catch (error) {
       toast.error('An error occurred. Please try again later.');
-      throw error;
     }
   };
 
