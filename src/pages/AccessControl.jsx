@@ -82,7 +82,7 @@ const AccessControl = () => {
                         return (
                           <tr>
                             <td>{(index) + 1}</td>
-                            <td>{user.firstname + " " + user.lastname}</td>
+                            <td className="text-nowrap">{user.firstname + " " + user.lastname}</td>
                             <td>{user.email}</td>
                             <td>{accountSetting.role[user.role]}</td>
                             <td>{user.barangay ? user.role : "N/A"}</td>
