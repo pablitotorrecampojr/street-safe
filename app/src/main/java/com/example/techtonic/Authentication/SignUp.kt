@@ -144,7 +144,6 @@ class SignUp : AppCompatActivity() {
                 Log.w("Firebase", "Error saving user data", e)
             }
 
-        // Save to Firestore
         firestore.collection("users").document(userId)
             .set(userData)
             .addOnSuccessListener {
