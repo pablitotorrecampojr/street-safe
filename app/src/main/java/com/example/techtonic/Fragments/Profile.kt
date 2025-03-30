@@ -16,13 +16,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.techtonic.Activity.EditProfile
+import com.example.techtonic.Authentication.SigninSignUp
 import com.google.firebase.database.*
 import com.example.techtonic.R
 import com.example.techtonic.models.Users
-
+import com.google.firebase.auth.FirebaseAuth
 
 class Profile : Fragment() {
-
     private lateinit var firstnametv: TextView
     private lateinit var lastnametv: TextView
     private lateinit var Edit: Button
@@ -30,7 +30,8 @@ class Profile : Fragment() {
     private lateinit var phoneNumberTextView: TextView
     private lateinit var database: DatabaseReference
     private val users = mutableListOf<Users>()
-
+    private lateinit var signOutButton: Button
+    private lateinit var auth: FirebaseAuth
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -44,12 +45,21 @@ class Profile : Fragment() {
         emailTextView = view.findViewById(R.id.txtEmailAddress)
         phoneNumberTextView = view.findViewById(R.id.txtPhoneNumber)
         Edit = view.findViewById(R.id.btn_edit)
+        signOutButton = view.findViewById(R.id.signOutButton)
 
         val intent = Intent(requireContext(), EditProfile::class.java)
 
 
         Edit.setOnClickListener {
             startActivity(intent)
+        }
+
+        auth = FirebaseAuth.getInstance()
+        signOutButton.setOnClickListener {
+            auth.signOut()
+            val _intent = Intent(requireContext(), SigninSignUp::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(_intent)
         }
 
 

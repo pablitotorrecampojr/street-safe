@@ -8,11 +8,19 @@
     android:padding="16dp">
 
 
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        tools:layout_editor_absoluteX="158dp"
+        tools:layout_editor_absoluteY="699dp" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:layout_editor_absoluteX="49dp"
+        tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="53dp">
 
         <ImageButton
@@ -48,10 +56,10 @@
             android:layout_width="wrap_content"
             android:layout_height="45dp"
             android:layout_marginTop="232dp"
-            app:backgroundTint="@color/Blue"
-            android:textColor="@color/white"
             android:background="@drawable/roundcorner"
             android:text="Add Photo"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/Blue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -60,7 +68,7 @@
             android:id="@+id/firstname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="8dp"
             android:gravity="left"
             android:paddingRight="10dp"
             android:text="First Name :"
@@ -68,7 +76,7 @@
             android:textColorHint="@color/black"
             android:textSize="20dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.015"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profileButton" />
 
@@ -76,13 +84,14 @@
             android:id="@+id/edtfirstname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/listview_border"
-            android:gravity="left"
             android:layout_marginHorizontal="15dp"
             android:layout_marginTop="5dp"
+            android:background="@drawable/listview_border"
+            android:gravity="left"
             android:hint="First Name"
             android:inputType="text"
             android:paddingRight="10dp"
+            android:rotationX="-5"
             android:textColor="@color/black"
             android:textSize="15dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -108,10 +117,10 @@
             android:id="@+id/edtlastname"
             android:layout_width="match_parent"
             android:layout_height="35dp"
-            android:background="@drawable/listview_border"
-            android:gravity="left"
             android:layout_marginHorizontal="15dp"
             android:layout_marginTop="5dp"
+            android:background="@drawable/listview_border"
+            android:gravity="left"
             android:hint="Last Name"
             android:inputType="textPersonName"
             android:paddingLeft="10dp"
@@ -125,8 +134,8 @@
             android:id="@+id/email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="left"
             android:layout_marginTop="5dp"
+            android:gravity="left"
             android:paddingRight="10dp"
             android:text="Email :"
             android:textColor="@color/black"
@@ -140,8 +149,8 @@
             android:id="@+id/edtEmailAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:layout_marginHorizontal="15dp"
+            android:layout_marginTop="5dp"
             android:background="@drawable/listview_border"
             android:gravity="left"
             android:hint="Email"
@@ -169,12 +178,28 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edtEmailAddress" />
 
+
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="129dp"
+            android:layout_height="43dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/roundcorner"
+            android:text="Update"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/Blue"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent" />
+
         <EditText
             android:id="@+id/edtPhoneNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:layout_marginHorizontal="15dp"
+            android:layout_marginTop="5dp"
             android:background="@drawable/listview_border"
             android:gravity="left
 "
@@ -184,24 +209,10 @@
             android:textColor="@color/black"
             android:textSize="15dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.862"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/phone" />
 
-
-        <Button
-            android:id="@+id/btn_save"
-            android:layout_width="129dp"
-            android:layout_height="43dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="32dp"
-            android:background="@drawable/roundcorner"
-            app:backgroundTint="@color/Blue"
-            android:text="Update"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

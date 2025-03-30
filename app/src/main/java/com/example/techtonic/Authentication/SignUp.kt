@@ -134,7 +134,7 @@ class SignUp : AppCompatActivity() {
         }
 
         val userRef = database.child("users").child(userId)
-        val userData = SignupClass(firstName, lastName, email, phoneNumber, "4")
+        val userData = SignupClass(firstName, lastName, email, phoneNumber, "3")
 
         userRef.setValue(userData)
             .addOnSuccessListener {
