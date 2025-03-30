@@ -11,15 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.techtonic.Class.SignupClass
 import com.example.techtonic.R
 import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import papaya.`in`.sendmail.SendMail
-import java.util.concurrent.TimeUnit
-import kotlin.random.Random
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SignUp : AppCompatActivity() {
     private lateinit var firstnameEditText: TextInputEditText
@@ -28,12 +23,9 @@ class SignUp : AppCompatActivity() {
     private lateinit var phoneEditText: TextInputEditText
     private lateinit var passwordEditText: TextInputEditText
     private lateinit var confirmPasswordEditText: TextInputEditText
-    private lateinit var Login: TextView
+    private lateinit var loginTextView: TextView
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
-
-    private var generatedOTP: Int = 0
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,16 +39,15 @@ class SignUp : AppCompatActivity() {
         phoneEditText = findViewById(R.id.phoneEditText)
         passwordEditText = findViewById(R.id.passEditText)
         confirmPasswordEditText = findViewById(R.id.conpassEditText)
-        Login = findViewById(R.id.login)
+        loginTextView = findViewById(R.id.login)
         val registerButton = findViewById<Button>(R.id.registerButton)
 
         registerButton.setOnClickListener {
             registerUser()
         }
 
-        Login.setOnClickListener {
-            val intent = Intent(this, SignIn::class.java)
-            startActivity(intent)
+        loginTextView.setOnClickListener {
+            startActivity(Intent(this, SignIn::class.java))
         }
     }
 
@@ -74,22 +65,23 @@ class SignUp : AppCompatActivity() {
             return
         }
         if (lastname.isEmpty()) {
-            firstnameEditText.error = "Last name is required"
-            firstnameEditText.requestFocus()
-            return
-        }
-
-        if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            lastnameEditText.error = "Enter a valid email"
+            lastnameEditText.error = "Last name is required"
             lastnameEditText.requestFocus()
             return
         }
 
-        if (phone.isEmpty() || phone.length == 11) {
-            phoneEditText.error = "Enter a valid phone number"
+        if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailEditText.error = "Enter a valid email"
+            emailEditText.requestFocus()
+            return
+        }
+
+        if (phone.isEmpty() || phone.length != 11) {  // Fixed condition
+            phoneEditText.error = "Enter a valid 11-digit phone number"
             phoneEditText.requestFocus()
             return
         }
+
         if (password.isEmpty() || password.length < 6) {
             passwordEditText.error = "Password must be at least 6 characters"
             passwordEditText.requestFocus()
@@ -102,10 +94,9 @@ class SignUp : AppCompatActivity() {
             return
         }
 
-
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                saveUserData(firstname, lastname,email, phone)
+                saveUserData(firstname, lastname, email, phone)
                 auth.currentUser?.sendEmailVerification()?.addOnCompleteListener { verifyTask ->
                     if (verifyTask.isSuccessful) {
                         Toast.makeText(
@@ -116,7 +107,6 @@ class SignUp : AppCompatActivity() {
 
                         startActivity(Intent(this, SignIn::class.java))
                         finish()
-
                     } else {
                         Toast.makeText(
                             this,
@@ -133,25 +123,18 @@ class SignUp : AppCompatActivity() {
                 ).show()
             }
         }
-        // sendVerificationEmail(email)
-
     }
 
-    private fun saveUserData(firstName: String,lastName:String,email: String, phonenumber: String) {
+    private fun saveUserData(firstName: String, lastName: String, email: String, phoneNumber: String) {
         val userId = auth.currentUser?.uid
-        var role = "4"
-        Log.d("Firebase", "Saving data for user ID: $userId")
-
+        val firestore = FirebaseFirestore.getInstance()
         if (userId == null) {
             Log.w("Firebase", "User ID is null. Cannot save data.")
             return
         }
 
         val userRef = database.child("users").child(userId)
-
-        val userData = SignupClass(firstName,lastName, email,phonenumber)
-
-        Log.d("Firebase", "User data: $userData")
+        val userData = SignupClass(firstName, lastName, email, phoneNumber, "4")
 
         userRef.setValue(userData)
             .addOnSuccessListener {
@@ -160,6 +143,15 @@ class SignUp : AppCompatActivity() {
             .addOnFailureListener { e ->
                 Log.w("Firebase", "Error saving user data", e)
             }
+
+        // Save to Firestore
+        firestore.collection("users").document(userId)
+            .set(userData)
+            .addOnSuccessListener {
+                Log.d("Firebase", "User data saved successfully in Firestore")
+            }
+            .addOnFailureListener { e ->
+                Log.w("Firebase", "Error saving user data in Firestore", e)
+            }
     }
 }
-
