@@ -3,7 +3,10 @@
     <item
         android:id="@+id/home"
         android:icon="@drawable/icons_home"
-        android:title="Home"/>
+        android:iconTint="@color/white"
+        android:title="Home"
+        android:itemBackground="@android:color/white"/>
+
     <item
         android:id="@+id/report"
         android:icon="@drawable/icons_plus"
