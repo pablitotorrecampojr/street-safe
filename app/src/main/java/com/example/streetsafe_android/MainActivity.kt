@@ -1,33 +1,36 @@
 package com.example.streetsafe_android
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import com.example.streetsafe_android.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var bindings: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+        bindings = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(bindings.root)
+        replaceFragment(HomeFragment())
 
-        // Ensure the ID exists in your XML, or replace it with the correct root layout ID
-        val rootView = findViewById<View>(android.R.id.content) // Fallback if R.id.main is missing
-        ViewCompat.setOnApplyWindowInsetsListener(rootView) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        bindings.bottomNavigation.setOnItemSelectedListener {
+            when(it.itemId) {
+                R.id.home -> replaceFragment(HomeFragment())
+                R.id.profile -> replaceFragment(ProfileFragment())
+                R.id.report -> replaceFragment(ReportFragment())
+                else -> {
+                }
+            }
+            true
         }
+    }
 
-        val signupLink = findViewById<TextView>(R.id.signupLink)
-        signupLink.setOnClickListener {
-            val intent = Intent(this, SignUpActivity::class.java)
-            startActivity(intent)
-        }
+    private fun replaceFragment(fragment: Fragment) {
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.nav_host_fragment, fragment)
+        fragmentTransaction.commit()
     }
 }

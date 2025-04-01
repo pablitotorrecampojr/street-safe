@@ -2,9 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/signup"
     android:layout_width="match_parent"
     android:background="@android:color/white"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".SignUpActivity">
 
     <TextView
         android:id="@+id/textView"
@@ -37,7 +39,7 @@
         android:layout_height="wrap_content"
         android:text="sign in"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="#282F66"
+        android:textColor="#1F45F7"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/signupTextView"
         app:layout_constraintTop_toTopOf="@id/signupTextView" />
@@ -53,7 +55,7 @@
         android:padding="10dp"
         android:textSize="12sp"
         android:textColor="@android:color/black"
-        android:textColorHint="@android:color/darker_gray"
+        android:textColorHint="#3D4553"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signupLink" />
@@ -70,7 +72,7 @@
         android:padding="10dp"
         android:textSize="12sp"
         android:textColor="@android:color/black"
-        android:textColorHint="@android:color/darker_gray"
+        android:textColorHint="#3D4553"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/firstName" />
@@ -86,7 +88,7 @@
         android:padding="10dp"
         android:textSize="12sp"
         android:textColor="@android:color/black"
-        android:textColorHint="@android:color/darker_gray"
+        android:textColorHint="#3D4553"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lastName" />
@@ -102,7 +104,7 @@
         android:padding="10dp"
         android:textSize="12sp"
         android:textColor="@android:color/black"
-        android:textColorHint="@android:color/darker_gray"
+        android:textColorHint="#3D4553"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailInput" />
@@ -118,7 +120,7 @@
         android:padding="10dp"
         android:textSize="12sp"
         android:textColor="@android:color/black"
-        android:textColorHint="@android:color/darker_gray"
+        android:textColorHint="#3D4553"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/phoneNumber" />
@@ -134,7 +136,7 @@
         android:padding="10dp"
         android:textSize="12sp"
         android:textColor="@android:color/black"
-        android:textColorHint="@android:color/darker_gray"
+        android:textColorHint="#3D4553"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent"
@@ -147,7 +149,8 @@
         android:layout_marginTop="24dp"
         android:text="Sign Up"
         android:textColor="@android:color/white"
-        android:backgroundTint="#282F66"
+        android:backgroundTint="#1F45F7"
+        android:background="@drawable/rounded_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.824"

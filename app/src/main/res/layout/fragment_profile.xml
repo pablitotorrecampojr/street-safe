@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:padding="20dp">
+
+    <Button
+        android:id="@+id/signOutButton"
+        android:layout_width="327dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/rounded_button_yellow"
+        android:drawableStart="@drawable/icons_signout_white_15"
+        android:paddingStart="16dp"
+        android:text="    Sign Out"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settingsButton" />
+
+    <Button
+        android:id="@+id/notificationButton"
+        android:layout_width="327dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_button_gray"
+        android:drawableStart="@drawable/icons_notifications_15"
+        android:paddingStart="16dp"
+        android:text="    Notification"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileButton" />
+
+    <Button
+        android:id="@+id/settingsButton"
+        android:layout_width="327dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_button_gray"
+        android:drawableStart="@drawable/icons_settings_15"
+        android:paddingStart="16dp"
+        android:text="    Settings"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/notificationButton" />
+
+    <TextView
+        android:id="@+id/emaiLTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:clickable="false"
+        android:text="markgrayson@invincible.com"
+        app:layout_constraintStart_toEndOf="@+id/profileImage"
+        app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
+
+    <TextView
+        android:id="@+id/nameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="80dp"
+        android:clickable="false"
+        android:text="Markus Grayson"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/profileImage"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/profileImage"
+        android:layout_width="62dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <Button
+        android:id="@+id/profileButton"
+        android:layout_width="327dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="84dp"
+        android:background="@drawable/rounded_button_gray"
+        android:drawableStart="@drawable/icons_user_15"
+        android:paddingStart="16dp"
+        android:text="    Personal Data"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emaiLTextView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
