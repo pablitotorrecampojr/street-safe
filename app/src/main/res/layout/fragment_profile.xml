@@ -1,14 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:background="@android:color/white"
-    android:orientation="vertical">
+    android:padding="20dp">
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="327dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="92dp"
+        android:background="@drawable/rounded_button_yellow"
+        android:drawableStart="@drawable/icons_signout_white_15"
+        android:textColor="@android:color/white"
+        android:paddingStart="16dp"
+        android:text="    Sign Out"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="327dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_button_gray"
+        android:drawableStart="@drawable/icons_notifications_15"
+        android:paddingStart="16dp"
+        android:text="    Notification"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button6" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="327dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/rounded_button_gray"
+        android:drawableStart="@drawable/icons_settings_15"
+        android:paddingStart="16dp"
+        android:text="    Settings"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
 
     <TextView
+        android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Profile Fragment"
-        android:textSize="24sp" />
-</LinearLayout>
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:clickable="false"
+        android:text="markgrayson@invincible.com"
+        app:layout_constraintStart_toEndOf="@+id/imageView4"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <TextView
+        android:id="@+id/textView4"
+        :white
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="80dp"
+        android:clickable="false"
+        android:text="Markus Grayson"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:textcolor
+        app:layout_constraintStart_toEndOf="@+id/imageView4"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="62dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="327dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="84dp"
+        android:background="@drawable/rounded_button_gray"
+        android:drawableStart="@drawable/icons_user_15"
+        android:paddingStart="16dp"
+        android:text="    Profile"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
