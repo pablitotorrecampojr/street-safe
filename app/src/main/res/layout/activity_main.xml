@@ -44,7 +44,7 @@
         android:layout_marginTop="20dp"
         android:text="Sign In"
         android:textColor="@android:color/white"
-        android:backgroundTint="#282F66"
+        android:backgroundTint="#1F45F7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.824"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,15 +68,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/signupTextView" />
 
-
-
     <TextView
         android:id="@+id/signupLink"
         android:layout_width="56dp"
         android:layout_height="21dp"
         android:text="sign up"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="#282F66"
+        android:textColor="#1F45F7"
         android:textStyle="bold"
         android:textColorHint="@android:color/darker_gray"
         app:layout_constraintStart_toEndOf="@+id/signupTextView"
