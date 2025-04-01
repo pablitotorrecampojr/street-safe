@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.sign_in)
 
         // Ensure the ID exists in your XML, or replace it with the correct root layout ID
         val rootView = findViewById<View>(android.R.id.content) // Fallback if R.id.main is missing
