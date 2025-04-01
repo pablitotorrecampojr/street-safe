@@ -13,9 +13,9 @@
         android:theme="@style/Theme.Streetsafeandroid"
         tools:targetApi="31">
 
-        <!-- MainActivity (Entry Point) -->
+        <!-- SignInActivity (New Default Entry Point) -->
         <activity
-            android:name=".MainActivity"
+            android:name=".SignInActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,9 +23,11 @@
             </intent-filter>
         </activity>
 
-        <!-- SignUpActivity (Added Here) -->
+        <!-- MainActivity -->
+        <activity android:name=".MainActivity" android:exported="true"/>
+
+        <!-- SignUpActivity -->
         <activity android:name=".SignUpActivity" android:exported="false"/>
-        <activity android:name=".SignInActivity" android:exported="false"/>
 
     </application>
 

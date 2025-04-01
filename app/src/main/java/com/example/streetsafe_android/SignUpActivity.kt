@@ -12,7 +12,7 @@ class SignUpActivity : AppCompatActivity() {
 
         val signinLink = findViewById<TextView>(R.id.signupLink)
         signinLink.setOnClickListener{
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, SignInActivity::class.java)
             startActivity(intent)
         }
     }
