@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.streetsafe_android.databinding.FragmentProfileBinding
 
@@ -29,6 +27,11 @@ class ProfileFragment : Fragment() {
         //show sign in page
         binding.signOutButton.setOnClickListener {
             startActivity(Intent(requireContext(), SignInActivity::class.java))
+        }
+
+        //show edit profile page
+        binding.profileButton.setOnClickListener{
+            startActivity(Intent(requireContext(), EditProfileActivity::class.java))
         }
     }
 

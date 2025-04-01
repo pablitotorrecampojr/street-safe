@@ -28,6 +28,7 @@
 
         <!-- SignUpActivity -->
         <activity android:name=".SignUpActivity" android:exported="false"/>
+        <activity android:name=".EditProfileActivity" android:exported="false"/>
 
     </application>
 
