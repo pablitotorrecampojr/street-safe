@@ -6,17 +6,20 @@ import android.util.Patterns
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SignUpActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.sign_up)
 
-        // Initialize Firebase Auth
+        // Initialize Firebase Auth and Firestore
         auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
 
         // Get UI elements
         val firstName = findViewById<EditText>(R.id.firstName)
@@ -28,7 +31,6 @@ class SignUpActivity : AppCompatActivity() {
         val signUpButton = findViewById<Button>(R.id.signinButton)
         val loginLink = findViewById<TextView>(R.id.signupLink)
 
-        // Handle Sign Up button click
         signUpButton.setOnClickListener {
             val firstNameText = firstName.text.toString().trim()
             val lastNameText = lastName.text.toString().trim()
@@ -57,13 +59,31 @@ class SignUpActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Create user in Firebase
+            // Create user in Firebase Authentication
             auth.createUserWithEmailAndPassword(emailText, passwordText)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(this, "Sign-up Successful!", Toast.LENGTH_LONG).show()
-                        startActivity(Intent(this, MainActivity::class.java))
-                        finish()
+                        val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
+
+                        // Create user object
+                        val user = hashMapOf(
+                            "firstName" to firstNameText,
+                            "lastName" to lastNameText,
+                            "email" to emailText,
+                            "phone" to phoneText,
+                            "role" to 4
+                        )
+
+                        // Save user data in Firestore
+                        db.collection("users").document(userId).set(user)
+                            .addOnSuccessListener {
+                                Toast.makeText(this, "Sign-up Successful!", Toast.LENGTH_LONG).show()
+                                startActivity(Intent(this, MainActivity::class.java))
+                                finish()
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                            }
                     } else {
                         Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                     }
