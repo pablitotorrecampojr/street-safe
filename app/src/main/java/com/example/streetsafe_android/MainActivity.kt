@@ -13,15 +13,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         bindings = ActivityMainBinding.inflate(layoutInflater)
         setContentView(bindings.root)
-        replaceFragment(HomeFragment())
+
+        val fragmentToLoad = intent.getStringExtra("FRAGMENT_TO_LOAD")
+
+        if (fragmentToLoad == "ProfileFragment") {
+            replaceFragment(ProfileFragment())
+        } else {
+            replaceFragment(HomeFragment()) // Default behavior
+        }
 
         bindings.bottomNavigation.setOnItemSelectedListener {
             when(it.itemId) {
                 R.id.home -> replaceFragment(HomeFragment())
                 R.id.profile -> replaceFragment(ProfileFragment())
                 R.id.report -> replaceFragment(ReportFragment())
-                else -> {
-                }
             }
             true
         }
