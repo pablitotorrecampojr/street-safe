@@ -44,7 +44,7 @@ export const signIn = async (email, password) => {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        if(!user.emailVerified) return { status: 400, message: "Please verify your email address." }
+        // if(!user.emailVerified) return { status: 400, message: "Please verify your email address." }
 
         return { status: 200, message: "User signed in successfully!", user };
     } catch (error) {
