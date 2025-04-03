@@ -22,24 +22,22 @@ class SignUpActivity : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
 
         // Get UI elements
-        val firstName = findViewById<EditText>(R.id.firstName)
-        val lastName = findViewById<EditText>(R.id.lastName)
+        val fullNameInput = findViewById<EditText>(R.id.fullNameInput)
         val emailInput = findViewById<EditText>(R.id.emailInput)
         val phoneNumber = findViewById<EditText>(R.id.phoneNumber)
         val password = findViewById<EditText>(R.id.password)
         val confirmPassword = findViewById<EditText>(R.id.confirmPassword)
-        val signUpButton = findViewById<Button>(R.id.signinButton)
+        val signUpButton = findViewById<Button>(R.id.signupButton)
         val loginLink = findViewById<TextView>(R.id.signupLink)
 
         signUpButton.setOnClickListener {
-            val firstNameText = firstName.text.toString().trim()
-            val lastNameText = lastName.text.toString().trim()
+            val fullNameText = fullNameInput.text.toString().trim()
             val emailText = emailInput.text.toString().trim()
             val phoneText = phoneNumber.text.toString().trim()
             val passwordText = password.text.toString().trim()
             val confirmPasswordText = confirmPassword.text.toString().trim()
 
-            if (firstNameText.isEmpty() || lastNameText.isEmpty() || phoneText.isEmpty()) {
+            if (fullNameText.isEmpty() || phoneText.isEmpty()) {
                 Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -59,38 +57,28 @@ class SignUpActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Create user in Firebase Authentication
             auth.createUserWithEmailAndPassword(emailText, passwordText)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
 
-                        // Create user object
                         val user = hashMapOf(
-                            "firstName" to firstNameText,
-                            "lastName" to lastNameText,
+                            "fullName" to fullNameText,
                             "email" to emailText,
                             "phone" to phoneText,
                             "role" to 4
                         )
 
-                        // Save user data in Firestore
                         db.collection("users").document(userId).set(user)
                             .addOnSuccessListener {
                                 Toast.makeText(this, "Sign-up Successful!", Toast.LENGTH_LONG).show()
                                 startActivity(Intent(this, MainActivity::class.java))
                                 finish()
                             }
-                            .addOnFailureListener { e ->
-                                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
-                            }
-                    } else {
-                        Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                     }
                 }
         }
 
-        // Navigate to Login Screen
         loginLink.setOnClickListener {
             startActivity(Intent(this, SignInActivity::class.java))
         }
