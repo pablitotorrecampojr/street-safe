@@ -11,8 +11,7 @@ import {signUp} from '../firebase/auth';
 const SignUp = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    firstname: "",
-    lastname: "",
+    fullname: "",
     email: "",
     role: "",
     district: "",
@@ -50,16 +49,15 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     let newErrors = {};
-    const { firstname, lastname, email, role, district, barangay, municipality, password, confirmPassword } = formData;
+    const { fullname, email, role, district, barangay, municipality, password, confirmPassword } = formData;
 
-    if (!firstname) newErrors.firstname = "First name is required";
-    if (!lastname) newErrors.lastname = "Last name is required";
+    if (!fullname) newErrors.fullname = "First name is required";
     if (!email) newErrors.email = "Email is required";
     // if (!role) newErrors.role = "Role is required";
     if (!password) newErrors.password = "Password is required";
     if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match";
     setErrors(newErrors);
-    if (!firstname || !lastname || !email || !password || !confirmPassword || 
+    if (!fullname || !email || !password || !confirmPassword || 
       (role === "1" && !district) || 
       (role === "2" && (!municipality || !barangay))) {
       toast.error("Please fill in all required fields!");
@@ -107,31 +105,19 @@ const SignUp = () => {
 
                     <form id="formAuthentication" className="mb-3" onSubmit={handleSubmit}>
                       <div className="mb-3">
-                          <label className="form-label">First name</label>
+                          <label className="form-label">Full name</label>
                           <input
                             type="text"
                             className="form-control"
                             id="firstname"
-                            name="firstname"
-                            placeholder="First name"
-                            value={formData.firstname}
+                            name="fullname"
+                            placeholder="Full name"
+                            value={formData.fullname}
                             onChange={handleChange}
                           />
-                          {errors.firstname && <p className="error">{errors.firstname}</p>}
+                          {errors.fullname && <p className="error">{errors.fullname}</p>}
                       </div>
-                      <div className="mb-3">
-                          <label className="form-label">Last name</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="lastname"
-                            name="lastname"
-                            placeholder="Last name"
-                            value={formData.lastname}
-                            onChange={handleChange}
-                          />
-                          {errors.lastname && <p className="error">{errors.lastname}</p>}
-                      </div>
+                     
                       <div className="mb-3">
                           <label className="form-label">Email</label>
                           <input 

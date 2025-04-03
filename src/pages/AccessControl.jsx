@@ -80,14 +80,14 @@ const AccessControl = () => {
                     <tbody>
                      {userData && userData.map((user, index) => {
                         return (
-                          <tr>
+                          <tr key={index}>
                             <td>{(index) + 1}</td>
-                            <td className="text-nowrap">{user.firstname + " " + user.lastname}</td>
+                            <td className="text-nowrap">{user.fullname}</td>
                             <td>{user.email}</td>
                             <td>{accountSetting.role[user.role]}</td>
                             <td>{user.barangay ? user.role : "N/A"}</td>
                             <td>{user.district ? districtLists.districts[user.district].code +", "+districtLists.districts[user.district].name : "N/A"}</td>
-                            <td>{new Date(user.createdAt.toDate()).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true })}</td>
+                            <td>{user.createdAt ? new Date(user.createdAt.seconds * 1000).toLocaleDateString() : "N/A"}</td>
                           </tr>
                         )
                      })}
