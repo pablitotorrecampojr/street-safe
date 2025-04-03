@@ -9,19 +9,19 @@
         android:id="@+id/signupTextView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:text="Change Password"
         android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.198"
+        app:layout_constraintHorizontal_bias="0.188"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/phoneNumber" />
 
     <EditText
-        android:id="@+id/phoneNumber2"
+        android:id="@+id/passwordInput"
         android:layout_width="299dp"
         android:layout_height="40dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/rounded_edittext"
         android:hint="Password"
         android:inputType="phone"
@@ -30,12 +30,11 @@
         android:textColorHint="#3D4553"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.526"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toggleButton" />
+        app:layout_constraintTop_toBottomOf="@+id/toggleChangePassword" />
 
     <ToggleButton
-        android:id="@+id/toggleButton"
+        android:id="@+id/toggleChangePassword"
         android:layout_width="91dp"
         android:layout_height="32dp"
         android:layout_marginTop="12dp"
@@ -44,12 +43,12 @@
         android:textColor="@android:color/white"
         android:textSize="10dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.181"
+        app:layout_constraintHorizontal_bias="0.175"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signupTextView2" />
 
     <EditText
-        android:id="@+id/phoneNumber3"
+        android:id="@+id/confirmpasswordInput"
         android:layout_width="299dp"
         android:layout_height="40dp"
         android:layout_marginTop="8dp"
@@ -61,9 +60,8 @@
         android:textColorHint="#3D4553"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.526"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phoneNumber2" />
+        app:layout_constraintTop_toBottomOf="@+id/passwordInput" />
 
     <Button
         android:id="@+id/backButton"
@@ -100,7 +98,7 @@
         android:text="Full name "
         android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.17"
+        app:layout_constraintHorizontal_bias="0.161"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
@@ -117,12 +115,11 @@
         android:textColorHint="#3D4553"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.526"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signupTextView4" />
 
     <EditText
-        android:id="@+id/firstName"
+        android:id="@+id/fullNameInput"
         android:layout_width="299dp"
         android:layout_height="40dp"
         android:layout_marginTop="8dp"
@@ -134,7 +131,6 @@
         android:textColorHint="#3D4553"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.526"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signupTextView" />
 
@@ -146,7 +142,7 @@
         android:text="Phone Number"
         android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.185"
+        app:layout_constraintHorizontal_bias="0.176"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailInput" />
 
@@ -154,16 +150,18 @@
         android:id="@+id/updateButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/rounded_button"
+        android:layout_marginTop="12dp"
 
+        android:background="@drawable/rounded_button"
         android:backgroundTint="#1F45F7"
         android:text="Update"
         android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.835"
+        app:layout_constraintHorizontal_bias="0.826"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phoneNumber3" />
+        app:layout_constraintTop_toBottomOf="@+id/confirmpasswordInput"
+        app:layout_constraintVertical_bias="0.068" />
 
     <TextView
         android:id="@+id/signupTextView3"
@@ -173,9 +171,9 @@
         android:text="Email Address"
         android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.183"
+        app:layout_constraintHorizontal_bias="0.174"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/firstName" />
+        app:layout_constraintTop_toBottomOf="@+id/fullNameInput" />
 
     <EditText
         android:id="@+id/emailInput"
@@ -190,7 +188,6 @@
         android:textColorHint="#3D4553"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.526"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signupTextView3" />
 
