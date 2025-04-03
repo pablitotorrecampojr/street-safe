@@ -5,6 +5,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <EditText
+        android:id="@+id/phoneNumber3"
+        android:layout_width="299dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/rounded_edittext"
+        android:hint="Confirm Password"
+        android:inputType="phone"
+        android:padding="10dp"
+        android:textColor="@android:color/black"
+        android:textColorHint="#3D4553"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/phoneNumber2" />
+
+    <EditText
+        android:id="@+id/phoneNumber2"
+        android:layout_width="299dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/rounded_edittext"
+        android:hint="Password"
+        android:inputType="phone"
+        android:padding="10dp"
+        android:textColor="@android:color/black"
+        android:textColorHint="#3D4553"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toggleButton" />
+
     <Button
         android:id="@+id/backButton"
         android:layout_width="34dp"
@@ -94,32 +126,34 @@
         android:id="@+id/updateButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/rounded_button"
-        android:backgroundTint="#1F45F7"
 
+        android:backgroundTint="#1F45F7"
         android:text="Update"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.829"
+        app:layout_constraintHorizontal_bias="0.835"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phoneNumber" />
+        app:layout_constraintTop_toBottomOf="@+id/phoneNumber3" />
 
     <TextView
         android:id="@+id/signupTextView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="Email Address"
         android:textColor="@android:color/black"
-        app:layout_constraintTop_toBottomOf="@+id/firstName"
-        tools:layout_editor_absoluteX="59dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.183"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/firstName" />
 
     <EditText
         android:id="@+id/emailInput"
         android:layout_width="299dp"
         android:layout_height="40dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:background="@drawable/rounded_edittext"
         android:hint="Email Address"
         android:inputType="textEmailAddress"
@@ -141,6 +175,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
         app:srcCompat="@drawable/markgrayson_icon" />
+
+    <ToggleButton
+        android:id="@+id/toggleButton"
+        android:layout_width="91dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/rounded_button_yellow"
+        android:text="Toggle"
+        android:textColor="@android:color/white"
+        android:textSize="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.181"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/phoneNumber" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
