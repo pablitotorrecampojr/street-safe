@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -37,6 +38,20 @@ class EditProfileActivity : AppCompatActivity() {
         val confirmPasswordInput = findViewById<EditText>(R.id.confirmpasswordInput)
         val updateButton = findViewById<Button>(R.id.updateButton)
         val backButton = findViewById<Button>(R.id.backButton)
+        val toggleChangePassword = findViewById<ToggleButton>(R.id.toggleChangePassword)
+
+
+        // Disable password fields by default
+        passwordInput.isEnabled = false
+        confirmPasswordInput.isEnabled = false
+        toggleChangePassword.isChecked = false  // Ensure toggle is off by default
+
+        // Toggle button listener
+        toggleChangePassword.setOnCheckedChangeListener { _, isChecked ->
+            passwordInput.isEnabled = isChecked
+            confirmPasswordInput.isEnabled = isChecked
+        }
+
 
         // Fetch user data from Firestore
         db.collection("users").document(userId).get()
@@ -45,8 +60,6 @@ class EditProfileActivity : AppCompatActivity() {
                     fullNameInput.setText(document.getString("fullname"))
                     emailInput.setText(document.getString("email"))
                     phoneNumberInput.setText(document.getString("phone"))
-                    passwordInput.setText(document.getString("password")) // Handle securely in real apps
-                    confirmPasswordInput.setText(document.getString("password")) // Handle securely
                 } else {
                     Toast.makeText(this, "User data not found", Toast.LENGTH_SHORT).show()
                 }
@@ -58,10 +71,10 @@ class EditProfileActivity : AppCompatActivity() {
         // Update Firestore on button click
         updateButton.setOnClickListener {
             val updatedData = mapOf(
-                "fullName" to fullNameInput.text.toString(),
+                "fullname" to fullNameInput.text.toString(),
                 "email" to emailInput.text.toString(),
-                "phoneNumber" to phoneNumberInput.text.toString(),
-                "password" to passwordInput.text.toString() // Encrypt in production apps
+                "phone" to phoneNumberInput.text.toString(),
+                "password" to passwordInput.text.toString()
             )
 
             db.collection("users").document(userId).update(updatedData)
