@@ -7,6 +7,9 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class SignUpActivity : AppCompatActivity() {
 
@@ -63,10 +66,13 @@ class SignUpActivity : AppCompatActivity() {
                         val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
 
                         val user = hashMapOf(
-                            "fullName" to fullNameText,
+                            "fullname" to fullNameText,
                             "email" to emailText,
                             "phone" to phoneText,
-                            "role" to 4
+                            "role" to "4",
+                            "createdAt" to SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(
+                                Date()
+                            )
                         )
 
                         db.collection("users").document(userId).set(user)

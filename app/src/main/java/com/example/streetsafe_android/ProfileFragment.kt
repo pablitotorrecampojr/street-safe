@@ -39,8 +39,8 @@ class ProfileFragment : Fragment() {
             db.collection("users").document(uid).get()
                 .addOnSuccessListener { document ->
                     if (document.exists()) {
-                        val fullName = document.getString("fullName") ?: "User"
-                        binding.nameTextView.text = fullName
+                        val fullname = document.getString("fullname") ?: "User"
+                        binding.nameTextView.text = fullname
                     }
                 }
                 .addOnFailureListener {

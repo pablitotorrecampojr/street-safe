@@ -15,6 +15,10 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.util.Date
+import java.util.Locale
 
 class SignInActivity : AppCompatActivity() {
 
@@ -133,9 +137,10 @@ class SignInActivity : AppCompatActivity() {
                 // Store user data in Firestore
                 val userData = hashMapOf(
                     "uid" to uid,
-                    "fullName" to fullName,
+                    "fullname" to fullName,
                     "email" to email,
-                    "role" to 4
+                    "role" to "4",
+                    "createdAt" to SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                 )
 
                 db.collection("users").document(uid).set(userData)
