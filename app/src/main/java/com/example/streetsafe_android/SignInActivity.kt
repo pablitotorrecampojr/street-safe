@@ -72,7 +72,7 @@ class SignInActivity : AppCompatActivity() {
                             db.collection("users").document(userId).get()
                                 .addOnSuccessListener { document ->
                                     if (document.exists()) {
-                                        Toast.makeText(this, "Welcome back, ${document.getString("firstName")}!", Toast.LENGTH_LONG).show()
+                                        Toast.makeText(this, "Welcome back, ${document.getString("fullname")}!", Toast.LENGTH_LONG).show()
                                     }
                                     startActivity(Intent(this, MainActivity::class.java))
                                     finish()
