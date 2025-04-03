@@ -60,7 +60,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
         android:clickable="false"
-        android:text="markgrayson@invincible.com"
+        android:text="..."
         app:layout_constraintStart_toEndOf="@+id/profileImage"
         app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
 
@@ -71,7 +71,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="80dp"
         android:clickable="false"
-        android:text="Markus Grayson"
+        android:text="..."
         android:textColor="@android:color/black"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/profileImage"
