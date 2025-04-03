@@ -22,7 +22,7 @@ export const signUp = async (formData) => {
             municipality,
             barangay,
             uid: user.uid, 
-            createdAt: new Date()
+            createdAt: new Date().toISOString().slice(0, 10)
         });
 
         return {

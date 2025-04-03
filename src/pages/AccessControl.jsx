@@ -87,7 +87,7 @@ const AccessControl = () => {
                             <td>{accountSetting.role[user.role]}</td>
                             <td>{user.barangay ? user.role : "N/A"}</td>
                             <td>{user.district ? districtLists.districts[user.district].code +", "+districtLists.districts[user.district].name : "N/A"}</td>
-                            <td>{user.createdAt ? new Date(user.createdAt.seconds * 1000).toLocaleDateString() : "N/A"}</td>
+                            <td>{user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"}</td>
                           </tr>
                         )
                      })}
