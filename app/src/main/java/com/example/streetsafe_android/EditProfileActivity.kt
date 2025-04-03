@@ -8,6 +8,7 @@ import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 
 class EditProfileActivity : AppCompatActivity() {
@@ -40,18 +41,16 @@ class EditProfileActivity : AppCompatActivity() {
         val backButton = findViewById<Button>(R.id.backButton)
         val toggleChangePassword = findViewById<ToggleButton>(R.id.toggleChangePassword)
 
-
         // Disable password fields by default
         passwordInput.isEnabled = false
         confirmPasswordInput.isEnabled = false
         toggleChangePassword.isChecked = false  // Ensure toggle is off by default
-
+        emailInput.isEnabled = false
         // Toggle button listener
         toggleChangePassword.setOnCheckedChangeListener { _, isChecked ->
             passwordInput.isEnabled = isChecked
             confirmPasswordInput.isEnabled = isChecked
         }
-
 
         // Fetch user data from Firestore
         db.collection("users").document(userId).get()
@@ -68,18 +67,50 @@ class EditProfileActivity : AppCompatActivity() {
                 Toast.makeText(this, "Error fetching data: ${e.message}", Toast.LENGTH_SHORT).show()
             }
 
-        // Update Firestore on button click
         updateButton.setOnClickListener {
             val updatedData = mapOf(
                 "fullname" to fullNameInput.text.toString(),
-                "email" to emailInput.text.toString(),
-                "phone" to phoneNumberInput.text.toString(),
-                "password" to passwordInput.text.toString()
+                "phone" to phoneNumberInput.text.toString()
             )
 
             db.collection("users").document(userId).update(updatedData)
                 .addOnSuccessListener {
-                    Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show()
+                    // Handle password update in Firebase Authentication if toggle is checked
+                    if (toggleChangePassword.isChecked) {
+                        val newPassword = passwordInput.text.toString()
+                        val confirmPassword = confirmPasswordInput.text.toString()
+
+                        if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
+                            Toast.makeText(this, "Password fields cannot be empty", Toast.LENGTH_SHORT).show()
+                            return@addOnSuccessListener
+                        }
+
+                        if (newPassword != confirmPassword) {
+                            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                            return@addOnSuccessListener
+                        }
+
+                        val user: FirebaseUser? = auth.currentUser
+                        user?.updatePassword(newPassword)
+                            ?.addOnSuccessListener {
+                                Toast.makeText(this, "Password updated successfully!", Toast.LENGTH_SHORT).show()
+
+                                // Redirect to MainActivity after a successful update
+                                val intent = Intent(this, MainActivity::class.java)
+                                intent.putExtra("FRAGMENT_TO_LOAD", "ProfileFragment")
+                                startActivity(intent)
+                                finish()  // Close the current activity
+                            }
+                            ?.addOnFailureListener { e ->
+                                Toast.makeText(this, "Password update failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                            }
+                    } else {
+                        // If toggle is not checked, still redirect to MainActivity after updating user data
+                        val intent = Intent(this, MainActivity::class.java)
+                        intent.putExtra("FRAGMENT_TO_LOAD", "ProfileFragment")
+                        startActivity(intent)
+                        finish()  // Close the current activity
+                    }
                 }
                 .addOnFailureListener { e ->
                     Toast.makeText(this, "Update failed: ${e.message}", Toast.LENGTH_SHORT).show()
