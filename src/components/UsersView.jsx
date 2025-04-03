@@ -7,7 +7,7 @@ import * as RegularIcons from "@fortawesome/free-regular-svg-icons";
 import * as BrandIcons from "@fortawesome/free-brands-svg-icons";
 import accountSetting from "../constants/account-setting.json";
 
-export default function UsersView({ icon = "faUser", color = "primary", _role = "0" }) {
+export default function UsersView({ icon = "faUser", color = "primary", role = "0" }) {
     const [user, setUser] = useState(null);
     const [userData, setUserData] = useState(null);
   
@@ -27,11 +27,11 @@ export default function UsersView({ icon = "faUser", color = "primary", _role = 
     }, []);
   
     const selectedIcon = SolidIcons[icon] || RegularIcons[icon] || BrandIcons[icon] || RegularIcons.faUser;
-    const roleName = accountSetting.role[_role] || "Unknown Role";
+    const roleName = accountSetting.role[role] || "Unknown Role";
     let filteredUsers = 0;
     userData && userData.forEach((user) => { 
         console.log(user);
-        if (user.role == _role) {
+        if (user.role == role) {
             filteredUsers++;
         }
     });
