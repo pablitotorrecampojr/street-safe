@@ -8,11 +8,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.streetsafe_android.databinding.FragmentProfileBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth  // Firebase Authentication
+    private val db = FirebaseFirestore.getInstance() // Firestore instance
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,12 +29,30 @@ class ProfileFragment : Fragment() {
 
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
+        val user = auth.currentUser
 
-        // Logout user when Sign Out button is clicked
+        // Display email directly from FirebaseAuth
+        binding.emaiLTextView.text = user?.email ?: "Email not available"
+
+        // Fetch full name from Firestore
+        user?.uid?.let { uid ->
+            db.collection("users").document(uid).get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val fullname = document.getString("fullname") ?: "User"
+                        binding.nameTextView.text = fullname
+                    }
+                }
+                .addOnFailureListener {
+                    binding.nameTextView.text = "User"
+                }
+        }
+
+        // Logout button action
         binding.signOutButton.setOnClickListener {
-            auth.signOut()  // Sign out the user from Firebase
+            auth.signOut()
             val intent = Intent(requireContext(), SignInActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK // Prevent user from going back
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }
 
