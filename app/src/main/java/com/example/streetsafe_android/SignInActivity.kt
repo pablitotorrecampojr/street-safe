@@ -132,9 +132,9 @@ class SignInActivity : AppCompatActivity() {
                 intent.putExtra("email" , account.email)
                 intent.putExtra("name" , account.displayName)
                 startActivity(intent)
-            }else{
+                Toast.makeText(this, "Login Successful" , Toast.LENGTH_SHORT).show()
+            } else{
                 Toast.makeText(this, it.exception.toString() , Toast.LENGTH_SHORT).show()
-
             }
         }
     }
