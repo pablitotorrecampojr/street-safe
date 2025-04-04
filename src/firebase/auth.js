@@ -10,7 +10,8 @@ export const signUp = async (formData) => {
         const { fullname, email, role, district, municipality, barangay, password } = formData;
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await signOut(auth);
-        await updateProfile(userCredential.user, { displayName: fullname });
+        const displayName = `${fullname}`;
+        await updateProfile(userCredential.user, { displayName });
         const user = userCredential.user;
 
         await setDoc(doc(db, "users", user.uid), {
@@ -21,7 +22,7 @@ export const signUp = async (formData) => {
             municipality,
             barangay,
             uid: user.uid, 
-            createdAt: new Date()
+            createdAt: new Date().toISOString().slice(0, 10)
         });
 
         return {
@@ -41,6 +42,9 @@ export const signIn = async (email, password) => {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
+
+        // if(!user.emailVerified) return { status: 400, message: "Please verify your email address." }
+
         return { status: 200, message: "User signed in successfully!", user };
     } catch (error) {
         return { status: 400, message: error.message };

@@ -51,7 +51,7 @@ const SignUp = () => {
     let newErrors = {};
     const { fullname, email, role, district, barangay, municipality, password, confirmPassword } = formData;
 
-    if (!fullname) newErrors.fullname = "Full name is required";
+    if (!fullname) newErrors.fullname = "First name is required";
     if (!email) newErrors.email = "Email is required";
     // if (!role) newErrors.role = "Role is required";
     if (!password) newErrors.password = "Password is required";
@@ -109,14 +109,15 @@ const SignUp = () => {
                           <input
                             type="text"
                             className="form-control"
-                            id="fullname"
+                            id="firstname"
                             name="fullname"
-                            placeholder="Enter your full name"
+                            placeholder="Full name"
                             value={formData.fullname}
                             onChange={handleChange}
                           />
                           {errors.fullname && <p className="error">{errors.fullname}</p>}
                       </div>
+                     
                       <div className="mb-3">
                           <label className="form-label">Email</label>
                           <input 
@@ -138,6 +139,7 @@ const SignUp = () => {
                           value={formData.role}
                           onChange={handleChange}
                         > 
+                          <option value="">Choose option</option>
                           {accountSetting.role.map((role, index) => {
                             return (
                               <option key={index} value={index}>
@@ -154,11 +156,11 @@ const SignUp = () => {
                           <label className="form-label">Select District</label>
                           <select name="district" className="form-select" onChange={handleChange} value={formData.district}>
                             <option value="">Select District</option>
-                            {districts.disctricts.map((district, index) => (
-                              <option key={index} value={index}>
+                            {Object.entries(districts.districts).map(([key, district]) => (
+                              <option key={key} value={key}>
                                 {district.code} / {district.name}
                               </option>
-                            ))};
+                            ))}
                           </select>
                         </div>
                       )}

@@ -23,14 +23,15 @@ export default function UsersView({ icon = "faUser", color = "primary", role = "
             }
         };
     
-    fetchUsers(); // Call function on mount
+    fetchUsers();
     }, []);
   
     const selectedIcon = SolidIcons[icon] || RegularIcons[icon] || BrandIcons[icon] || RegularIcons.faUser;
     const roleName = accountSetting.role[role] || "Unknown Role";
     let filteredUsers = 0;
     userData && userData.forEach((user) => { 
-        if (user.role === role) {
+        console.log(user);
+        if (user.role == role) {
             filteredUsers++;
         }
     });
@@ -52,4 +53,4 @@ export default function UsersView({ icon = "faUser", color = "primary", role = "
         </div>
       </div>
     );
-  }
+}
