@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Switch
 import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
@@ -39,7 +40,7 @@ class EditProfileActivity : AppCompatActivity() {
         val confirmPasswordInput = findViewById<EditText>(R.id.confirmpasswordInput)
         val updateButton = findViewById<Button>(R.id.updateButton)
         val backButton = findViewById<Button>(R.id.backButton)
-        val toggleChangePassword = findViewById<ToggleButton>(R.id.toggleChangePassword)
+        val toggleChangePassword = findViewById<Switch>(R.id.toggleChangePassword)
 
         // Disable password fields by default
         passwordInput.isEnabled = false
