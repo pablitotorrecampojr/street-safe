@@ -2,6 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- USB Permissions (if needed for USB cameras) -->
+    <uses-permission android:name="android.permission.USB_PERMISSION"/>
+    <uses-permission android:name="android.permission.CAMERA"/> <!-- Only if needed for capturing images/videos -->
+
+    <!-- Remove the regular camera feature if you're not using the phone's built-in camera -->
+    <!-- <uses-feature android:name="android.hardware.camera" android:required="false"/> -->
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,7 +20,7 @@
         android:theme="@style/Theme.Streetsafeandroid"
         tools:targetApi="31">
 
-        <!-- SignInActivity (New Default Entry Point) -->
+        <!-- Main Activities and others -->
         <activity
             android:name=".SignInActivity"
             android:exported="true">
@@ -23,10 +30,7 @@
             </intent-filter>
         </activity>
 
-        <!-- MainActivity -->
         <activity android:name=".MainActivity" android:exported="true"/>
-
-        <!-- SignUpActivity -->
         <activity android:name=".SignUpActivity" android:exported="false"/>
         <activity android:name=".EditProfileActivity" android:exported="false"/>
         <activity android:name=".SettingsActivity" android:exported="false"/>
