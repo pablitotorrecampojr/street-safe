@@ -68,12 +68,14 @@
         android:id="@+id/submitReport"
         android:layout_width="299dp"
         android:layout_height="44dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/rounded_button"
         android:text="Submit Report"
-        android:textColor="@android:color/white"
         android:textAllCaps="false"
-        tools:layout_editor_absoluteX="56dp"
-        tools:layout_editor_absoluteY="562dp" />
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerDefects" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

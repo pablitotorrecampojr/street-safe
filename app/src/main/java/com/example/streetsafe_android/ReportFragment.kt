@@ -3,6 +3,10 @@ package com.example.streetsafe_android
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageFormat
+import android.graphics.Rect
+import android.graphics.YuvImage
 import android.icu.text.SimpleDateFormat
 import android.location.Address
 import android.location.Geocoder
@@ -18,6 +22,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
@@ -31,6 +38,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.util.*
 import java.util.concurrent.ExecutionException
 
@@ -41,6 +49,7 @@ class ReportFragment : Fragment() {
     private lateinit var previewView: PreviewView
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     data class RoadDefect(val id: Int, val label: String)
+    private var imageCapture: ImageCapture? = null
 
     data class RoadHazardReport(
         val imageUrl: String,
@@ -105,30 +114,44 @@ class ReportFragment : Fragment() {
         val streetTextView = view.findViewById<TextView>(R.id.tvStreet)
 
         submitButton.setOnClickListener {
-            // Example data
-            val city = cityTextView.text.toString().removePrefix("City: ")
-            val barangay = barangayTextView.text.toString().removePrefix("Barangay: ")
-            val street = streetTextView.text.toString().removePrefix("Street: ")
-            val roadHazard = spinner.selectedItem.toString()
-            val dateSubmitted = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+            val imageCapture = imageCapture ?: return@setOnClickListener
 
-            // Assume you already have a bitmap from the camera
-            uploadImageToFirebase(bitmap) { imageUrl ->
-                if (imageUrl != null) {
-                    val report = RoadHazardReport(
-                        imageUrl = imageUrl,
-                        dateSubmitted = dateSubmitted,
-                        city = city,
-                        barangay = barangay,
-                        street = street,
-                        roadHazard = roadHazard
-                    )
-                    submitReportToDatabase(report)
-                } else {
-                    Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT).show()
+            val outputOptions = ImageCapture.OutputFileOptions.Builder(
+                File(requireContext().cacheDir, "temp_image.jpg")
+            ).build()
+
+            imageCapture.takePicture(
+                ContextCompat.getMainExecutor(requireContext()),
+                object : ImageCapture.OnImageCapturedCallback() {
+                    override fun onCaptureSuccess(imageProxy: ImageProxy) {
+                        val bitmap = imageProxyToBitmap(imageProxy)
+                        imageProxy.close()
+
+                        // Now you can use the bitmap:
+                        uploadImageToFirebase(bitmap) { imageUrl ->
+                            if (imageUrl != null) {
+                                val report = RoadHazardReport(
+                                    imageUrl = imageUrl,
+                                    dateSubmitted = System.currentTimeMillis().toString(),
+                                    city = cityTextView.text.toString().removePrefix("City: ").trim(),
+                                    barangay = barangayTextView.text.toString().removePrefix("Barangay: ").trim(),
+                                    street = streetTextView.text.toString().removePrefix("Street: ").trim(),
+                                    roadHazard = spinner.selectedItem.toString()
+                                )
+                                submitReportToDatabase(report)
+                            } else {
+                                Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+
+                    override fun onError(exception: ImageCaptureException) {
+                        Toast.makeText(requireContext(), "Image capture failed: ${exception.message}", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
+            )
         }
+
 
     }
 
@@ -142,36 +165,31 @@ class ReportFragment : Fragment() {
 
     private fun openCamera() {
         try {
-            // Get the CameraX provider
             val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
             cameraProviderFuture.addListener({
-                // CameraX is now initialized, bind use cases
                 val cameraProvider = cameraProviderFuture.get()
 
-                // Create the Preview use case
                 val preview = Preview.Builder().build()
-
-                // Set the SurfaceProvider to show the camera feed on PreviewView
                 preview.setSurfaceProvider(previewView.surfaceProvider)
 
-                // Get a CameraSelector for the back camera
-                val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
+                // New ImageCapture use case
+                imageCapture = ImageCapture.Builder()
+                    .setTargetRotation(previewView.display.rotation)
+                    .build()
 
-                // Bind the camera use case to the lifecycle of the fragment
+                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+                cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(
-                    viewLifecycleOwner, // LifecycleOwner
-                    cameraSelector,     // CameraSelector
-                    preview             // Use case (Preview)
+                    viewLifecycleOwner,
+                    cameraSelector,
+                    preview,
+                    imageCapture // Include it here
                 )
             }, ContextCompat.getMainExecutor(requireContext()))
-        } catch (e: ExecutionException) {
-            e.printStackTrace()
-        } catch (e: InterruptedException) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
-
-        // Log confirmation
-        Log.d("ReportFragment", "Camera is being opened and displayed on PreviewView.")
     }
 
     private fun checkAndRequestLocationPermission() {
@@ -273,6 +291,29 @@ class ReportFragment : Fragment() {
             onComplete(null)
         }
     }
+
+    private fun imageProxyToBitmap(image: ImageProxy): Bitmap {
+        val yBuffer = image.planes[0].buffer
+        val uBuffer = image.planes[1].buffer
+        val vBuffer = image.planes[2].buffer
+
+        val ySize = yBuffer.remaining()
+        val uSize = uBuffer.remaining()
+        val vSize = vBuffer.remaining()
+
+        val nv21 = ByteArray(ySize + uSize + vSize)
+
+        yBuffer.get(nv21, 0, ySize)
+        vBuffer.get(nv21, ySize, vSize)
+        uBuffer.get(nv21, ySize + vSize, uSize)
+
+        val yuvImage = YuvImage(nv21, ImageFormat.NV21, image.width, image.height, null)
+        val out = ByteArrayOutputStream()
+        yuvImage.compressToJpeg(Rect(0, 0, image.width, image.height), 100, out)
+        val imageBytes = out.toByteArray()
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+    }
+
 
 
 }
