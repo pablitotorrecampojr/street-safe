@@ -52,6 +52,9 @@ dependencies {
 
     implementation("com.google.android.gms:play-services-location:18.0.0")
 
+    implementation("com.google.firebase:firebase-database-ktx")
+    implementation("com.google.firebase:firebase-storage-ktx")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
