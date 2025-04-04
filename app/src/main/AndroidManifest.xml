@@ -5,6 +5,9 @@
     <!-- USB Permissions (if needed for USB cameras) -->
     <uses-permission android:name="android.permission.USB_PERMISSION"/>
     <uses-permission android:name="android.permission.CAMERA"/> <!-- Only if needed for capturing images/videos -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
 
     <!-- Remove the regular camera feature if you're not using the phone's built-in camera -->
     <!-- <uses-feature android:name="android.hardware.camera" android:required="false"/> -->
