@@ -39,8 +39,8 @@ class SignInActivity : AppCompatActivity() {
         val passwordInput = findViewById<EditText>(R.id.passwordInput)
         val signInButton = findViewById<Button>(R.id.signinButton)
         val signUpLink = findViewById<TextView>(R.id.signupLink)
-        val googleSignInButton = findViewById<ImageView>(R.id.googleSignInButton)
-        val facebookSignInButton = findViewById<ImageView>(R.id.facebookSignInButton)
+        val googleSignInButton = findViewById<Button>(R.id.googleSignInButton)
+        val facebookSignInButton = findViewById<Button>(R.id.facebookSignInButton)
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
