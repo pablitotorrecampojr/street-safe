@@ -70,7 +70,7 @@
         android:layout_width="331dp"
         android:layout_height="53dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/rounded_button_yellow"
+        android:background="@drawable/rounded_button_red"
         android:drawableStart="@drawable/icons_signout_white_15"
         android:minHeight="48dp"
         android:paddingStart="12dp"
