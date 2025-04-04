@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">streetsafe-android</string>
+    <string name="default_web_client_id">810744358418-ehsg14nrc7fop9bo2516gbcg6jmu633a.apps.googleusercontent.com</string>
 </resources>

@@ -70,9 +70,7 @@ class SignUpActivity : AppCompatActivity() {
                             "email" to emailText,
                             "phone" to phoneText,
                             "role" to "4",
-                            "createdAt" to SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(
-                                Date()
-                            )
+                            "createdAt" to SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                         )
 
                         db.collection("users").document(userId).set(user)
@@ -81,8 +79,16 @@ class SignUpActivity : AppCompatActivity() {
                                 startActivity(Intent(this, MainActivity::class.java))
                                 finish()
                             }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(this, "Failed to save user: ${e.message}", Toast.LENGTH_LONG).show()
+                            }
+                    } else {
+                        // Handle authentication failure
+                        val errorMessage = task.exception?.localizedMessage ?: "Sign-up failed. Please try again."
+                        Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
                     }
                 }
+
         }
 
         loginLink.setOnClickListener {

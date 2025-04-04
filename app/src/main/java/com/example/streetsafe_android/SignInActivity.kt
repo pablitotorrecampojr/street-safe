@@ -39,8 +39,8 @@ class SignInActivity : AppCompatActivity() {
         val passwordInput = findViewById<EditText>(R.id.passwordInput)
         val signInButton = findViewById<Button>(R.id.signinButton)
         val signUpLink = findViewById<TextView>(R.id.signupLink)
-        val googleSignInButton = findViewById<ImageView>(R.id.googleSignInButton)
-        val facebookSignInButton = findViewById<ImageView>(R.id.facebookSignInButton)
+        val googleSignInButton = findViewById<Button>(R.id.googleSignInButton)
+        val facebookSignInButton = findViewById<Button>(R.id.facebookSignInButton)
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
@@ -134,29 +134,41 @@ class SignInActivity : AppCompatActivity() {
                 val email = account.email ?: ""
                 val fullName = account.displayName ?: ""
 
-                // Store user data in Firestore
-                val userData = hashMapOf(
-                    "uid" to uid,
-                    "fullname" to fullName,
-                    "email" to email,
-                    "role" to "4",
-                    "createdAt" to SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-                )
+                // Check if the user already exists in Firestore
+                db.collection("users").document(uid).get()
+                    .addOnSuccessListener { document ->
+                        if (!document.exists()) {
+                            // User does not exist, create new entry in Firestore
+                            val userData = hashMapOf(
+                                "uid" to uid,
+                                "fullname" to fullName,
+                                "email" to email,
+                                "role" to "4",
+                                "createdAt" to SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+                            )
 
-                db.collection("users").document(uid).set(userData)
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "User data saved successfully!", Toast.LENGTH_SHORT).show()
-                    }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(this, "Failed to save user data: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
+                            // Store user data in Firestore
+                            db.collection("users").document(uid).set(userData)
+                                .addOnSuccessListener {
+                                    Toast.makeText(this, "User data saved successfully!", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener { e ->
+                                    Toast.makeText(this, "Failed to save user data: ${e.message}", Toast.LENGTH_SHORT).show()
+                                }
+                        }
 
-                val intent = Intent(this, MainActivity::class.java).apply {
-                    putExtra("email", email)
-                    putExtra("fullName", fullName)
-                }
-                startActivity(intent)
-                finish()
+                        // Navigate to MainActivity
+                        val intent = Intent(this, MainActivity::class.java).apply {
+                            putExtra("email", email)
+                            putExtra("fullName", fullName)
+                        }
+                        startActivity(intent)
+                        finish()
+
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Error checking user: ${it.message}", Toast.LENGTH_SHORT).show()
+                    }
             } else {
                 Toast.makeText(this, task.exception.toString(), Toast.LENGTH_SHORT).show()
             }

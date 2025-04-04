@@ -5,101 +5,112 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:padding="20dp">
-
-    <Button
-        android:id="@+id/signOutButton"
-        android:layout_width="327dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/rounded_button_yellow"
-        android:drawableStart="@drawable/icons_signout_white_15"
-        android:paddingStart="16dp"
-        android:text="    Sign Out"
-        android:textAlignment="textStart"
-        android:textAllCaps="false"
-        android:textColor="@android:color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/settingsButton" />
-
-    <Button
-        android:id="@+id/notificationButton"
-        android:layout_width="327dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_button_gray"
-        android:drawableStart="@drawable/icons_notifications_15"
-        android:paddingStart="16dp"
-        android:text="    Notification"
-        android:textAlignment="textStart"
-        android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileButton" />
-
-    <Button
-        android:id="@+id/settingsButton"
-        android:layout_width="327dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_button_gray"
-        android:drawableStart="@drawable/icons_settings_15"
-        android:paddingStart="16dp"
-        android:text="    Settings"
-        android:textAlignment="textStart"
-        android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/notificationButton" />
-
-    <TextView
-        android:id="@+id/emaiLTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="8dp"
-        android:clickable="false"
-        android:text="..."
-        app:layout_constraintStart_toEndOf="@+id/profileImage"
-        app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
-
-    <TextView
-        android:id="@+id/nameTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="80dp"
-        android:clickable="false"
-        android:text="..."
-        android:textColor="@android:color/black"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/profileImage"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:paddingHorizontal="12dp"
+    android:paddingTop="20dp"
+    android:paddingBottom="20dp">
 
     <ImageView
         android:id="@+id/profileImage"
         android:layout_width="62dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="80dp"
+        android:layout_height="62dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="128dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
 
     <Button
+        android:id="@+id/notificationButton"
+        android:layout_width="331dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_button_gray"
+        android:drawableStart="@drawable/icons_notifications_15"
+        android:minHeight="48dp"
+        android:paddingStart="12dp"
+        android:text="    Notification"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileButton" />
+
+    <TextView
+        android:id="@+id/emailTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:text="..."
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@+id/profileImage"
+        app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
+
+    <Button
         android:id="@+id/profileButton"
-        android:layout_width="327dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="84dp"
+        android:layout_width="331dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="32dp"
         android:background="@drawable/rounded_button_gray"
         android:drawableStart="@drawable/icons_user_15"
-        android:paddingStart="16dp"
+        android:minHeight="48dp"
+        android:paddingStart="12dp"
         android:text="    Personal Data"
         android:textAlignment="textStart"
         android:textAllCaps="false"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emaiLTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/emailTextView" />
+
+    <Button
+        android:id="@+id/signOutButton"
+        android:layout_width="331dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/rounded_button_red"
+        android:drawableStart="@drawable/icons_signout_white_15"
+        android:minHeight="48dp"
+        android:paddingStart="12dp"
+        android:text="    Sign Out"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settingsButton" />
+
+    <TextView
+        android:id="@+id/nameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="132dp"
+        android:text="..."
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/profileImage"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/settingsButton"
+        android:layout_width="331dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_button_gray"
+        android:drawableStart="@drawable/icons_settings_15"
+        android:minHeight="48dp"
+        android:paddingStart="12dp"
+        android:text="    Settings"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/notificationButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
