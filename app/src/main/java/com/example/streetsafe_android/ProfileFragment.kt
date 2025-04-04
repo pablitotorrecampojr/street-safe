@@ -1,6 +1,7 @@
 package com.example.streetsafe_android
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -42,6 +43,13 @@ class ProfileFragment : Fragment() {
                         val fullname = document.getString("fullname") ?: "User"
                         binding.nameTextView.text = fullname
                     }
+
+                    val fullname = document.getString("fullname") ?: "User"
+                    binding.nameTextView.text = fullname
+
+                    val firstLetter = fullname.trim().firstOrNull()?.toString() ?: "?"
+                    val drawable = createInitialsDrawable(firstLetter, bgColor = Color.parseColor("#1E88E5")) // Custom blue
+                    binding.profileImage.setImageBitmap(drawable)
                 }
                 .addOnFailureListener {
                     binding.nameTextView.text = "User"
@@ -65,5 +73,25 @@ class ProfileFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun createInitialsDrawable(initial: String, bgColor: Int = android.graphics.Color.GRAY, textColor: Int = android.graphics.Color.WHITE): android.graphics.Bitmap {
+        val size = 100
+        val bitmap = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.ARGB_8888)
+        val canvas = android.graphics.Canvas(bitmap)
+
+        val paint = android.graphics.Paint().apply {
+            color = bgColor
+            isAntiAlias = true
+        }
+        canvas.drawCircle(size / 2f, size / 2f, size / 2f, paint)
+
+        paint.color = textColor
+        paint.textSize = 40f
+        paint.textAlign = android.graphics.Paint.Align.CENTER
+        val textY = size / 2 - ((paint.descent() + paint.ascent()) / 2)
+        canvas.drawText(initial.uppercase(), size / 2f, textY, paint)
+
+        return bitmap
     }
 }
