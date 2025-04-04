@@ -14,8 +14,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
-    private lateinit var auth: FirebaseAuth  // Firebase Authentication
-    private val db = FirebaseFirestore.getInstance() // Firestore instance
+    private lateinit var auth: FirebaseAuth
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +33,7 @@ class ProfileFragment : Fragment() {
         val user = auth.currentUser
 
         // Display email directly from FirebaseAuth
-        binding.emaiLTextView.text = user?.email ?: "Email not available"
+        binding.emailTextView.text = user?.email ?: "Email not available"
 
         // Fetch full name from Firestore
         user?.uid?.let { uid ->
