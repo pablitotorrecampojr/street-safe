@@ -9,6 +9,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -31,7 +33,7 @@ class ReportFragment : Fragment() {
     private val locationPermission = Manifest.permission.ACCESS_FINE_LOCATION
     private lateinit var previewView: PreviewView
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-
+    data class RoadDefect(val id: Int, val label: String)
     // Request permission launcher for camera
     private val requestCameraPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -72,6 +74,14 @@ class ReportFragment : Fragment() {
 
         // Check and request location permission on fragment start
         checkAndRequestLocationPermission()
+
+        val spinner: Spinner = view.findViewById(R.id.spinnerDefects)
+        val defects = loadDefectsFromJson()
+        val labels = defects.map { it.label }
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, labels)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+
     }
 
     private fun checkAndOpenCamera() {
@@ -162,6 +172,26 @@ class ReportFragment : Fragment() {
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(requireContext(), "Error getting address: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun loadDefectsFromJson(): List<RoadDefect> {
+        val jsonString = requireContext().assets.open("road_defects.json")
+            .bufferedReader().use { it.readText() }
+
+        return try {
+            val jsonArray = org.json.JSONArray(jsonString)
+            val defectList = mutableListOf<RoadDefect>()
+            for (i in 0 until jsonArray.length()) {
+                val obj = jsonArray.getJSONObject(i)
+                val id = obj.getInt("id")
+                val label = obj.getString("label")
+                defectList.add(RoadDefect(id, label))
+            }
+            defectList
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
         }
     }
 
