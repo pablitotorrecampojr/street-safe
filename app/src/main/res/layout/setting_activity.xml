@@ -78,7 +78,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView">
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/allowCamera"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -87,7 +87,7 @@
             android:textSize="16sp" />
 
         <Switch
-            android:id="@+id/switch1"
+            android:id="@+id/allowCameraSwith"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
@@ -104,7 +104,7 @@
         app:layout_constraintTop_toBottomOf="@+id/view2">
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/allowFiles"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -113,7 +113,7 @@
             android:textSize="16sp" />
 
         <Switch
-            android:id="@+id/switch1"
+            android:id="@+id/allowFileSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:layout_editor_absoluteX="346dp"
@@ -132,7 +132,7 @@
         app:layout_constraintTop_toBottomOf="@+id/view">
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/allowLocation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -141,7 +141,7 @@
             android:textSize="16sp" />
 
         <Switch
-            android:id="@+id/switch1"
+            android:id="@+id/allowLocationSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:layout_editor_absoluteX="346dp"
