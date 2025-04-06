@@ -112,14 +112,10 @@ class ReportFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize PreviewView and FusedLocationProviderClient
         previewView = view.findViewById(R.id.previewView)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
-        // Check and request camera permission on fragment start
         checkAndOpenCamera()
-
-        // Check and request location permission on fragment start
         checkAndRequestLocationPermission()
 
         val spinner: Spinner = view.findViewById(R.id.spinnerDefects)
@@ -145,12 +141,13 @@ class ReportFragment : Fragment() {
                 ContextCompat.getMainExecutor(requireContext()),
                 object : ImageCapture.OnImageCapturedCallback() {
                     override fun onCaptureSuccess(imageProxy: ImageProxy) {
+                        Log.d("Capture", "Image captured successfully")
                         val bitmap = imageProxyToBitmap(imageProxy)
                         imageProxy.close()
-
-                        // Now you can use the bitmap:
+                        Log.d("Capture", "Bitmap size: ${bitmap.byteCount} bytes")
                         uploadImageToFirebase(bitmap) { imageUrl ->
                             if (imageUrl != null) {
+                                Log.d("Firebase", "Image uploaded: $imageUrl")
                                 val report = RoadHazardReport(
                                     imageUrl = imageUrl,
                                     dateSubmitted = System.currentTimeMillis().toString(),
@@ -161,6 +158,7 @@ class ReportFragment : Fragment() {
                                 )
                                 submitReportToDatabase(report)
                             } else {
+                                Log.e("Firebase", "Failed to upload image")
                                 Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT).show()
                             }
                         }
@@ -172,8 +170,44 @@ class ReportFragment : Fragment() {
                 }
             )
         }
+    }
 
+    private fun imageProxyToBitmap(image: ImageProxy): Bitmap {
+        val planes = image.planes
+        when (image.format) {
+            ImageFormat.YUV_420_888 -> {
+                return convertYUV420ToBitmap(image)
+            }
+            ImageFormat.NV21 -> {
+                return convertNV21ToBitmap(image)
+            }
+            else -> {
+                throw IllegalArgumentException("Unsupported image format: ${image.format}")
+            }
+        }
+    }
 
+    private fun convertYUV420ToBitmap(image: ImageProxy): Bitmap {
+        val planes = image.planes
+        val yPlane = planes[0]
+        val uPlane = planes[1]
+        val vPlane = planes[2]
+
+        val ySize = yPlane.buffer.remaining()
+        val uSize = uPlane.buffer.remaining()
+        val vSize = vPlane.buffer.remaining()
+
+        val nv21 = ByteArray(ySize + uSize + vSize)
+        yPlane.buffer.get(nv21, 0, ySize)
+        vPlane.buffer.get(nv21, ySize, vSize)
+        uPlane.buffer.get(nv21, ySize + vSize, uSize)
+
+        val yuvImage = YuvImage(nv21, ImageFormat.NV21, image.width, image.height, null)
+        val out = ByteArrayOutputStream()
+        yuvImage.compressToJpeg(Rect(0, 0, image.width, image.height), 100, out)
+        val imageBytes = out.toByteArray()
+        image.close()
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
     }
 
     private fun checkAndOpenCamera() {
@@ -183,6 +217,27 @@ class ReportFragment : Fragment() {
             requestCameraPermissionLauncher.launch(cameraPermission)
         }
     }
+
+    private fun convertNV21ToBitmap(image: ImageProxy): Bitmap {
+        val planes = image.planes
+        val yPlane = planes[0]
+        val uvPlane = planes[1]
+
+        val ySize = yPlane.buffer.remaining()
+        val uvSize = uvPlane.buffer.remaining()
+
+        val nv21 = ByteArray(ySize + uvSize)
+        yPlane.buffer.get(nv21, 0, ySize)
+        uvPlane.buffer.get(nv21, ySize, uvSize)
+
+        val yuvImage = YuvImage(nv21, ImageFormat.NV21, image.width, image.height, null)
+        val out = ByteArrayOutputStream()
+        yuvImage.compressToJpeg(Rect(0, 0, image.width, image.height), 100, out)
+        val imageBytes = out.toByteArray()
+        image.close()
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+    }
+
 
     private fun openCamera() {
         try {
@@ -245,16 +300,11 @@ class ReportFragment : Fragment() {
                 val barangay = address.subLocality // Could be barangay or district
                 val street = address.thoroughfare // Street name
 
-                // Log the address details
-                Log.d("ReportFragment", "City: $city, Barangay: $barangay, Street: $street")
-
                 // Update the TextViews with the location details
                 view?.findViewById<TextView>(R.id.tvCity)?.text = "City: $city"
                 view?.findViewById<TextView>(R.id.tvBarangay)?.text = "Barangay: $barangay"
                 view?.findViewById<TextView>(R.id.tvStreet)?.text = "Street: $street"
 
-                // Optionally, show a toast with the location info
-                Toast.makeText(requireContext(), "City: $city, Barangay: $barangay, Street: $street", Toast.LENGTH_LONG).show()
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -313,27 +363,6 @@ class ReportFragment : Fragment() {
         }
     }
 
-    private fun imageProxyToBitmap(image: ImageProxy): Bitmap {
-        val yBuffer = image.planes[0].buffer
-        val uBuffer = image.planes[1].buffer
-        val vBuffer = image.planes[2].buffer
-
-        val ySize = yBuffer.remaining()
-        val uSize = uBuffer.remaining()
-        val vSize = vBuffer.remaining()
-
-        val nv21 = ByteArray(ySize + uSize + vSize)
-
-        yBuffer.get(nv21, 0, ySize)
-        vBuffer.get(nv21, ySize, vSize)
-        uBuffer.get(nv21, ySize + vSize, uSize)
-
-        val yuvImage = YuvImage(nv21, ImageFormat.NV21, image.width, image.height, null)
-        val out = ByteArrayOutputStream()
-        yuvImage.compressToJpeg(Rect(0, 0, image.width, image.height), 100, out)
-        val imageBytes = out.toByteArray()
-        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-    }
 
     private fun checkLocationSettingsAndGetLocation() {
         val locationRequest = LocationRequest.create().apply {
