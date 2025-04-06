@@ -141,11 +141,13 @@ const SignUp = () => {
                         > 
                           <option value="">Choose option</option>
                           {accountSetting.role.map((role, index) => {
+                           if (index < 3) {
                             return (
                               <option key={index} value={index}>
                                 {role}
                               </option>
                             )
+                           }
                           })}
                         </select>
                         {errors.role && <p className="error">{errors.role}</p>}
