@@ -1,6 +1,7 @@
 package com.example.streetsafe_android
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -41,6 +42,12 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
 import java.util.concurrent.ExecutionException
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.LocationSettingsStatusCodes
+import com.google.android.gms.common.api.ResolvableApiException
+import android.content.IntentSender
+import androidx.appcompat.app.AppCompatActivity
 
 class ReportFragment : Fragment() {
 
@@ -87,6 +94,20 @@ class ReportFragment : Fragment() {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_report, container, false)
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 1001) {
+            if (resultCode == AppCompatActivity.RESULT_OK) {
+                // User enabled location, get the location
+                getLocation()
+            } else {
+                Toast.makeText(requireContext(), "Location services must be enabled.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -194,7 +215,7 @@ class ReportFragment : Fragment() {
 
     private fun checkAndRequestLocationPermission() {
         if (ContextCompat.checkSelfPermission(requireContext(), locationPermission) == PackageManager.PERMISSION_GRANTED) {
-            getLocation()
+            checkLocationSettingsAndGetLocation()
         } else {
             requestLocationPermissionLauncher.launch(locationPermission)
         }
@@ -314,6 +335,32 @@ class ReportFragment : Fragment() {
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
     }
 
+    private fun checkLocationSettingsAndGetLocation() {
+        val locationRequest = LocationRequest.create().apply {
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
 
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+
+        val client = LocationServices.getSettingsClient(requireActivity())
+        val task = client.checkLocationSettings(builder.build())
+
+        task.addOnSuccessListener {
+            // All location settings are satisfied. Proceed with getting the location
+            getLocation()
+        }
+
+        task.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException) {
+                try {
+                    // Show dialog to turn on location
+                    exception.startResolutionForResult(requireActivity(), 1001)
+                } catch (sendEx: IntentSender.SendIntentException) {
+                    sendEx.printStackTrace()
+                }
+            }
+        }
+    }
 
 }
