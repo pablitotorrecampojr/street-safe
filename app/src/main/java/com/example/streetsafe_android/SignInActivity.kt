@@ -143,7 +143,7 @@ class SignInActivity : AppCompatActivity() {
                                 "uid" to uid,
                                 "fullname" to fullName,
                                 "email" to email,
-                                "role" to "4",
+                                "role" to "3",
                                 "createdAt" to SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                             )
 

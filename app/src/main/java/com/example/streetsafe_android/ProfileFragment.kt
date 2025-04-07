@@ -68,6 +68,10 @@ class ProfileFragment : Fragment() {
         binding.profileButton.setOnClickListener {
             startActivity(Intent(requireContext(), EditProfileActivity::class.java))
         }
+
+        binding.settingsButton.setOnClickListener {
+            startActivity(Intent(requireContext(), SettingsActivity::class.java))
+        }
     }
 
     override fun onDestroyView() {
