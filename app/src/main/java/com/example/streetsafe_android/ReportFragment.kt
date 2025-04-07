@@ -4,6 +4,10 @@ package com.example.streetsafe_android
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageFormat
+import android.graphics.Rect
+import android.graphics.YuvImage
 import android.icu.text.SimpleDateFormat
 import android.location.Address
 import android.location.Geocoder
@@ -21,6 +25,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
@@ -107,14 +112,33 @@ class ReportFragment : Fragment() {
             imageCapture.takePicture(
                 ContextCompat.getMainExecutor(requireContext()),
                 object : ImageCapture.OnImageCapturedCallback() {
-                    override fun onCaptureSuccess(imageProxy: androidx.camera.core.ImageProxy) {
+                    override fun onCaptureSuccess(imageProxy: ImageProxy) {
                         val bitmap = imageProxyToBitmap(imageProxy)
                         imageProxy.close()
-
                         val base64Image = bitmapToBase64(bitmap)
-
+                        val city = cityTextView.text.removePrefix("City: ").toString()
+                        val barangay = barangayTextView.text.removePrefix("Barangay: ").toString()
+                        val street = streetTextView.text.removePrefix("Street: ").toString()
+                        val selectedHazard = spinner.selectedItem?.toString() ?: "Unknown"
+                        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                        val currentDateTime = dateFormat.format(Date())
+                        val report = RoadHazardReport(
+                            imageUrl = base64Image,
+                            dateSubmitted = currentDateTime,
+                            city = city,
+                            barangay = barangay,
+                            street = street,
+                            roadHazard = selectedHazard
+                        )
                         Log.d("Base64", base64Image)
-                        Toast.makeText(requireContext(), "Base64 image captured!", Toast.LENGTH_SHORT).show()
+                        val db = Firebase.database.reference
+                        db.child("roadhazards").push().setValue(report)
+                            .addOnSuccessListener {
+                                Toast.makeText(requireContext(), "Report submitted!", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(requireContext(), "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                            }
                     }
 
                     override fun onError(exception: ImageCaptureException) {
