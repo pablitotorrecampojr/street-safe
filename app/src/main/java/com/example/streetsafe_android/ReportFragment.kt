@@ -82,17 +82,10 @@ class ReportFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Initialize PreviewView and FusedLocationProviderClient
         previewView = view.findViewById(R.id.previewView)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-
-        // Check and request camera permission on fragment start
         checkAndOpenCamera()
-
-        // Check and request location permission on fragment start
         checkAndRequestLocationPermission()
-
         val spinner: Spinner = view.findViewById(R.id.spinnerDefects)
         val defects = loadDefectsFromJson()
         val labels = defects.map { it.label }
@@ -106,17 +99,14 @@ class ReportFragment : Fragment() {
         val streetTextView = view.findViewById<TextView>(R.id.tvStreet)
 
         submitButton.setOnClickListener {
-            // Example data
             val city = cityTextView.text.toString().removePrefix("City: ")
             val barangay = barangayTextView.text.toString().removePrefix("Barangay: ")
             val street = streetTextView.text.toString().removePrefix("Street: ")
             val roadHazard = spinner.selectedItem.toString()
             val dateSubmitted = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
-
         }
 
     }
-
     private fun checkAndOpenCamera() {
         if (ContextCompat.checkSelfPermission(requireContext(), cameraPermission) == PackageManager.PERMISSION_GRANTED) {
             openCamera()
@@ -127,26 +117,16 @@ class ReportFragment : Fragment() {
 
     private fun openCamera() {
         try {
-            // Get the CameraX provider
             val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
             cameraProviderFuture.addListener({
-                // CameraX is now initialized, bind use cases
                 val cameraProvider = cameraProviderFuture.get()
-
-                // Create the Preview use case
                 val preview = Preview.Builder().build()
-
-                // Set the SurfaceProvider to show the camera feed on PreviewView
                 preview.setSurfaceProvider(previewView.surfaceProvider)
-
-                // Get a CameraSelector for the back camera
                 val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
-
-                // Bind the camera use case to the lifecycle of the fragment
                 cameraProvider.bindToLifecycle(
-                    viewLifecycleOwner, // LifecycleOwner
-                    cameraSelector,     // CameraSelector
-                    preview             // Use case (Preview)
+                    viewLifecycleOwner,
+                    cameraSelector,
+                    preview
                 )
             }, ContextCompat.getMainExecutor(requireContext()))
         } catch (e: ExecutionException) {
@@ -155,7 +135,6 @@ class ReportFragment : Fragment() {
             e.printStackTrace()
         }
 
-        // Log confirmation
         Log.d("ReportFragment", "Camera is being opened and displayed on PreviewView.")
     }
 
@@ -176,7 +155,6 @@ class ReportFragment : Fragment() {
                 }
             }
         } else {
-            // Permission is not granted, request it
             requestLocationPermissionLauncher.launch(locationPermission)
         }
     }
@@ -190,16 +168,10 @@ class ReportFragment : Fragment() {
                 val city = address.locality
                 val barangay = address.subLocality // Could be barangay or district
                 val street = address.thoroughfare // Street name
-
-                // Log the address details
                 Log.d("ReportFragment", "City: $city, Barangay: $barangay, Street: $street")
-
-                // Update the TextViews with the location details
                 view?.findViewById<TextView>(R.id.tvCity)?.text = "City: $city"
                 view?.findViewById<TextView>(R.id.tvBarangay)?.text = "Barangay: $barangay"
                 view?.findViewById<TextView>(R.id.tvStreet)?.text = "Street: $street"
-
-                // Optionally, show a toast with the location info
                 Toast.makeText(requireContext(), "City: $city, Barangay: $barangay, Street: $street", Toast.LENGTH_LONG).show()
             }
         } catch (e: Exception) {
@@ -211,7 +183,6 @@ class ReportFragment : Fragment() {
     private fun loadDefectsFromJson(): List<RoadDefect> {
         val jsonString = requireContext().assets.open("road_defects.json")
             .bufferedReader().use { it.readText() }
-
         return try {
             val jsonArray = org.json.JSONArray(jsonString)
             val defectList = mutableListOf<RoadDefect>()
@@ -227,37 +198,5 @@ class ReportFragment : Fragment() {
             emptyList()
         }
     }
-
-    private fun submitReportToDatabase(report: RoadHazardReport) {
-        val databaseRef = Firebase.database.getReference("roadhazards")
-        val newEntryRef = databaseRef.push()  // Generates unique ID
-        newEntryRef.setValue(report)
-            .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Report submitted successfully", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener {
-                Toast.makeText(requireContext(), "Failed to submit report", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    private fun uploadImageToFirebase(bitmap: Bitmap, onComplete: (String?) -> Unit) {
-        val storageRef = Firebase.storage.reference
-        val imageRef = storageRef.child("images/${UUID.randomUUID()}.jpg")
-
-        val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        val data = baos.toByteArray()
-
-        val uploadTask = imageRef.putBytes(data)
-        uploadTask.addOnSuccessListener {
-            imageRef.downloadUrl.addOnSuccessListener { uri ->
-                onComplete(uri.toString())  // Return download URL
-            }
-        }.addOnFailureListener {
-            it.printStackTrace()
-            onComplete(null)
-        }
-    }
-
 
 }
