@@ -1,13 +1,9 @@
+
 package com.example.streetsafe_android
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.ImageFormat
-import android.graphics.Rect
-import android.graphics.YuvImage
 import android.icu.text.SimpleDateFormat
 import android.location.Address
 import android.location.Geocoder
@@ -23,9 +19,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
@@ -39,15 +32,8 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.util.*
 import java.util.concurrent.ExecutionException
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationSettingsRequest
-import com.google.android.gms.location.LocationSettingsStatusCodes
-import com.google.android.gms.common.api.ResolvableApiException
-import android.content.IntentSender
-import androidx.appcompat.app.AppCompatActivity
 
 class ReportFragment : Fragment() {
 
@@ -56,7 +42,6 @@ class ReportFragment : Fragment() {
     private lateinit var previewView: PreviewView
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     data class RoadDefect(val id: Int, val label: String)
-    private var imageCapture: ImageCapture? = null
 
     data class RoadHazardReport(
         val imageUrl: String,
@@ -95,27 +80,17 @@ class ReportFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_report, container, false)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == 1001) {
-            if (resultCode == AppCompatActivity.RESULT_OK) {
-                // User enabled location, get the location
-                getLocation()
-            } else {
-                Toast.makeText(requireContext(), "Location services must be enabled.", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Initialize PreviewView and FusedLocationProviderClient
         previewView = view.findViewById(R.id.previewView)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
+        // Check and request camera permission on fragment start
         checkAndOpenCamera()
+
+        // Check and request location permission on fragment start
         checkAndRequestLocationPermission()
 
         val spinner: Spinner = view.findViewById(R.id.spinnerDefects)
@@ -131,83 +106,15 @@ class ReportFragment : Fragment() {
         val streetTextView = view.findViewById<TextView>(R.id.tvStreet)
 
         submitButton.setOnClickListener {
-            val imageCapture = imageCapture ?: return@setOnClickListener
+            // Example data
+            val city = cityTextView.text.toString().removePrefix("City: ")
+            val barangay = barangayTextView.text.toString().removePrefix("Barangay: ")
+            val street = streetTextView.text.toString().removePrefix("Street: ")
+            val roadHazard = spinner.selectedItem.toString()
+            val dateSubmitted = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
 
-            val outputOptions = ImageCapture.OutputFileOptions.Builder(
-                File(requireContext().cacheDir, "temp_image.jpg")
-            ).build()
-
-            imageCapture.takePicture(
-                ContextCompat.getMainExecutor(requireContext()),
-                object : ImageCapture.OnImageCapturedCallback() {
-                    override fun onCaptureSuccess(imageProxy: ImageProxy) {
-                        Log.d("Capture", "Image captured successfully")
-                        val bitmap = imageProxyToBitmap(imageProxy)
-                        imageProxy.close()
-                        Log.d("Capture", "Bitmap size: ${bitmap.byteCount} bytes")
-                        uploadImageToFirebase(bitmap) { imageUrl ->
-                            if (imageUrl != null) {
-                                Log.d("Firebase", "Image uploaded: $imageUrl")
-                                val report = RoadHazardReport(
-                                    imageUrl = imageUrl,
-                                    dateSubmitted = System.currentTimeMillis().toString(),
-                                    city = cityTextView.text.toString().removePrefix("City: ").trim(),
-                                    barangay = barangayTextView.text.toString().removePrefix("Barangay: ").trim(),
-                                    street = streetTextView.text.toString().removePrefix("Street: ").trim(),
-                                    roadHazard = spinner.selectedItem.toString()
-                                )
-                                submitReportToDatabase(report)
-                            } else {
-                                Log.e("Firebase", "Failed to upload image")
-                                Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
-
-                    override fun onError(exception: ImageCaptureException) {
-                        Toast.makeText(requireContext(), "Image capture failed: ${exception.message}", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            )
         }
-    }
 
-    private fun imageProxyToBitmap(image: ImageProxy): Bitmap {
-        val planes = image.planes
-        when (image.format) {
-            ImageFormat.YUV_420_888 -> {
-                return convertYUV420ToBitmap(image)
-            }
-            ImageFormat.NV21 -> {
-                return convertNV21ToBitmap(image)
-            }
-            else -> {
-                throw IllegalArgumentException("Unsupported image format: ${image.format}")
-            }
-        }
-    }
-
-    private fun convertYUV420ToBitmap(image: ImageProxy): Bitmap {
-        val planes = image.planes
-        val yPlane = planes[0]
-        val uPlane = planes[1]
-        val vPlane = planes[2]
-
-        val ySize = yPlane.buffer.remaining()
-        val uSize = uPlane.buffer.remaining()
-        val vSize = vPlane.buffer.remaining()
-
-        val nv21 = ByteArray(ySize + uSize + vSize)
-        yPlane.buffer.get(nv21, 0, ySize)
-        vPlane.buffer.get(nv21, ySize, vSize)
-        uPlane.buffer.get(nv21, ySize + vSize, uSize)
-
-        val yuvImage = YuvImage(nv21, ImageFormat.NV21, image.width, image.height, null)
-        val out = ByteArrayOutputStream()
-        yuvImage.compressToJpeg(Rect(0, 0, image.width, image.height), 100, out)
-        val imageBytes = out.toByteArray()
-        image.close()
-        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
     }
 
     private fun checkAndOpenCamera() {
@@ -218,59 +125,43 @@ class ReportFragment : Fragment() {
         }
     }
 
-    private fun convertNV21ToBitmap(image: ImageProxy): Bitmap {
-        val planes = image.planes
-        val yPlane = planes[0]
-        val uvPlane = planes[1]
-
-        val ySize = yPlane.buffer.remaining()
-        val uvSize = uvPlane.buffer.remaining()
-
-        val nv21 = ByteArray(ySize + uvSize)
-        yPlane.buffer.get(nv21, 0, ySize)
-        uvPlane.buffer.get(nv21, ySize, uvSize)
-
-        val yuvImage = YuvImage(nv21, ImageFormat.NV21, image.width, image.height, null)
-        val out = ByteArrayOutputStream()
-        yuvImage.compressToJpeg(Rect(0, 0, image.width, image.height), 100, out)
-        val imageBytes = out.toByteArray()
-        image.close()
-        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-    }
-
-
     private fun openCamera() {
         try {
+            // Get the CameraX provider
             val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
             cameraProviderFuture.addListener({
+                // CameraX is now initialized, bind use cases
                 val cameraProvider = cameraProviderFuture.get()
 
+                // Create the Preview use case
                 val preview = Preview.Builder().build()
+
+                // Set the SurfaceProvider to show the camera feed on PreviewView
                 preview.setSurfaceProvider(previewView.surfaceProvider)
 
-                // New ImageCapture use case
-                imageCapture = ImageCapture.Builder()
-                    .setTargetRotation(previewView.display.rotation)
-                    .build()
+                // Get a CameraSelector for the back camera
+                val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
 
-                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-                cameraProvider.unbindAll()
+                // Bind the camera use case to the lifecycle of the fragment
                 cameraProvider.bindToLifecycle(
-                    viewLifecycleOwner,
-                    cameraSelector,
-                    preview,
-                    imageCapture // Include it here
+                    viewLifecycleOwner, // LifecycleOwner
+                    cameraSelector,     // CameraSelector
+                    preview             // Use case (Preview)
                 )
             }, ContextCompat.getMainExecutor(requireContext()))
-        } catch (e: Exception) {
+        } catch (e: ExecutionException) {
+            e.printStackTrace()
+        } catch (e: InterruptedException) {
             e.printStackTrace()
         }
+
+        // Log confirmation
+        Log.d("ReportFragment", "Camera is being opened and displayed on PreviewView.")
     }
 
     private fun checkAndRequestLocationPermission() {
         if (ContextCompat.checkSelfPermission(requireContext(), locationPermission) == PackageManager.PERMISSION_GRANTED) {
-            checkLocationSettingsAndGetLocation()
+            getLocation()
         } else {
             requestLocationPermissionLauncher.launch(locationPermission)
         }
@@ -300,11 +191,16 @@ class ReportFragment : Fragment() {
                 val barangay = address.subLocality // Could be barangay or district
                 val street = address.thoroughfare // Street name
 
+                // Log the address details
+                Log.d("ReportFragment", "City: $city, Barangay: $barangay, Street: $street")
+
                 // Update the TextViews with the location details
                 view?.findViewById<TextView>(R.id.tvCity)?.text = "City: $city"
                 view?.findViewById<TextView>(R.id.tvBarangay)?.text = "Barangay: $barangay"
                 view?.findViewById<TextView>(R.id.tvStreet)?.text = "Street: $street"
 
+                // Optionally, show a toast with the location info
+                Toast.makeText(requireContext(), "City: $city, Barangay: $barangay, Street: $street", Toast.LENGTH_LONG).show()
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -363,33 +259,5 @@ class ReportFragment : Fragment() {
         }
     }
 
-
-    private fun checkLocationSettingsAndGetLocation() {
-        val locationRequest = LocationRequest.create().apply {
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-
-        val builder = LocationSettingsRequest.Builder()
-            .addLocationRequest(locationRequest)
-
-        val client = LocationServices.getSettingsClient(requireActivity())
-        val task = client.checkLocationSettings(builder.build())
-
-        task.addOnSuccessListener {
-            // All location settings are satisfied. Proceed with getting the location
-            getLocation()
-        }
-
-        task.addOnFailureListener { exception ->
-            if (exception is ResolvableApiException) {
-                try {
-                    // Show dialog to turn on location
-                    exception.startResolutionForResult(requireActivity(), 1001)
-                } catch (sendEx: IntentSender.SendIntentException) {
-                    sendEx.printStackTrace()
-                }
-            }
-        }
-    }
 
 }
