@@ -51,16 +51,6 @@ class ReportFragment : Fragment() {
     data class RoadDefect(val id: Int, val label: String)
     private var imageCapture: ImageCapture? = null
 
-    data class RoadHazardReport(
-        val imageUrl: String,
-        val dateSubmitted: String,
-        val city: String,
-        val barangay: String,
-        val street: String,
-        val roadHazard: String
-    )
-
-    // Request permission launcher for camera
     private val requestCameraPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
@@ -70,7 +60,6 @@ class ReportFragment : Fragment() {
             }
         }
 
-    // Request permission launcher for location
     private val requestLocationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
@@ -84,7 +73,6 @@ class ReportFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_report, container, false)
     }
 
@@ -122,15 +110,15 @@ class ReportFragment : Fragment() {
                         val selectedHazard = spinner.selectedItem?.toString() ?: "Unknown"
                         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                         val currentDateTime = dateFormat.format(Date())
-                        val report = RoadHazardReport(
-                            imageUrl = base64Image,
-                            dateSubmitted = currentDateTime,
-                            city = city,
-                            barangay = barangay,
-                            street = street,
-                            roadHazard = selectedHazard
+                        val report = hashMapOf(
+                            "imageUrl" to base64Image,
+                            "dateSubmitted" to currentDateTime,
+                            "city" to city,
+                            "barangay" to barangay,
+                            "street" to street,
+                            "roadHazard" to selectedHazard
                         )
-                        Log.d("Base64", base64Image)
+                        Log.d("ReportDebug", report.toString())
                         val db = Firebase.database.reference
                         db.child("roadhazards").push().setValue(report)
                             .addOnSuccessListener {
@@ -140,7 +128,6 @@ class ReportFragment : Fragment() {
                                 Toast.makeText(requireContext(), "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
                             }
                     }
-
                     override fun onError(exception: ImageCaptureException) {
                         Toast.makeText(requireContext(), "Capture failed: ${exception.message}", Toast.LENGTH_SHORT).show()
                     }
@@ -161,14 +148,10 @@ class ReportFragment : Fragment() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
-
             val preview = Preview.Builder().build()
             preview.setSurfaceProvider(previewView.surfaceProvider)
-
             imageCapture = ImageCapture.Builder().build()
-
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
             cameraProvider.unbindAll()
             cameraProvider.bindToLifecycle(viewLifecycleOwner, cameraSelector, preview, imageCapture)
         }, ContextCompat.getMainExecutor(requireContext()))
@@ -184,7 +167,6 @@ class ReportFragment : Fragment() {
 
     private fun getLocation() {
         if (ContextCompat.checkSelfPermission(requireContext(), locationPermission) == PackageManager.PERMISSION_GRANTED) {
-            // Permission is granted, access the location
             fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location ->
                 location?.let {
                     getAddressFromLocation(it.latitude, it.longitude)
@@ -234,7 +216,6 @@ class ReportFragment : Fragment() {
             emptyList()
         }
     }
-
     private fun imageProxyToBitmap(imageProxy: androidx.camera.core.ImageProxy): Bitmap {
         val planeProxy = imageProxy.planes[0]
         val buffer = planeProxy.buffer
@@ -242,7 +223,6 @@ class ReportFragment : Fragment() {
         buffer.get(bytes)
         return android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
     }
-
     private fun bitmapToBase64(bitmap: Bitmap): String {
         val outputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
