@@ -19,6 +19,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
@@ -42,6 +44,7 @@ class ReportFragment : Fragment() {
     private lateinit var previewView: PreviewView
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     data class RoadDefect(val id: Int, val label: String)
+    private var imageCapture: ImageCapture? = null
 
     data class RoadHazardReport(
         val imageUrl: String,
@@ -99,11 +102,26 @@ class ReportFragment : Fragment() {
         val streetTextView = view.findViewById<TextView>(R.id.tvStreet)
 
         submitButton.setOnClickListener {
-            val city = cityTextView.text.toString().removePrefix("City: ")
-            val barangay = barangayTextView.text.toString().removePrefix("Barangay: ")
-            val street = streetTextView.text.toString().removePrefix("Street: ")
-            val roadHazard = spinner.selectedItem.toString()
-            val dateSubmitted = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+            val imageCapture = imageCapture ?: return@setOnClickListener
+
+            imageCapture.takePicture(
+                ContextCompat.getMainExecutor(requireContext()),
+                object : ImageCapture.OnImageCapturedCallback() {
+                    override fun onCaptureSuccess(imageProxy: androidx.camera.core.ImageProxy) {
+                        val bitmap = imageProxyToBitmap(imageProxy)
+                        imageProxy.close()
+
+                        val base64Image = bitmapToBase64(bitmap)
+
+                        Log.d("Base64", base64Image)
+                        Toast.makeText(requireContext(), "Base64 image captured!", Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onError(exception: ImageCaptureException) {
+                        Toast.makeText(requireContext(), "Capture failed: ${exception.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            )
         }
 
     }
@@ -116,26 +134,20 @@ class ReportFragment : Fragment() {
     }
 
     private fun openCamera() {
-        try {
-            val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-            cameraProviderFuture.addListener({
-                val cameraProvider = cameraProviderFuture.get()
-                val preview = Preview.Builder().build()
-                preview.setSurfaceProvider(previewView.surfaceProvider)
-                val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
-                cameraProvider.bindToLifecycle(
-                    viewLifecycleOwner,
-                    cameraSelector,
-                    preview
-                )
-            }, ContextCompat.getMainExecutor(requireContext()))
-        } catch (e: ExecutionException) {
-            e.printStackTrace()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+        cameraProviderFuture.addListener({
+            val cameraProvider = cameraProviderFuture.get()
 
-        Log.d("ReportFragment", "Camera is being opened and displayed on PreviewView.")
+            val preview = Preview.Builder().build()
+            preview.setSurfaceProvider(previewView.surfaceProvider)
+
+            imageCapture = ImageCapture.Builder().build()
+
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+            cameraProvider.unbindAll()
+            cameraProvider.bindToLifecycle(viewLifecycleOwner, cameraSelector, preview, imageCapture)
+        }, ContextCompat.getMainExecutor(requireContext()))
     }
 
     private fun checkAndRequestLocationPermission() {
@@ -199,4 +211,18 @@ class ReportFragment : Fragment() {
         }
     }
 
+    private fun imageProxyToBitmap(imageProxy: androidx.camera.core.ImageProxy): Bitmap {
+        val planeProxy = imageProxy.planes[0]
+        val buffer = planeProxy.buffer
+        val bytes = ByteArray(buffer.remaining())
+        buffer.get(bytes)
+        return android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+    }
+
+    private fun bitmapToBase64(bitmap: Bitmap): String {
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+        val byteArray = outputStream.toByteArray()
+        return android.util.Base64.encodeToString(byteArray, android.util.Base64.NO_WRAP)
+    }
 }
