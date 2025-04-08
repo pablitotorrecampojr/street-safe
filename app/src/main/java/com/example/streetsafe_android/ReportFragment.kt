@@ -197,10 +197,10 @@ class ReportFragment : Fragment() {
             val addresses: List<Address> = geocoder.getFromLocation(latitude, longitude, 1) ?: emptyList()
             if (addresses.isNotEmpty()) {
                 val address: Address = addresses[0]
+                Log.d("Adress", address.toString())
                 val city = address.locality
                 val barangay = address.subLocality // Could be barangay or district
                 val street = address.thoroughfare // Street name
-                Log.d("ReportFragment", "City: $city, Barangay: $barangay, Street: $street")
                 view?.findViewById<TextView>(R.id.tvCity)?.text = "City: $city"
                 view?.findViewById<TextView>(R.id.tvBarangay)?.text = "Barangay: $barangay"
                 view?.findViewById<TextView>(R.id.tvStreet)?.text = "Street: $street"
