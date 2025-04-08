@@ -18,6 +18,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
@@ -86,6 +87,7 @@ class ReportFragment : Fragment() {
         val defects = loadDefectsFromJson()
         val labels = defects.map { it.label }
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, labels)
+        val capturedImageView = view.findViewById<ImageView>(R.id.capturedImageView)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
 
@@ -103,6 +105,17 @@ class ReportFragment : Fragment() {
                     override fun onCaptureSuccess(imageProxy: ImageProxy) {
                         val bitmap = imageProxyToBitmap(imageProxy)
                         imageProxy.close()
+
+                        if (bitmap == null || bitmap.width <= 10 || bitmap.height <= 10) {
+                            Log.e("ImageCheck", "Invalid bitmap captured!")
+                            Toast.makeText(requireContext(), "Image capture failed. Please try again.", Toast.LENGTH_SHORT).show()
+                            return
+                        } else {
+                            Log.d("ImageCheck", "Valid bitmap captured: ${bitmap.width}x${bitmap.height}")
+                            capturedImageView.setImageBitmap(bitmap)
+                            capturedImageView.visibility = View.VISIBLE
+                        }
+
                         val base64Image = bitmapToBase64(bitmap)
                         val city = cityTextView.text.removePrefix("City: ").toString()
                         val barangay = barangayTextView.text.removePrefix("Barangay: ").toString()
@@ -116,9 +129,10 @@ class ReportFragment : Fragment() {
                             "city" to city,
                             "barangay" to barangay,
                             "street" to street,
-                            "roadHazard" to selectedHazard
+                            "roadHazard" to selectedHazard,
+                            "status" to 0
                         )
-                        Log.d("ReportDebug", report.toString())
+                        Log.d("ReportDebug", base64Image)
                         val db = Firebase.database.reference
                         db.child("roadhazards").push().setValue(report)
                             .addOnSuccessListener {
@@ -216,13 +230,39 @@ class ReportFragment : Fragment() {
             emptyList()
         }
     }
-    private fun imageProxyToBitmap(imageProxy: androidx.camera.core.ImageProxy): Bitmap {
-        val planeProxy = imageProxy.planes[0]
-        val buffer = planeProxy.buffer
-        val bytes = ByteArray(buffer.remaining())
-        buffer.get(bytes)
-        return android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+
+    private fun imageProxyToBitmap(imageProxy: ImageProxy): Bitmap {
+        return when (imageProxy.format) {
+            ImageFormat.JPEG -> {
+                val buffer = imageProxy.planes[0].buffer
+                val bytes = ByteArray(buffer.remaining())
+                buffer.get(bytes)
+                BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            }
+            ImageFormat.YUV_420_888 -> {
+                val yBuffer = imageProxy.planes[0].buffer
+                val uBuffer = imageProxy.planes[1].buffer
+                val vBuffer = imageProxy.planes[2].buffer
+
+                val ySize = yBuffer.remaining()
+                val uSize = uBuffer.remaining()
+                val vSize = vBuffer.remaining()
+
+                val nv21 = ByteArray(ySize + uSize + vSize)
+                yBuffer.get(nv21, 0, ySize)
+                vBuffer.get(nv21, ySize, vSize)
+                uBuffer.get(nv21, ySize + vSize, uSize)
+
+                val yuvImage = YuvImage(nv21, ImageFormat.NV21, imageProxy.width, imageProxy.height, null)
+                val out = ByteArrayOutputStream()
+                yuvImage.compressToJpeg(Rect(0, 0, imageProxy.width, imageProxy.height), 90, out)
+                val imageBytes = out.toByteArray()
+                BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+            }
+            else -> throw IllegalArgumentException("Unsupported image format: ${imageProxy.format}")
+        }
     }
+
     private fun bitmapToBase64(bitmap: Bitmap): String {
         val outputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
