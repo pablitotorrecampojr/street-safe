@@ -93,8 +93,6 @@ class ReportFragment : Fragment() {
 
         val submitButton = view.findViewById<Button>(R.id.submitReport)
         val cityTextView = view.findViewById<TextView>(R.id.tvCity)
-        val barangayTextView = view.findViewById<TextView>(R.id.tvBarangay)
-        val streetTextView = view.findViewById<TextView>(R.id.tvStreet)
 
         submitButton.setOnClickListener {
             val imageCapture = imageCapture ?: return@setOnClickListener
@@ -117,18 +115,15 @@ class ReportFragment : Fragment() {
                         }
 
                         val base64Image = bitmapToBase64(bitmap)
-                        val city = cityTextView.text.removePrefix("City: ").toString()
-                        val barangay = barangayTextView.text.removePrefix("Barangay: ").toString()
-                        val street = streetTextView.text.removePrefix("Street: ").toString()
+                        val fullAddress = cityTextView.text.removePrefix("City: ").toString()
+
                         val selectedHazard = spinner.selectedItem?.toString() ?: "Unknown"
                         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                         val currentDateTime = dateFormat.format(Date())
                         val report = hashMapOf(
                             "imageUrl" to base64Image,
                             "dateSubmitted" to currentDateTime,
-                            "city" to city,
-                            "barangay" to barangay,
-                            "street" to street,
+                            "city" to fullAddress,
                             "roadHazard" to selectedHazard,
                             "status" to 0
                         )
@@ -197,14 +192,9 @@ class ReportFragment : Fragment() {
             val addresses: List<Address> = geocoder.getFromLocation(latitude, longitude, 1) ?: emptyList()
             if (addresses.isNotEmpty()) {
                 val address: Address = addresses[0]
-                Log.d("Adress", address.toString())
-                val city = address.locality
-                val barangay = address.subLocality // Could be barangay or district
-                val street = address.thoroughfare // Street name
-                view?.findViewById<TextView>(R.id.tvCity)?.text = "City: $city"
-                view?.findViewById<TextView>(R.id.tvBarangay)?.text = "Barangay: $barangay"
-                view?.findViewById<TextView>(R.id.tvStreet)?.text = "Street: $street"
-                Toast.makeText(requireContext(), "City: $city, Barangay: $barangay, Street: $street", Toast.LENGTH_LONG).show()
+                Log.d("Address", address.toString())
+                val fullAddress = address.getAddressLine(0)
+                view?.findViewById<TextView>(R.id.tvCity)?.text = "Address: $fullAddress"
             }
         } catch (e: Exception) {
             e.printStackTrace()
