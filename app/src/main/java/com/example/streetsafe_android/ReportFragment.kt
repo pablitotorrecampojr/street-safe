@@ -51,6 +51,8 @@ class ReportFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     data class RoadDefect(val id: Int, val label: String)
     private var imageCapture: ImageCapture? = null
+    private var latitude: Double? = null
+    private var longitude: Double? = null
 
     private val requestCameraPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -125,7 +127,9 @@ class ReportFragment : Fragment() {
                             "dateSubmitted" to currentDateTime,
                             "fullAddress" to fullAddress,
                             "roadHazard" to selectedHazard,
-                            "status" to 0
+                            "status" to 0,
+                            "latitude" to latitude,
+                            "longitude" to longitude
                         )
                         Log.d("ReportDebug", base64Image)
                         val db = Firebase.database.reference
@@ -178,6 +182,8 @@ class ReportFragment : Fragment() {
         if (ContextCompat.checkSelfPermission(requireContext(), locationPermission) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location ->
                 location?.let {
+                    latitude = it.latitude
+                    longitude = it.longitude
                     getAddressFromLocation(it.latitude, it.longitude)
                 }
             }
