@@ -55,7 +55,15 @@ const HazardReport = () => {
           <div className='content-wrapper'>
             <div className='container-xxl flex-grow-1 container-p-y'>
               {loading ? (
-                <div>Loading...</div>
+                <div>
+                  <div className='d-flex justify-content-center align-items-center' style={{ height: "100vh" }}>
+                    <div className="demo-inline-spacing">
+                      <div className="spinner-border spinner-border-lg text-primary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               ) : (
                 <div className='row'>
                   {roadHazards.map((hazard, index) => {
