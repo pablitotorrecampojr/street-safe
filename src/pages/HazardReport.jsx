@@ -5,7 +5,7 @@ import {signOut} from '../firebase/auth';
 import Aside from '../components/Aside';
 import Navbar from '../components/NavBar';
 import Profile from '../components/Profile';
-import { getDatabase, ref, get } from "firebase/database";
+import { getDatabase, ref, get, onValue } from "firebase/database";
 import $ from "jquery";
 import "datatables.net-dt/css/dataTables.dataTables.css";
 import "datatables.net";
@@ -17,26 +17,27 @@ const HazardReport = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const db = getDatabase();
-        const roadhazardsRef = ref(db, 'roadhazards');
-        const snapshot = await get(roadhazardsRef);
-
-        if (snapshot.exists()) {
-          setRoadHazards(Object.values(snapshot.val())); 
-        } else {
-          toast.error("No roadhazards found");
-        }
-      } catch (error) {
-        toast.error("Error fetching roadhazards");
-      } finally {
-        setLoading(false);
+    const db = getDatabase();
+    const roadhazardsRef = ref(db, 'roadhazards');
+  
+    const unsubscribe = onValue(roadhazardsRef, (snapshot) => {
+      if (snapshot.exists()) {
+        setRoadHazards(Object.values(snapshot.val()));
+        setTimeout(() => {
+          $('.display').DataTable().destroy(); // destroy previous instance
+        }, 0);
+      } else {
+        setRoadHazards([]);
       }
-    };
-
-    fetchData();
-  }, []);
+      setLoading(false);
+    }, (error) => {
+      toast.error("Error fetching roadhazards");
+      setLoading(false);
+    });
+  
+    // Optional cleanup
+    return () => unsubscribe();
+  }, []);  
 
   useEffect(() => {
     if(!loading) {
@@ -90,9 +91,7 @@ const HazardReport = () => {
                               <tr>
                                 <th>#</th>
                                 <th>Image</th>
-                                <th>Barangay</th>
-                                <th>City</th>
-                                <th>Municipality</th>
+                                <th>Full Address</th>
                                 <th>Status</th>
                                 <th>Action</th>
                               </tr>
@@ -106,10 +105,8 @@ const HazardReport = () => {
                                   <td>
                                     <a className='btn btn-link' href={imageUrl}>{hazard.roadHazard}</a>
                                   </td>
-                                  <td>{hazard.barangay}</td>
-                                  <td>{hazard.city}</td>
-                                  <td>{hazard.street}</td>
-                                  <td>---</td>
+                                  <td>{hazard.fullAddress}</td>
+                                  <td>{hazard.status}</td>
                                   <td>---</td>
                                 </tr>
                               );
