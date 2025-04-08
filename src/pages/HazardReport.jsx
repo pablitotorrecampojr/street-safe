@@ -9,6 +9,7 @@ import { getDatabase, ref, get, onValue } from "firebase/database";
 import $ from "jquery";
 import "datatables.net-dt/css/dataTables.dataTables.css";
 import "datatables.net";
+import { hazard_status } from '../constants/hazard-report';
 
 const HazardReport = () => {
   const navigate = useNavigate();
@@ -154,7 +155,7 @@ const HazardReport = () => {
                                     </button>
                                   </td>
                                   <td className='text-wrap'>{hazard.fullAddress}</td>
-                                  <td>{hazard.status}</td>
+                                  <td>{hazard_status[hazard.status]}</td>
                                   <td>---</td>
                                 </tr>
                               );
