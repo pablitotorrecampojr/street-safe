@@ -91,22 +91,29 @@ const HazardReport = () => {
                                 <th>#</th>
                                 <th>Image</th>
                                 <th>Barangay</th>
-                                <th>District</th>
+                                <th>City</th>
                                 <th>Municipality</th>
                                 <th>Status</th>
                                 <th>Action</th>
                               </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                  <td>1</td>
-                                  <td>----</td>
-                                  <td>----</td>
-                                  <td>----</td>
-                                  <td>----</td>
-                                  <td>----</td>
-                                  <td>----</td>
+                            {roadHazards.map((hazard, index) => {
+                              const imageUrl = `data:image/jpeg;base64,${hazard.imageUrl}`;
+                              return (
+                                <tr key={index}>
+                                  <td>{(index) + 1}</td>
+                                  <td>
+                                    <a className='btn btn-link' href={imageUrl}>{hazard.roadHazard}</a>
+                                  </td>
+                                  <td>{hazard.barangay}</td>
+                                  <td>{hazard.city}</td>
+                                  <td>{hazard.street}</td>
+                                  <td>---</td>
+                                  <td>---</td>
                                 </tr>
+                              );
+                            })}
                             </tbody>
                           </table>
                         </div>
