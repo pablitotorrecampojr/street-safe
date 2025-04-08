@@ -30,7 +30,6 @@ export default function UsersView({ icon = "faUser", color = "primary", role = "
     const roleName = accountSetting.role[role] || "Unknown Role";
     let filteredUsers = 0;
     userData && userData.forEach((user) => { 
-        console.log(user);
         if (user.role == role) {
             filteredUsers++;
         }
