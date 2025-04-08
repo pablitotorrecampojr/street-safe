@@ -123,7 +123,7 @@ class ReportFragment : Fragment() {
                         val report = hashMapOf(
                             "imageUrl" to base64Image,
                             "dateSubmitted" to currentDateTime,
-                            "city" to fullAddress,
+                            "fullAddress" to fullAddress,
                             "roadHazard" to selectedHazard,
                             "status" to 0
                         )
