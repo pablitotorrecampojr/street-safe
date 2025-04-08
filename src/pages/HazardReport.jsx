@@ -6,15 +6,16 @@ import Aside from '../components/Aside';
 import Navbar from '../components/NavBar';
 import Profile from '../components/Profile';
 import { getDatabase, ref, get } from "firebase/database";
+import $ from "jquery";
+import "datatables.net-dt/css/dataTables.dataTables.css";
+import "datatables.net";
 
 const HazardReport = () => {
   const navigate = useNavigate();
   
-  // State to store roadhazards data
   const [roadHazards, setRoadHazards] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch roadhazards data on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -23,7 +24,6 @@ const HazardReport = () => {
         const snapshot = await get(roadhazardsRef);
 
         if (snapshot.exists()) {
-          // Assuming data is stored as an array of objects, map over it
           setRoadHazards(Object.values(snapshot.val())); 
         } else {
           toast.error("No roadhazards found");
@@ -37,6 +37,14 @@ const HazardReport = () => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if(!loading) {
+      $(document).ready(function() {
+        $(".display").DataTable();
+      });
+    }
+  }), [];
 
   const handleNavbarToggle = () => { 
     const htmlElement = document.getElementById("main-html");
@@ -65,18 +73,47 @@ const HazardReport = () => {
                   </div>
                 </div>
               ) : (
-                <div className='row'>
-                  {roadHazards.map((hazard, index) => {
-                    const imageUrl = `data:image/jpeg;base64,${hazard.imageUrl}`;
-
-                    return (
-                      <div key={index} className="col-md-3 mb-4">
-                        <img src={imageUrl} alt="Captured Hazard" height={100} width={100} />
-                        <p>{hazard.description}</p>
+                <>
+                  <div className="content-wrapper">
+                    <div className="container-xxl flex-grow-1 container-p-y">
+                      <div className="row">
+                        <div className="col-md-3 mb-4">
+                          <h1 style={{ fontSize: "20px" }} className="fw-bold">
+                            Hazard Report
+                          </h1>
+                        </div>
                       </div>
-                    );
-                  })}
-                </div>
+                      <div className="card">
+                        <div className="card-body">
+                          <table className="display">
+                            <thead>
+                              <tr>
+                                <th>#</th>
+                                <th>Image</th>
+                                <th>Barangay</th>
+                                <th>District</th>
+                                <th>Municipality</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                  <td>1</td>
+                                  <td>----</td>
+                                  <td>----</td>
+                                  <td>----</td>
+                                  <td>----</td>
+                                  <td>----</td>
+                                  <td>----</td>
+                                </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
               )}
             </div>
           </div>

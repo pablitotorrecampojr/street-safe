@@ -42,7 +42,7 @@ const AccessControl = () => {
     if (userData.length > 0 && tableRef.current) {
       const table = $(tableRef.current).DataTable();
       return () => {
-        table.destroy(); // Destroy previous instance before reinitializing
+        table.destroy();
       };
     }
   }, [userData]);
