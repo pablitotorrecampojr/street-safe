@@ -12,9 +12,11 @@ import "datatables.net";
 
 const HazardReport = () => {
   const navigate = useNavigate();
-  
   const [roadHazards, setRoadHazards] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [modalImageUrl, setModalImageUrl] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState(null);
 
   useEffect(() => {
     const db = getDatabase();
@@ -34,8 +36,6 @@ const HazardReport = () => {
       toast.error("Error fetching roadhazards");
       setLoading(false);
     });
-  
-    // Optional cleanup
     return () => unsubscribe();
   }, []);  
 
@@ -47,6 +47,10 @@ const HazardReport = () => {
     }
   }), [];
 
+  useEffect(() => {
+    document.body.style.overflow = modalVisible ? 'hidden' : 'auto';
+  }, [modalVisible]);
+
   const handleNavbarToggle = () => { 
     const htmlElement = document.getElementById("main-html");
     if (htmlElement) {
@@ -56,6 +60,38 @@ const HazardReport = () => {
 
   return (
     <div className="layout-wrapper layout-content-navbar">
+      {modalVisible && (
+        <div className="modal fade show d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">{modalTitle}</h5>
+                <button
+                  type="button"
+                  className="close"
+                  onClick={() => setModalVisible(false)}
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body d-flex justify-content-center align-items-center">
+                <img
+                  src={modalImageUrl}
+                  alt="Hazard Preview"
+                  style={{ maxWidth: "100%", maxHeight: "100%" }}
+                />
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setModalVisible(false)}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="layout-container">
         <Aside />
         <div className="layout-page">
@@ -103,9 +139,21 @@ const HazardReport = () => {
                                 <tr key={index}>
                                   <td>{(index) + 1}</td>
                                   <td>
-                                    <a className='btn btn-link' href={imageUrl}>{hazard.roadHazard}</a>
+                                    <button
+                                      key={index}
+                                      className="btn btn-link text-left"
+                                      data-toggle="modal"
+                                      data-target="#exampleModal"
+                                      onClick={() => {
+                                        setModalImageUrl(`data:image/jpeg;base64,${hazard.imageUrl}`);
+                                        setModalVisible(true);
+                                        setModalTitle(hazard.roadHazard);
+                                      }}
+                                    >
+                                      {hazard.roadHazard}
+                                    </button>
                                   </td>
-                                  <td>{hazard.fullAddress}</td>
+                                  <td className='text-wrap'>{hazard.fullAddress}</td>
                                   <td>{hazard.status}</td>
                                   <td>---</td>
                                 </tr>
