@@ -23,11 +23,14 @@ const HazardReport = () => {
     const db = getDatabase();
     const roadhazardsRef = ref(db, 'roadhazards');
   
-    const unsubscribe = onValue(roadhazardsRef, (snapshot) => {
+    onValue(roadhazardsRef, (snapshot) => {
       if (snapshot.exists()) {
-        setRoadHazards(Object.values(snapshot.val()));
+        const data = Object.values(snapshot.val());
+        const sortedDescending = data.sort((a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted));
+        setRoadHazards(sortedDescending);
+        toast.success("New Road Hazard Report!");
         setTimeout(() => {
-          $('.display').DataTable().destroy(); // destroy previous instance
+          $('.display').DataTable().destroy(); 
         }, 0);
       } else {
         setRoadHazards([]);
@@ -37,8 +40,8 @@ const HazardReport = () => {
       toast.error("Error fetching roadhazards");
       setLoading(false);
     });
-    return () => unsubscribe();
-  }, []);  
+  }, []);
+  
 
   useEffect(() => {
     if(!loading) {
@@ -154,7 +157,7 @@ const HazardReport = () => {
                                       {hazard.roadHazard}
                                     </button>
                                   </td>
-                                  <td className='text-wrap'>{hazard.fullAddress}</td>
+                                  <td className='text-wrap'>{hazard.fullAddress.replace("Address:","")}</td>
                                   <td>{hazard_status[hazard.status]}</td>
                                   <td>---</td>
                                 </tr>
