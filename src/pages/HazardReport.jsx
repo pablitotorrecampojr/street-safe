@@ -157,7 +157,7 @@ const HazardReport = () => {
                                       {hazard.roadHazard}
                                     </button>
                                   </td>
-                                  <td className='text-wrap'>{hazard.fullAddress.replace("Address:","")}</td>
+                                  <td className='text-wrap' data-latitude={hazard.latitude} data-longitude={hazard.longitude} >{hazard.fullAddress.replace("Address:","")}</td>
                                   <td>{hazard_status[hazard.status]}</td>
                                   <td>---</td>
                                 </tr>
