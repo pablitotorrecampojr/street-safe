@@ -22,16 +22,13 @@ const HazardReport = () => {
   useEffect(() => {
     const db = getDatabase();
     const roadhazardsRef = ref(db, 'roadhazards');
-  
-    onValue(roadhazardsRef, (snapshot) => {
+    const unsubscribe = onValue(roadhazardsRef, (snapshot) => {
       if (snapshot.exists()) {
         const data = Object.values(snapshot.val());
         const sortedDescending = data.sort((a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted));
-        setRoadHazards(sortedDescending);
         toast.success("New Road Hazard Report!");
-        setTimeout(() => {
-          $('.display').DataTable().destroy(); 
-        }, 0);
+  
+        setRoadHazards(sortedDescending);
       } else {
         setRoadHazards([]);
       }
@@ -40,8 +37,19 @@ const HazardReport = () => {
       toast.error("Error fetching roadhazards");
       setLoading(false);
     });
+  
+    return () => unsubscribe(); 
   }, []);
   
+  useEffect(() => {
+    if (!loading) {
+      const table = $('.display').DataTable();
+  
+      return () => {
+        table.destroy(); 
+      };
+    }
+  }, [roadHazards, loading]);  
 
   useEffect(() => {
     if(!loading) {
