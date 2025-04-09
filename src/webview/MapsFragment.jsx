@@ -14,15 +14,15 @@ export default function MapsFragment() {
             <div className="layout-container">
                 <div className="layout-page">
                     <div style={{ height: '100vh' }}>
-                        <MapContainer center={[14.5995, 120.9842]} zoom={13} style={{ height: '100%', width: '100%' }}>
+                        <MapContainer center={[10.3382812, 123.9122718]} zoom={19} style={{ height: '100%', width: '100%' }}>
                             <TileLayer
                             attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             />
-                            <Marker position={[14.5995, 120.9842]}>
-                            <Popup>
-                                A marker in Manila!
-                            </Popup>
+                            <Marker position={[10.3382812, 123.9122718]}>
+                                <Popup>
+                                    A marker in Manila!
+                                </Popup>
                             </Marker>
                         </MapContainer>
                     </div>
