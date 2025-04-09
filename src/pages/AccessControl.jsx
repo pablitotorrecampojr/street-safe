@@ -42,7 +42,7 @@ const AccessControl = () => {
     if (userData.length > 0 && tableRef.current) {
       const table = $(tableRef.current).DataTable();
       return () => {
-        table.destroy(); // Destroy previous instance before reinitializing
+        table.destroy();
       };
     }
   }, [userData]);
@@ -72,6 +72,7 @@ const AccessControl = () => {
                         <th>Name</th>
                         <th>Email</th>
                         <th>Role</th>
+                        <th>Municipality</th>
                         <th>Barangay</th>
                         <th>District</th>
                         <th>Registration Date</th>
@@ -85,7 +86,8 @@ const AccessControl = () => {
                             <td className="text-nowrap">{user.fullname}</td>
                             <td>{user.email}</td>
                             <td>{accountSetting.role[user.role]}</td>
-                            <td>{user.barangay ? user.role : "N/A"}</td>
+                            <td>{user.barangay ? user.municipality : "N/A"}</td>
+                            <td>{user.barangay ? user.barangay : "N/A"}</td>
                             <td>{user.district ? districtLists.districts[user.district].code +", "+districtLists.districts[user.district].name : "N/A"}</td>
                             <td>
                               {user.createdAt
