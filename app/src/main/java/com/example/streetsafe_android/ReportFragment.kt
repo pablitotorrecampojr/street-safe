@@ -140,17 +140,21 @@ class ReportFragment : Fragment() {
                         db.child("roadhazards").push().setValue(report)
                             .addOnSuccessListener {
                                 Toast.makeText(requireContext(), "Report submitted!", Toast.LENGTH_SHORT).show()
-                                activity?.finish()
+                                // Navigate back to ReportFragment
+                                val intent = Intent(requireContext(), MainActivity::class.java)
+                                startActivity(intent)
                             }
                             .addOnFailureListener { e ->
                                 Toast.makeText(requireContext(), "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
-                                activity?.finish()
+                                val intent = Intent(requireContext(), MainActivity::class.java)
+                                startActivity(intent)
                             }
                     }
 
                     override fun onError(exception: ImageCaptureException) {
                         Toast.makeText(requireContext(), "Capture failed: ${exception.message}", Toast.LENGTH_SHORT).show()
-                        activity?.finish()
+                        val intent = Intent(requireContext(), MainActivity::class.java)
+                        startActivity(intent)
                     }
                 }
             )
