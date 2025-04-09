@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import {signOut} from '../firebase/auth';
-import Aside from '../components/Aside';
-import Navbar from '../components/NavBar';
-import Profile from '../components/Profile';
+import { signOut } from "../firebase/auth";
+import Aside from "../components/Aside";
+import Navbar from "../components/NavBar";
+import Profile from "../components/Profile";
 import { getDatabase, ref, get, onValue } from "firebase/database";
-import $ from "jquery";
-import "datatables.net-dt/css/dataTables.dataTables.css";
-import "datatables.net";
-import { hazard_status } from '../constants/hazard-report';
+import { hazard_status } from "../constants/hazard-report";
+import { useTable } from "react-table";
 
 const HazardReport = () => {
   const navigate = useNavigate();
@@ -21,54 +19,100 @@ const HazardReport = () => {
 
   useEffect(() => {
     const db = getDatabase();
-    const roadhazardsRef = ref(db, 'roadhazards');
-    const unsubscribe = onValue(roadhazardsRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const data = Object.values(snapshot.val());
-        const sortedDescending = data.sort((a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted));
-        toast.success("New Road Hazard Report!");
-  
-        setRoadHazards(sortedDescending);
-      } else {
-        setRoadHazards([]);
+    const roadhazardsRef = ref(db, "roadhazards");
+    const unsubscribe = onValue(
+      roadhazardsRef,
+      (snapshot) => {
+        if (snapshot.exists()) {
+          const data = Object.values(snapshot.val());
+          const sortedDescending = data.sort(
+            (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
+          );
+          toast.success("New Road Hazard Report!");
+          setRoadHazards(sortedDescending);
+        } else {
+          setRoadHazards([]);
+        }
+        setLoading(false);
+      },
+      (error) => {
+        toast.error("Error fetching roadhazards");
+        setLoading(false);
       }
-      setLoading(false);
-    }, (error) => {
-      toast.error("Error fetching roadhazards");
-      setLoading(false);
-    });
-  
-    return () => unsubscribe(); 
+    );
+
+    return () => unsubscribe();
   }, []);
-  
-  useEffect(() => {
-    if (!loading) {
-      const table = $('.display').DataTable();
-  
-      return () => {
-        table.destroy(); 
-      };
-    }
-  }, [roadHazards, loading]);  
+
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: "#",
+        accessor: "index",
+      },
+      {
+        Header: "Image",
+        accessor: "roadHazard",
+        Cell: ({ value, row }) => (
+          <button
+            className="btn btn-link text-left"
+            onClick={() => {
+              setModalImageUrl(`data:image/jpeg;base64,${row.original.imageUrl}`);
+              setModalVisible(true);
+              setModalTitle(row.original.roadHazard);
+            }}
+          >
+            {value}
+          </button>
+        ),
+      },
+      {
+        Header: "Full Address",
+        accessor: "fullAddress",
+        Cell: ({ value }) => value.replace("Address:", ""),
+      },
+      {
+        Header: "Status",
+        accessor: "status",
+        Cell: ({ value }) => hazard_status[value],
+      },
+      {
+        Header: "Action",
+        accessor: "action",
+        Cell: () => "---", // You can add any action button here.
+      },
+    ],
+    []
+  );
+
+  const data = React.useMemo(
+    () =>
+      roadHazards.map((hazard, index) => ({
+        index: index + 1,
+        roadHazard: hazard.roadHazard,
+        imageUrl: hazard.imageUrl,
+        fullAddress: hazard.fullAddress,
+        status: hazard.status,
+        action: "---", // Placeholder for any action buttons
+      })),
+    [roadHazards]
+  );
+
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
+    columns,
+    data,
+  });
 
   useEffect(() => {
-    if(!loading) {
-      $(document).ready(function() {
-        $(".display").DataTable();
-      });
-    }
-  }), [];
-
-  useEffect(() => {
-    document.body.style.overflow = modalVisible ? 'hidden' : 'auto';
+    document.body.style.overflow = modalVisible ? "hidden" : "auto";
   }, [modalVisible]);
 
-  const handleNavbarToggle = () => { 
+  const handleNavbarToggle = () => {
     const htmlElement = document.getElementById("main-html");
     if (htmlElement) {
-        htmlElement.classList.remove("light-style", "layout-menu-fixed", "layout-menu-expanded");
+      htmlElement.classList.remove("light-style", "layout-menu-fixed", "layout-menu-expanded");
     }
-  }
+  };
 
   return (
     <div className="layout-wrapper layout-content-navbar">
@@ -88,11 +132,7 @@ const HazardReport = () => {
                 </button>
               </div>
               <div className="modal-body d-flex justify-content-center align-items-center">
-                <img
-                  src={modalImageUrl}
-                  alt="Hazard Preview"
-                  style={{ maxWidth: "100%", maxHeight: "100%" }}
-                />
+                <img src={modalImageUrl} alt="Hazard Preview" style={{ maxWidth: "100%", maxHeight: "100%" }} />
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setModalVisible(false)}>
@@ -109,16 +149,12 @@ const HazardReport = () => {
         <div className="layout-page">
           <Navbar />
 
-          <div className='content-wrapper'>
-            <div className='container-xxl flex-grow-1 container-p-y'>
+          <div className="content-wrapper">
+            <div className="container-xxl flex-grow-1 container-p-y">
               {loading ? (
-                <div>
-                  <div className='d-flex justify-content-center align-items-center' style={{ height: "100vh" }}>
-                    <div className="demo-inline-spacing">
-                      <div className="spinner-border spinner-border-lg text-primary" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
-                    </div>
+                <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
+                  <div className="spinner-border spinner-border-lg text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
                   </div>
                 </div>
               ) : (
@@ -134,43 +170,27 @@ const HazardReport = () => {
                       </div>
                       <div className="card">
                         <div className="card-body">
-                          <table className="display">
+                          <table {...getTableProps()} className="table table-striped">
                             <thead>
-                              <tr>
-                                <th>#</th>
-                                <th>Image</th>
-                                <th>Full Address</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                            {roadHazards.map((hazard, index) => {
-                              const imageUrl = `data:image/jpeg;base64,${hazard.imageUrl}`;
-                              return (
-                                <tr key={index}>
-                                  <td>{(index) + 1}</td>
-                                  <td>
-                                    <button
-                                      key={index}
-                                      className="btn btn-link text-left"
-                                      data-toggle="modal"
-                                      data-target="#exampleModal"
-                                      onClick={() => {
-                                        setModalImageUrl(`data:image/jpeg;base64,${hazard.imageUrl}`);
-                                        setModalVisible(true);
-                                        setModalTitle(hazard.roadHazard);
-                                      }}
-                                    >
-                                      {hazard.roadHazard}
-                                    </button>
-                                  </td>
-                                  <td className='text-wrap' data-latitude={hazard.latitude} data-longitude={hazard.longitude} >{hazard.fullAddress.replace("Address:","")}</td>
-                                  <td>{hazard_status[hazard.status]}</td>
-                                  <td>---</td>
+                              {headerGroups.map((headerGroup) => (
+                                <tr {...headerGroup.getHeaderGroupProps()}>
+                                  {headerGroup.headers.map((column) => (
+                                    <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+                                  ))}
                                 </tr>
-                              );
-                            })}
+                              ))}
+                            </thead>
+                            <tbody {...getTableBodyProps()}>
+                              {rows.map((row) => {
+                                prepareRow(row);
+                                return (
+                                  <tr {...row.getRowProps()}>
+                                    {row.cells.map((cell) => (
+                                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                                    ))}
+                                  </tr>
+                                );
+                              })}
                             </tbody>
                           </table>
                         </div>

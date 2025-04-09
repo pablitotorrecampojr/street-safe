@@ -19,6 +19,7 @@ import PageNotFound from './pages/PageNotFound';
 
 //TODO: import web view components
 import LoadingScreen from './webview/LoadingScreen';
+import MapsFragment from './webview/MapsFragment';
 
 // src/App.jsx
 import {app} from './firebase/firebase';
@@ -32,6 +33,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <Routes>
         {/* web view components */ }
         <Route path="/loading-screen" element={<LoadingScreen />} />
+        <Route path="/maps-fragment" element={<MapsFragment />} />
         {/* public routes */}
         <Route path="/" element={<PublicRoute><SignIn /></PublicRoute>} />
         <Route path="/sign-up" element={<PublicRoute><SignUp /></PublicRoute>} />
