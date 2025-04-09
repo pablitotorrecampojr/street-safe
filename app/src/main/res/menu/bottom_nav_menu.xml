@@ -3,7 +3,6 @@
     <item
         android:id="@+id/home"
         android:icon="@drawable/icons_home"
-        android:iconTint="@color/white"
         android:title="Home"
         android:itemBackground="@android:color/white"/>
 
@@ -18,7 +17,7 @@
         android:title="Report"/>
 
     <item
-        android:id="@+id/roadhazard"
+        android:id="@+id/hazards"
         android:icon="@drawable/icons_roadhazards_100"
         android:title="Hazards"/>
 
