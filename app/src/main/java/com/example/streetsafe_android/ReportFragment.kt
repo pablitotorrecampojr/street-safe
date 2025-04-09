@@ -43,6 +43,8 @@ import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
 import java.util.*
 import java.util.concurrent.ExecutionException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class ReportFragment : Fragment() {
 
@@ -127,6 +129,7 @@ class ReportFragment : Fragment() {
                         val selectedHazard = spinner.selectedItem?.toString() ?: "Unknown"
                         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                         val currentDateTime = dateFormat.format(Date())
+                        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "anonymous"
                         val report = hashMapOf(
                             "imageUrl" to base64Image,
                             "dateSubmitted" to currentDateTime,
@@ -134,7 +137,8 @@ class ReportFragment : Fragment() {
                             "roadHazard" to selectedHazard,
                             "status" to 0,
                             "latitude" to latitude,
-                            "longitude" to longitude
+                            "longitude" to longitude,
+                            "userid" to userId
                         )
                         Log.d("ReportDebug", base64Image)
                         val db = Firebase.database.reference
