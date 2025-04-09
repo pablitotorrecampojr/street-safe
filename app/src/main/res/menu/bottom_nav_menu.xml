@@ -8,9 +8,20 @@
         android:itemBackground="@android:color/white"/>
 
     <item
+        android:id="@+id/maps"
+        android:icon="@drawable/icons_maps_100"
+        android:title="Maps"/>
+
+    <item
         android:id="@+id/report"
         android:icon="@drawable/icons_plus"
         android:title="Report"/>
+
+    <item
+        android:id="@+id/roadhazard"
+        android:icon="@drawable/icons_roadhazards_100"
+        android:title="Hazards"/>
+
     <item
         android:id="@+id/profile"
         android:icon="@drawable/icons_profile"
