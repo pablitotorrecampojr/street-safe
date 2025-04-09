@@ -10,10 +10,17 @@
     <androidx.camera.view.PreviewView
         android:id="@+id/previewView"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="500dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <ImageView
+            android:id="@+id/capturedImageView"
+            android:layout_width="118dp"
+            android:layout_height="108dp"
+            tools:srcCompat="@tools:sample/avatars" />
+    </androidx.camera.view.PreviewView>
 
     <!-- Location Information TextViews -->
 
@@ -21,48 +28,12 @@
         android:id="@+id/tvCity"
         android:layout_width="299dp"
         android:layout_height="48dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="28dp"
         android:background="@drawable/rounded_edittext"
-        android:text="City: "
-        android:textSize="18sp"
+        android:text="Address: "
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/previewView" />
-
-    <TextView
-        android:id="@+id/tvBarangay"
-        android:layout_width="299dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/rounded_edittext"
-        android:text="Barangay: "
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvCity" />
-
-    <TextView
-        android:id="@+id/tvStreet"
-        android:layout_width="299dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/rounded_edittext"
-        android:text="Street: "
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvBarangay" />
-
-    <Spinner
-        android:id="@+id/spinnerDefects"
-        android:layout_width="299dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/spinner_with_icon"
-        android:paddingEnd="36dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvStreet" />
 
     <Button
         android:id="@+id/submitReport"
@@ -76,6 +47,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinnerDefects" />
+
+    <Spinner
+        android:id="@+id/spinnerDefects"
+        android:layout_width="299dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/spinner_with_icon"
+        android:paddingEnd="36dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCity" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
