@@ -17,7 +17,7 @@ class LoadingScreen : AppCompatActivity() {
         webView.settings.javaScriptEnabled = true
         webView.webViewClient = WebViewClient()
 
-        val loadingText = "Sending Data "
+        val loadingText = intent.getStringExtra("loadingText") ?: "Loading..."
         webView.loadUrl("http://192.168.1.188:5173/loading-screen?loadingText=$loadingText")
     }
 }

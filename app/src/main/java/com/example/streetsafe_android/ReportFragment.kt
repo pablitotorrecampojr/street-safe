@@ -102,6 +102,7 @@ class ReportFragment : Fragment() {
 
             // Start the loading screen
             val intent = Intent(requireContext(), LoadingScreen::class.java)
+            intent.putExtra("loadingText", "Sending Data ...")
             startActivity(intent)
 
             imageCapture.takePicture(
