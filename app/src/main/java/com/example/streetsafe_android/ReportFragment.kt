@@ -2,6 +2,7 @@
 package com.example.streetsafe_android
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -99,6 +100,10 @@ class ReportFragment : Fragment() {
         submitButton.setOnClickListener {
             val imageCapture = imageCapture ?: return@setOnClickListener
 
+            // Start the loading screen
+            val intent = Intent(requireContext(), LoadingScreen::class.java)
+            startActivity(intent)
+
             imageCapture.takePicture(
                 ContextCompat.getMainExecutor(requireContext()),
                 object : ImageCapture.OnImageCapturedCallback() {
@@ -118,7 +123,6 @@ class ReportFragment : Fragment() {
 
                         val base64Image = bitmapToBase64(bitmap)
                         val fullAddress = cityTextView.text.removePrefix("City: ").toString()
-
                         val selectedHazard = spinner.selectedItem?.toString() ?: "Unknown"
                         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                         val currentDateTime = dateFormat.format(Date())
@@ -136,13 +140,17 @@ class ReportFragment : Fragment() {
                         db.child("roadhazards").push().setValue(report)
                             .addOnSuccessListener {
                                 Toast.makeText(requireContext(), "Report submitted!", Toast.LENGTH_SHORT).show()
+                                activity?.finish()
                             }
                             .addOnFailureListener { e ->
                                 Toast.makeText(requireContext(), "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                                activity?.finish()
                             }
                     }
+
                     override fun onError(exception: ImageCaptureException) {
                         Toast.makeText(requireContext(), "Capture failed: ${exception.message}", Toast.LENGTH_SHORT).show()
+                        activity?.finish()
                     }
                 }
             )
