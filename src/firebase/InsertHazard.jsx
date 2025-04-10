@@ -12,11 +12,11 @@ export default function ProtectedRoute({ children }) {
                 const newHazard = {
                     imageUrl: "base64Image",
                     dateSubmitted: "2025-04-11 00:00:00",
-                    fullAddress: "869 A. S. Fortuna St, Mandaue City, Cebu",
-                    roadHazard: "Cracks",
+                    fullAddress: "8WQ3+5W7, Camp Lapu-Lapu Rd, Lungsod ng Cebu, 6000 Lalawigan ng Cebu",
+                    roadHazard: "Test Data",
                     status: 0,
-                    latitude: 10.340423,
-                    longitude: 123.9195337,
+                    latitude: 10.337927,
+                    longitude: 123.904806,
                     userid: "vCdg9SpVlreJSEnHLY4De2HSW4F2"
                 };
 
