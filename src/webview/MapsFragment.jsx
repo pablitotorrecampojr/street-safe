@@ -9,7 +9,8 @@ import { toast } from 'react-toastify';  // If you're using toast notifications 
 export default function MapsFragment() {
     const location = useLocation();
     const params = new URLSearchParams(location.search);
-    const loadingText = params.get("loadingText") || "Loading...";
+    const userLatitude = params.get("lat") || 10.3385155;
+    const userLongitude = params.get("lng") || 123.91217342595031;
     const [roadHazards, setRoadHazards] = useState([]);
 
     useEffect(() => {
@@ -31,6 +32,7 @@ export default function MapsFragment() {
             },
             (error) => {
                 toast.error("Error fetching roadhazards");
+                console.error("Error fetching roadhazards:", error);
             }
         );
 
@@ -55,18 +57,16 @@ export default function MapsFragment() {
             <div className="layout-container">
                 <div className="layout-page">
                     <div style={{ height: '100vh' }}>
-                        <MapContainer center={[10.3382812, 123.9122718]} zoom={19} style={{ height: '100%', width: '100%' }}>
+                        <MapContainer center={[userLatitude, userLongitude]} zoom={15} style={{ height: '100%', width: '100%' }}>
                             <TileLayer
                                 attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             />
-                            {/* Default Blue Marker */}
-                            <Marker position={[10.3382812, 123.9122718]}>
+                            <Marker position={[userLatitude, userLongitude]}>
                                 <Popup>
                                     A marker in Manila!
                                 </Popup>
                             </Marker>
-                            {/* Same Style Marker for Road Hazards with Custom SVG Icon */}
                             {roadHazards.map((hazard, index) => {
                                 const { latitude, longitude } = hazard;
 
@@ -74,7 +74,7 @@ export default function MapsFragment() {
                                     <Marker
                                         key={index}
                                         position={[latitude, longitude]}
-                                        icon={hazardIcon}  // Apply custom SVG icon
+                                        icon={hazardIcon}
                                     >
                                         <Popup>
                                             <div>
