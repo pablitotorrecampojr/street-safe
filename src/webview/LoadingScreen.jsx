@@ -16,9 +16,9 @@ export default function LoadingScreen() {
                   className="spinner-border text-primary"
                   role="status"
                   style={{
-                    width: "10rem",
-                    height: "10rem",
-                    borderWidth: "0.5rem"
+                    width: "8rem",
+                    height: "8rem",
+                    borderWidth: "5px"
                   }}
                 >
                   <span className="visually-hidden">{loadingText}</span>

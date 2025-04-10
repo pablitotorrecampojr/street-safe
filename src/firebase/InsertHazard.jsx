@@ -12,11 +12,11 @@ export default function ProtectedRoute({ children }) {
                 const newHazard = {
                     imageUrl: "base64Image",
                     dateSubmitted: "2025-04-11 00:00:00",
-                    fullAddress: "869 A. S. Fortuna St, Mandaue City, Cebu",
-                    roadHazard: "Cracks",
+                    fullAddress: "Cebu Transcentral Hwy, Cebu City, 6000 Cebu",
+                    roadHazard: "Test Data",
                     status: 0,
-                    latitude: 10.340423,
-                    longitude: 123.9195337,
+                    latitude: 10.3678299,
+                    longitude: 123.8682681,
                     userid: "vCdg9SpVlreJSEnHLY4De2HSW4F2"
                 };
 
