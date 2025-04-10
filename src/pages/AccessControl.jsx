@@ -1,51 +1,97 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getDocs, collection } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import Aside from "../components/Aside";
 import Navbar from "../components/NavBar";
-import $ from "jquery";
-import "datatables.net-dt/css/dataTables.dataTables.css";
-import "datatables.net";
 import accountSetting from "../constants/account-setting.json";
 import districtLists from "../constants/districts.json";
+import { useTable } from "react-table";
 
 const AccessControl = () => {
-  const tableRef = useRef(null);
   const [userData, setUserData] = useState([]);
 
-  const handleNavbarToggle = () => {
-    const htmlElement = document.getElementById("main-html");
-    if (htmlElement) {
-      htmlElement.classList.remove("light-style", "layout-menu-fixed", "layout-menu-expanded");
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: "#",
+        accessor: "index",
+      },
+      {
+        Header: "Name",
+        accessor: "fullname",
+      },
+      {
+        Header: "Email",
+        accessor: "email",
+      },
+      {
+        Header: "Role",
+        accessor: "role",
+        Cell: ({ value }) => accountSetting.role[value],
+      },
+      {
+        Header: "Municipality",
+        accessor: "municipality",
+        Cell: ({ row }) => row.original.barangay ? row.original.municipality : "N/A",
+      },
+      {
+        Header: "Barangay",
+        accessor: "barangay",
+        Cell: ({ value }) => value || "N/A",
+      },
+      {
+        Header: "District",
+        accessor: "district",
+        Cell: ({ value, row }) =>
+          value ? `${districtLists.districts[value].code}, ${districtLists.districts[value].name}` : "N/A",
+      },
+      {
+        Header: "Registration Date",
+        accessor: "createdAt",
+        Cell: ({ value }) => {
+          if (value) {
+            const date = new Date(value);
+            const month = date.toLocaleString("en-US", { month: "long" });
+            const day = String(date.getDate()).padStart(2, "0");
+            const year = date.getFullYear();
+            return `${month} ${day}, ${year}`;
+          }
+          return "N/A";
+        },
+      },
+    ],
+    []
+  );
+
+  const fetchUsers = async () => {
+    try {
+      const usersCollection = collection(db, "users");
+      const usersSnapshot = await getDocs(usersCollection);
+      const usersList = usersSnapshot.docs.map((doc, index) => ({
+        index: index + 1,
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setUserData(usersList);
+    } catch (error) {
+      console.error("Error fetching users:", error);
     }
   };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const usersCollection = collection(db, "users");
-        const usersSnapshot = await getDocs(usersCollection);
-        const usersList = usersSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setUserData(usersList);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
     fetchUsers();
   }, []);
 
-  useEffect(() => {
-    if (userData.length > 0 && tableRef.current) {
-      const table = $(tableRef.current).DataTable();
-      return () => {
-        table.destroy();
-      };
-    }
-  }, [userData]);
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = useTable({
+    columns,
+    data: userData,
+  });
 
   return (
     <div className="layout-wrapper layout-content-navbar">
@@ -65,44 +111,27 @@ const AccessControl = () => {
               </div>
               <div className="card">
                 <div className="card-body">
-                  <table ref={tableRef} className="display">
+                  <table {...getTableProps()} className="table table-striped">
                     <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Municipality</th>
-                        <th>Barangay</th>
-                        <th>District</th>
-                        <th>Registration Date</th>
-                      </tr>
+                      {headerGroups.map((headerGroup) => (
+                        <tr {...headerGroup.getHeaderGroupProps()}>
+                          {headerGroup.headers.map((column) => (
+                            <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+                          ))}
+                        </tr>
+                      ))}
                     </thead>
-                    <tbody>
-                     {userData && userData.map((user, index) => {
+                    <tbody {...getTableBodyProps()}>
+                      {rows.map((row) => {
+                        prepareRow(row);
                         return (
-                          <tr key={index}>
-                            <td>{(index) + 1}</td>
-                            <td className="text-nowrap">{user.fullname}</td>
-                            <td>{user.email}</td>
-                            <td>{accountSetting.role[user.role]}</td>
-                            <td>{user.barangay ? user.municipality : "N/A"}</td>
-                            <td>{user.barangay ? user.barangay : "N/A"}</td>
-                            <td>{user.district ? districtLists.districts[user.district].code +", "+districtLists.districts[user.district].name : "N/A"}</td>
-                            <td>
-                              {user.createdAt
-                                ? (() => {
-                                    const date = new Date(user.createdAt);
-                                    const month = date.toLocaleString("en-US", { month: "long" });
-                                    const day = String(date.getDate()).padStart(2, "0");
-                                    const year = date.getFullYear();
-                                    return `${month} ${day}, ${year}`;
-                                  })()
-                                : "N/A"}
-                            </td>
+                          <tr {...row.getRowProps()}>
+                            {row.cells.map((cell) => (
+                              <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                            ))}
                           </tr>
-                        )
-                     })}
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -111,7 +140,7 @@ const AccessControl = () => {
           </div>
         </div>
       </div>
-      <div className="layout-overlay layout-menu-toggle" onClick={handleNavbarToggle}></div>
+      <div className="layout-overlay layout-menu-toggle"></div>
     </div>
   );
 };

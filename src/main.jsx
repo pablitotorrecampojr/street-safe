@@ -17,6 +17,10 @@ import EditProfile from './pages/EditProfile';
 import AccessControl from './pages/AccessControl';
 import PageNotFound from './pages/PageNotFound';
 
+//TODO: import web view components
+import LoadingScreen from './webview/LoadingScreen';
+import MapsFragment from './webview/MapsFragment';
+
 // src/App.jsx
 import {app} from './firebase/firebase';
 import './index.css';
@@ -27,49 +31,52 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
+        {/* web view components */ }
+        <Route path="/loading-screen" element={<LoadingScreen />} />
+        <Route path="/maps-fragment" element={<MapsFragment />} />
         {/* public routes */}
         <Route path="/" element={<PublicRoute><SignIn /></PublicRoute>} />
         <Route path="/sign-up" element={<PublicRoute><SignUp /></PublicRoute>} />
         {/* private routes */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/hazard-report"
-          element={
-            <ProtectedRoute>
-              <HazardReport />
-            </ProtectedRoute>
-          }
-        /> 
-        <Route
-          path="/notification"
-          element={
-            <ProtectedRoute>
-              <Notification />
-            </ProtectedRoute>
-          }
-        /> 
-        <Route
-          path="/edit-profile"
-          element={
-            <ProtectedRoute>
-              <EditProfile />
-            </ProtectedRoute>
-          }
-        /> 
-         <Route
-          path="/access-control"
-          element={
-            <ProtectedRoute>
-              <AccessControl />
-            </ProtectedRoute>
-          }
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/hazard-report"
+            element={
+              <ProtectedRoute>
+                <HazardReport />
+              </ProtectedRoute>
+            }
+          /> 
+          <Route
+            path="/notification"
+            element={
+              <ProtectedRoute>
+                <Notification />
+              </ProtectedRoute>
+            }
+          /> 
+          <Route
+            path="/edit-profile"
+            element={
+              <ProtectedRoute>
+                <EditProfile />
+              </ProtectedRoute>
+            }
+          /> 
+          <Route
+            path="/access-control"
+            element={
+              <ProtectedRoute>
+                <AccessControl />
+              </ProtectedRoute>
+            }
         /> 
         <Route path="*" element={<PageNotFound />} />
       </Routes>
