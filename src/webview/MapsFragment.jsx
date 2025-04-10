@@ -100,6 +100,7 @@ export default function MapsFragment() {
                                             <Popup>
                                                 <div>
                                                     <h4>{hazard.roadHazard}</h4>
+                                                    <a href="#">View Details</a>
                                                 </div>
                                             </Popup>
                                         </Marker>
