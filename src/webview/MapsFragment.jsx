@@ -99,7 +99,9 @@ export default function MapsFragment() {
                                         >
                                             <Popup>
                                                 <div>
-                                                    <h4>{hazard.roadHazard}</h4>
+                                                    <h4>☢️ {hazard.roadHazard} ☢️</h4>
+                                                    <p>📌{hazard.fullAddress.replace("Address:", "")}</p>
+                                                    <a href="#">View full detail</a>
                                                 </div>
                                             </Popup>
                                         </Marker>

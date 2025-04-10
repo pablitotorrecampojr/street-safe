@@ -21,6 +21,9 @@ import PageNotFound from './pages/PageNotFound';
 import LoadingScreen from './webview/LoadingScreen';
 import MapsFragment from './webview/MapsFragment';
 
+//TODO: scripts
+import InsertHazard from './firebase/InsertHazard';
+
 // src/App.jsx
 import {app} from './firebase/firebase';
 import './index.css';
@@ -37,6 +40,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         {/* public routes */}
         <Route path="/" element={<PublicRoute><SignIn /></PublicRoute>} />
         <Route path="/sign-up" element={<PublicRoute><SignUp /></PublicRoute>} />
+
+        <Route path="/insert-hazard" element={<InsertHazard />} />
+
         {/* private routes */}
           <Route
             path="/dashboard"
