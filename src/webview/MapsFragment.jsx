@@ -4,7 +4,6 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { getDatabase, ref, onValue } from "firebase/database";
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet'; 
-import { toast } from 'react-toastify'; 
 
 export default function MapsFragment() {
     const location = useLocation();
@@ -24,7 +23,6 @@ export default function MapsFragment() {
                     const sortedDescending = data.sort(
                         (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
                     );
-                    toast.success("New Road Hazard Report!");
                     setRoadHazards(sortedDescending);
                 } else {
                     setRoadHazards([]);
@@ -77,7 +75,7 @@ export default function MapsFragment() {
                                     >
                                         <Popup>
                                             <div>
-                                                <h4>Road Hazard</h4>
+                                                <h4>{hazard.roadHazard}</h4>
                                             </div>
                                         </Popup>
                                     </Marker>
