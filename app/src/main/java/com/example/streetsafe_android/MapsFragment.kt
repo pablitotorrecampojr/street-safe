@@ -19,8 +19,7 @@ class MapsFragment : Fragment() {
         val webView = view.findViewById<WebView>(R.id.mapsWebView)
         webView.settings.javaScriptEnabled = true
         webView.webViewClient = WebViewClient()
-        val loadingText = arguments?.getString("loadingText") ?: "Loading..."
-        val url = "${Constants.BASE_URL}/maps-fragment?loadingText=$loadingText"
+        val url = "${Constants.BASE_URL}maps-fragment"
         webView.loadUrl(url)
         return view
     }
