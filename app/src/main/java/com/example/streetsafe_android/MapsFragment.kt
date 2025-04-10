@@ -1,16 +1,20 @@
 package com.example.streetsafe_android
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import com.google.android.gms.location.*
 
 class MapsFragment : Fragment() {
-    @SuppressLint("SetJavaScriptEnabled") // Allow JavaScript in WebView
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    @SuppressLint("MissingPermission", "SetJavaScriptEnabled")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -19,8 +23,31 @@ class MapsFragment : Fragment() {
         val webView = view.findViewById<WebView>(R.id.mapsWebView)
         webView.settings.javaScriptEnabled = true
         webView.webViewClient = WebViewClient()
-        val url = "${Constants.BASE_URL}maps-fragment"
-        webView.loadUrl(url)
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
+        // Check location permissions
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                val latitude = location?.latitude ?: 0.0
+                val longitude = location?.longitude ?: 0.0
+
+                // Add lat/lng as query params to URL
+                val url = "${Constants.BASE_URL}maps-fragment?lat=$latitude&lng=$longitude"
+                webView.loadUrl(url)
+            }
+        } else {
+            // Request permission from the user
+            requestPermissions(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                1001
+            )
+        }
+
         return view
     }
 }
