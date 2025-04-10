@@ -3,8 +3,8 @@ import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { getDatabase, ref, onValue } from "firebase/database";
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';  // Leaflet library for creating custom icons
-import { toast } from 'react-toastify';  // If you're using toast notifications for success/error messages
+import L from 'leaflet'; 
+import { toast } from 'react-toastify'; 
 
 export default function MapsFragment() {
     const location = useLocation();
@@ -39,7 +39,6 @@ export default function MapsFragment() {
         return () => unsubscribe();
     }, []);
 
-    // Define the SVG icon for road hazards
     const hazardIcon = new L.DivIcon({
         className: 'custom-svg-icon',
         html: `
@@ -48,8 +47,8 @@ export default function MapsFragment() {
             </svg>
         `,
         iconSize: [100, 100], 
-        iconAnchor: [15, 30],  // Adjust anchor point to center the icon
-        popupAnchor: [0, -30],  // Adjust position of popup relative to the icon
+        iconAnchor: [15, 30],  
+        popupAnchor: [0, -30], 
     });
 
     return (
