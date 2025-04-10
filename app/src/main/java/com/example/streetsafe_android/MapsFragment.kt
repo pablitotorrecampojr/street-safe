@@ -26,7 +26,6 @@ class MapsFragment : Fragment() {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
-        // Check location permissions
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -36,12 +35,10 @@ class MapsFragment : Fragment() {
                 val latitude = location?.latitude ?: 0.0
                 val longitude = location?.longitude ?: 0.0
 
-                // Add lat/lng as query params to URL
                 val url = "${Constants.BASE_URL}maps-fragment?lat=$latitude&lng=$longitude"
                 webView.loadUrl(url)
             }
         } else {
-            // Request permission from the user
             requestPermissions(
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 1001
