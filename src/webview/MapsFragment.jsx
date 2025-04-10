@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { getDatabase, ref, onValue } from "firebase/database";
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet'; 
+import LoadingScreen from './LoadingScreen';
 
 export default function MapsFragment() {
     const location = useLocation();
@@ -11,6 +12,7 @@ export default function MapsFragment() {
     const userLatitude = params.get("lat") || 10.3385155;
     const userLongitude = params.get("lng") || 123.91217342595031;
     const [roadHazards, setRoadHazards] = useState([]);
+    const [loading, setLoading] = useState(true); // ← add loading state
 
     useEffect(() => {
         const db = getDatabase();
@@ -27,10 +29,12 @@ export default function MapsFragment() {
                 } else {
                     setRoadHazards([]);
                 }
+                setLoading(false); // ← stop loading after data is fetched
             },
             (error) => {
                 toast.error("Error fetching roadhazards");
                 console.error("Error fetching roadhazards:", error);
+                setLoading(false);
             }
         );
 
@@ -68,37 +72,41 @@ export default function MapsFragment() {
         <div className="layout-wrapper layout-content-navbar">
             <div className="layout-container">
                 <div className="layout-page">
-                    <div style={{ height: '100vh' }}>
-                        <MapContainer center={[userLatitude, userLongitude]} zoom={15} style={{ height: '100%', width: '100%' }}>
-                            <TileLayer
-                                attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                            />
-                            <Marker 
-                                position={[userLatitude, userLongitude]} 
-                                icon={userIcon}>
-                                <Popup>
-                                    You are Here!
-                                </Popup>
-                            </Marker>
-                            {roadHazards.map((hazard, index) => {
-                                const { latitude, longitude } = hazard;
+                    <div style={{ height: '100vh', position: 'relative' }}>
+                        {loading ? (
+                            <LoadingScreen loadingText="Fetching Map Data..." />
+                        ) : (
+                            <MapContainer center={[userLatitude, userLongitude]} zoom={15} style={{ height: '100%', width: '100%' }}>
+                                <TileLayer
+                                    attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                />
+                                <Marker 
+                                    position={[userLatitude, userLongitude]} 
+                                    icon={userIcon}>
+                                    <Popup>
+                                        You are Here!
+                                    </Popup>
+                                </Marker>
+                                {roadHazards.map((hazard, index) => {
+                                    const { latitude, longitude } = hazard;
 
-                                return (
-                                    <Marker
-                                        key={index}
-                                        position={[latitude, longitude]}
-                                        icon={hazardIcon}
-                                    >
-                                        <Popup>
-                                            <div>
-                                                <h4>{hazard.roadHazard}</h4>
-                                            </div>
-                                        </Popup>
-                                    </Marker>
-                                );
-                            })}
-                        </MapContainer>
+                                    return (
+                                        <Marker
+                                            key={index}
+                                            position={[latitude, longitude]}
+                                            icon={hazardIcon}
+                                        >
+                                            <Popup>
+                                                <div>
+                                                    <h4>{hazard.roadHazard}</h4>
+                                                </div>
+                                            </Popup>
+                                        </Marker>
+                                    );
+                                })}
+                            </MapContainer>
+                        )}
                     </div>
                 </div>
             </div>
