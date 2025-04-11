@@ -165,7 +165,7 @@ const HazardReport = () => {
                         <div className="col-md-3 mb-4">
                           <h1 style={{ fontSize: "20px" }} className="fw-bold">
                             Hazard Report
-                          </h1>
+                        </h1>
                         </div>
                       </div>
                       <div className="card">

@@ -1,76 +1,106 @@
 import { useLocation } from 'react-router-dom';
-import { db } from '../firebase/firebase';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getDatabase, ref, onValue } from "firebase/database";
+import { hazard_status } from "../constants/hazard-report";
+import LoadingScreen from './LoadingScreen';
 
 export default function HazardFragment() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const userId = params.get("userId") || "null";
 
+  const [roadHazards, setRoadHazards] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(null);
 
   const handleAccordionClick = (index) => {
-    console.log(`Accordion ${index + 1} clicked by user ${userId}`);
     setActiveIndex(prev => (prev === index ? null : index));
   };
 
-  return (
-    <div className="layout-wrapper layout-content-navbar">
-      <div className="layout-container">
-        <div className="layout-page">
-          <div className="content-wrapper">
-            <div className="container-xxl flex-grow-1 container-p-y">
-              <div className="row">
-                <div className="col-md-3 mb-4 mb-md-0">
-                  <h1 className="text-center fw-bold">Hazards</h1>
-                  <div className="accordion mt-3" id="accordionExample">
-                    {[...Array(20)].map((_, index) => {
-                      const headingId = `heading${index}`;
-                      const collapseId = `collapse${index}`;
-                      const isActive = activeIndex === index;
+  useEffect(() => {
+    const db = getDatabase();
+    const roadhazardsRef = ref(db, "roadhazards");
 
-                      return (
-                        <div
-                          className={`card accordion-item ${isActive ? 'active' : ''}`}
-                          key={index}
-                        >
-                          <h2 className="accordion-header border-bottom" id={headingId}>
-                            <button
-                              type="button"
-                              className={`accordion-button ${isActive ? '' : 'collapsed'}`}
-                              data-bs-toggle="collapse"
-                              data-bs-target={`#${collapseId}`}
-                              aria-expanded={isActive}
-                              aria-controls={collapseId}
-                              onClick={() => handleAccordionClick(index)}
+    const unsubscribe = onValue(
+      roadhazardsRef,
+      (snapshot) => {
+        if (snapshot.exists()) {
+          const data = Object.values(snapshot.val());
+          const sortedDescending = data.sort(
+            (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
+          );
+          setRoadHazards(sortedDescending);
+        } else {
+          setRoadHazards([]);
+        }
+        setLoading(false);
+      },
+      (error) => {
+        console.error("Error fetching roadhazards:", error);
+        setLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
+
+    return (
+        <div className="layout-wrapper layout-content-navbar">
+        <div className="layout-container">
+            <div className="layout-page">
+            <div className="content-wrapper">
+                <div className="container-xxl flex-grow-1 container-p-y">
+                <div className="row">
+                    <div className="col-md-6 mb-4 mb-md-0">
+                    <h1 className="text-center fw-bold">Hazards</h1>
+                    {loading ? (
+                        <LoadingScreen loadingText="Fetching Map Data..." />
+                    ) : (
+                        <div className="accordion mt-3" id="accordionExample">
+                        {roadHazards.map((hazard, index) => {
+                            const headingId = `heading${index}`;
+                            const collapseId = `collapse${index}`;
+                            const isActive = activeIndex === index;
+
+                            return (
+                            <div
+                                className={`card accordion-item ${isActive ? 'active' : ''}`}
+                                key={hazard.id || index}
                             >
-                              Accordion Item {index + 1}
-                            </button>
-                          </h2>
+                                <h2 className="accordion-header border-bottom" id={headingId}>
+                                <button
+                                    type="button"
+                                    className={`accordion-button ${isActive ? '' : 'collapsed'}`}
+                                    aria-expanded={isActive}
+                                    onClick={() => handleAccordionClick(index)}
+                                >
+                                    {hazard.hazardType || `Hazard ${index + 1}`}
+                                </button>
+                                </h2>
 
-                          <div
-                            id={collapseId}
-                            className={`accordion-collapse  ${isActive ? 'show mt-4 mb-4' : 'collapse'}`}
-                            data-bs-parent="#accordionExample"
-                          >
-                            <div className="accordion-body">
-                              <p className="text-black">
-                                Lemon drops chocolate cake gummies carrot cake chupa chups muffin topping. Sesame snaps icing
-                                marzipan gummi bears macaroon dragée danish caramels powder. Bear claw dragée pastry topping
-                                soufflé. Wafer gummi bears marshmallow pastry pie.
-                              </p>
+                                <div
+                                id={collapseId}
+                                className={`accordion-collapse ${isActive ? 'show mt-4 mb-4' : 'collapse'}`}
+                                >
+                                <div className="accordion-body">
+                                    <p className="text-black">
+                                    <strong>Date Submitted:</strong> {hazard.dateSubmitted || 'N/A'}<br />
+                                    <strong>Location:</strong> {hazard.fullAddress}<br />
+                                    <strong>Status:</strong> {hazard_status[hazard.status] || 'Unknown'}
+                                    </p>
+                                </div>
+                                </div>
                             </div>
-                          </div>
+                            );
+                        })}
                         </div>
-                      );
-                    })}
-                  </div>
+                    )}
+                    </div>
                 </div>
-              </div>
+                </div>
             </div>
-          </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+        </div>
+    );
 }
