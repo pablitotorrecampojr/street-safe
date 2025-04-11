@@ -62,7 +62,7 @@ export default function HazardFragment() {
                             const collapseId = `collapse${index}`;
                             const isActive = activeIndex === index;
 
-                            if (hazard.userId == userId) {
+                            if (hazard.userid == userId) {
                                 return (
                                     <div
                                         className={`card accordion-item ${isActive ? 'active' : ''}`}
