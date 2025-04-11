@@ -62,36 +62,43 @@ export default function HazardFragment() {
                             const collapseId = `collapse${index}`;
                             const isActive = activeIndex === index;
 
-                            return (
-                            <div
-                                className={`card accordion-item ${isActive ? 'active' : ''}`}
-                                key={hazard.id || index}
-                            >
-                                <h2 className="accordion-header border-bottom" id={headingId}>
-                                <button
-                                    type="button"
-                                    className={`accordion-button ${isActive ? '' : 'collapsed'}`}
-                                    aria-expanded={isActive}
-                                    onClick={() => handleAccordionClick(index)}
-                                >
-                                    {hazard.hazardType || `Hazard ${index + 1}`}
-                                </button>
-                                </h2>
-
-                                <div
-                                id={collapseId}
-                                className={`accordion-collapse ${isActive ? 'show mt-4 mb-4' : 'collapse'}`}
-                                >
-                                <div className="accordion-body">
-                                    <p className="text-black">
-                                    <strong>Date Submitted:</strong> {hazard.dateSubmitted || 'N/A'}<br />
-                                    <strong>Location:</strong> {hazard.fullAddress}<br />
-                                    <strong>Status:</strong> {hazard_status[hazard.status] || 'Unknown'}
-                                    </p>
-                                </div>
-                                </div>
-                            </div>
-                            );
+                            if (hazard.userid == userId) {
+                                return (
+                                    <div
+                                        className={`card accordion-item ${isActive ? 'active' : ''}`}
+                                        key={hazard.id || index}
+                                    >
+                                        <h2 className="accordion-header border-bottom" id={headingId}>
+                                        <button
+                                            type="button"
+                                            className={`accordion-button ${isActive ? '' : 'collapsed'}`}
+                                            aria-expanded={isActive}
+                                            onClick={() => handleAccordionClick(index)}
+                                        >
+                                            {hazard.roadHazard || `Hazard ${index + 1}`}
+                                        </button>
+                                        </h2>
+    
+                                        <div
+                                        id={collapseId}
+                                        className={`accordion-collapse ${isActive ? 'show mt-4 mb-4' : 'collapse'}`}
+                                        >
+                                        <div className="accordion-body">
+                                            <img
+                                                src={"data:image/jpeg;base64," +hazard.imageUrl}
+                                                alt="Hazard Preview"
+                                                className="img-fluid mb-3"
+                                                style={{ maxWidth: "100%", maxHeight: "300px", objectFit: "cover" }} />
+                                            <p className="text-black">
+                                                <strong>Date Submitted:</strong> {hazard.dateSubmitted || 'N/A'}<br />
+                                                <strong>Location:</strong> {hazard.fullAddress}<br />
+                                                <strong>Status:</strong> {hazard_status[hazard.status] || 'Unknown'}
+                                            </p>
+                                        </div>
+                                        </div>
+                                    </div>
+                                );
+                            }
                         })}
                         </div>
                     )}
