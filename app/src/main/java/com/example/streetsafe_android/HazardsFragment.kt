@@ -29,7 +29,7 @@ class HazardsFragment : Fragment() {
         val webView = view.findViewById<WebView>(R.id.mapsWebView)
         webView.settings.javaScriptEnabled = true
         webView.webViewClient = WebViewClient()
-        val url = "${Constants.BASE_URL}hazards-fragment"
+        val url = "${Constants.BASE_URL}hazards-fragment?userId="
         webView.loadUrl(url)
         return  view
     }
