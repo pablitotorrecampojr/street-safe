@@ -48,7 +48,7 @@ class ProfileFragment : Fragment() {
                     binding.nameTextView.text = fullname
 
                     val firstLetter = fullname.trim().firstOrNull()?.toString() ?: "?"
-                    val drawable = createInitialsDrawable(firstLetter, bgColor = Color.parseColor("#1E88E5")) // Custom blue
+                    val drawable = createInitialsDrawable(firstLetter, bgColor = Color.parseColor("#FF5F61E6")) // Custom blue
                     binding.profileImage.setImageBitmap(drawable)
                 }
                 .addOnFailureListener {
