@@ -74,7 +74,7 @@ export default function HazardFragment() {
                                     aria-expanded={isActive}
                                     onClick={() => handleAccordionClick(index)}
                                 >
-                                    {hazard.hazardType || `Hazard ${index + 1}`}
+                                    {hazard.roadHazard || `Hazard ${index + 1}`}
                                 </button>
                                 </h2>
 
@@ -83,10 +83,15 @@ export default function HazardFragment() {
                                 className={`accordion-collapse ${isActive ? 'show mt-4 mb-4' : 'collapse'}`}
                                 >
                                 <div className="accordion-body">
+                                    <img
+                                        src={"data:image/jpeg;base64," +hazard.imageUrl}
+                                        alt="Hazard Preview"
+                                        className="img-fluid mb-3"
+                                        style={{ maxWidth: "100%", maxHeight: "300px", objectFit: "cover" }} />
                                     <p className="text-black">
-                                    <strong>Date Submitted:</strong> {hazard.dateSubmitted || 'N/A'}<br />
-                                    <strong>Location:</strong> {hazard.fullAddress}<br />
-                                    <strong>Status:</strong> {hazard_status[hazard.status] || 'Unknown'}
+                                        <strong>Date Submitted:</strong> {hazard.dateSubmitted || 'N/A'}<br />
+                                        <strong>Location:</strong> {hazard.fullAddress}<br />
+                                        <strong>Status:</strong> {hazard_status[hazard.status] || 'Unknown'}
                                     </p>
                                 </div>
                                 </div>
