@@ -9,6 +9,8 @@ import Aside from "../components/Aside";
 import Navbar from "../components/NavBar";
 import LoadingScreen from '../webview/LoadingScreen';
 import { hazard_status } from "../constants/hazard-report";
+import { Tooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
 
 // Custom hook to get current user data
 const useCurrentUserData = () => {
@@ -113,9 +115,33 @@ const HazardReport = () => {
                 type="button"
                 className="btn btn-icon btn-outline-primary"
                 onClick={() => navigate("/hazard-report-details", { state: { hazard } })}
+                data-tooltip-id="hazard-tooltip"
+                data-tooltip-content="Update Status"
               >
                 <span className="tf-icons bx bx-pie-chart-alt"></span>
               </button>
+
+              <button
+                type="button"
+                className="btn btn-icon btn-outline-warning"
+                onClick={() => navigate("/hazard-report-details", { state: { hazard } })}
+                data-tooltip-id="hazard-tooltip"
+                data-tooltip-content="View location on map"
+              >
+               <span className="tf-icons bx bx-navigation"></span>
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-icon btn-outline-danger"
+                onClick={() => navigate("/hazard-report-details", { state: { hazard } })}
+                data-tooltip-id="hazard-tooltip"
+                data-tooltip-content="Flag as National Road Hazard"
+              >
+                <span className="tf-icons bx bx-traffic-cone"></span>
+              </button>
+
+              <Tooltip id="hazard-tooltip" />
             </div>
           );
         }
