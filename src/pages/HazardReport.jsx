@@ -124,7 +124,7 @@ const HazardReport = () => {
               <button
                 type="button"
                 className="btn btn-icon btn-outline-warning"
-                onClick={() => window.open(`/maps-fragment?selectedLat=${hazard.latitude}&selectedLng=${hazard.longitude}`)}
+                onClick={() => window.open(`/maps-fragment?selectedLat=${hazard.latitude}&selectedLng=${hazard.longitude}&fromAdmin=true`)}
                 data-tooltip-id="hazard-tooltip"
                 data-tooltip-content="View location on map"
               >
