@@ -57,6 +57,7 @@ const HazardReport = () => {
           (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
         );
         toast.success("New Road Hazard Report!");
+        console.log("Road Hazards:", sorted);
         setRoadHazards(sorted);
       } else {
         setRoadHazards([]);
@@ -106,8 +107,7 @@ const HazardReport = () => {
       Header: "Action",
       accessor: "action",
       Cell: ({ row }) => {
-        const hazard = roadHazards[row.index - 1];
-
+        const hazard = row.original;
         if (userData?.role === "1" || userData?.role === "2") {
           return (
             <div className="flex gap-2">
@@ -124,7 +124,7 @@ const HazardReport = () => {
               <button
                 type="button"
                 className="btn btn-icon btn-outline-warning"
-                onClick={() => navigate("/hazard-report-details", { state: { hazard } })}
+                onClick={() => window.open(`/maps-fragment?selectedLat=${hazard.latitude}&selectedLng=${hazard.longitude}`)}
                 data-tooltip-id="hazard-tooltip"
                 data-tooltip-content="View location on map"
               >
@@ -159,6 +159,8 @@ const HazardReport = () => {
       fullAddress: hazard.fullAddress,
       status: hazard.status,
       action: "---",
+      latitude: hazard.latitude,
+      longitude: hazard.longitude,
     }))
   , [roadHazards]);
 

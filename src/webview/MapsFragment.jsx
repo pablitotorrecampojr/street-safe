@@ -12,7 +12,9 @@ export default function MapsFragment() {
     const userLatitude = params.get("lat") || 10.3385155;
     const userLongitude = params.get("lng") || 123.91217342595031;
     const [roadHazards, setRoadHazards] = useState([]);
-    const [loading, setLoading] = useState(true); // ← add loading state
+    const [loading, setLoading] = useState(true);
+    const selectedLat = params.get("selectedLat") || null;
+    const selectedLng = params.get("selectedLng") || null;
 
     useEffect(() => {
         const db = getDatabase();
@@ -68,6 +70,18 @@ export default function MapsFragment() {
         popupAnchor: [0, -30], 
     });
 
+    const selectedHazard = new L.DivIcon({
+        className: 'custom-svg-icon',
+        html: `
+            <svg class="text-danger bounce" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+            </svg>
+        `,
+        iconSize: [200, 200], 
+        iconAnchor: [15, 30],  
+        popupAnchor: [0, -30], 
+    });
+
     return (
         <div className="layout-wrapper layout-content-navbar">
             <div className="layout-container">
@@ -90,12 +104,12 @@ export default function MapsFragment() {
                                 </Marker>
                                 {roadHazards.map((hazard, index) => {
                                     const { latitude, longitude } = hazard;
-
+                                    const isSelectedHazard = ( latitude == selectedLat && longitude == selectedLng );
                                     return (
                                         <Marker
                                             key={index}
                                             position={[latitude, longitude]}
-                                            icon={hazardIcon}
+                                            icon={ isSelectedHazard ? selectedHazard : hazardIcon }
                                         >
                                             <Popup>
                                                 <div>
