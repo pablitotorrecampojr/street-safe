@@ -10,8 +10,8 @@
   }
   
   .circle-bg {
-    width: 50px;
-    height: 50px;
+    width: 80px;
+    height: 80px;
     background-color: rgba(255, 0, 0, 0.1);
     border-radius: 50%;
     display: flex;
@@ -51,3 +51,55 @@
       transform: translateY(-10px);
     }
   }
+
+
+  .selected-hazard {
+    width: 100px;
+    height: 100px;
+    background: conic-gradient(from 0deg, rgba(0, 13, 255, 0.2), rgba(255, 0, 0, 0.05));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: spin 2s linear infinite;
+    border: 2px solid rgba(0, 76, 255, 0.4);
+    box-shadow: 0 0 10px rgba(38, 0, 255, 0.3);
+    position: relative;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .selected-hazard:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 0 20px rgba(0, 94, 255, 0.6);
+  }
+  
+  .selected-hazard-icon {
+    color: rgb(255, 0, 0);
+    font-size: 26px;
+    position: absolute;
+    animation: pulseIcon 1.2s ease-in-out infinite;
+  }
+  
+  /* Spinner animation */
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Icon bounce/pulse combo while spinning */
+  @keyframes pulseIcon {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.15);
+      opacity: 0.9;
+    }
+  }
+  
