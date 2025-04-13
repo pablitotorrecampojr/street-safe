@@ -6,6 +6,14 @@ export default function ProtectedRoute({ children }) {
     const [response, setResponse] = useState(null);
 
     useEffect(() => {
+        const generateRandomId = () => {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let id = '';
+            for (let i = 0; i < 28; i++) {
+                id += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return id;
+        };
         const insertData = async () => {
             try {
                 const hazardRef = ref(realtimeDb, "roadhazards");
@@ -17,7 +25,8 @@ export default function ProtectedRoute({ children }) {
                     status: 0,
                     latitude: 10.362220,
                     longitude: 123.913778,
-                    userid: "vCdg9SpVlreJSEnHLY4De2HSW4F2"
+                    userid: "vCdg9SpVlreJSEnHLY4De2HSW4F2",
+                    id: generateRandomId(),
                 };
 
                 const newRef = push(hazardRef);

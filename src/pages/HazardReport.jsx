@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getDatabase, ref, onValue } from "firebase/database";
-import { getDoc, doc } from "firebase/firestore";
+import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { useTable } from "react-table";
 import { auth, db } from "../firebase/firebase";
 import Aside from "../components/Aside";
@@ -12,7 +12,27 @@ import { hazard_status } from "../constants/hazard-report";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 
-// Custom hook to get current user data
+const sendResponseTeam = async (hazard) => {
+  let hazardId = hazard.id;
+  console.log("Hazard ID:", hazardId);
+
+  if (!hazardId) { // Check only once if hazardId is falsy
+    console.error("Invalid hazard data");
+    return;
+  }
+
+  try {
+    const hazardRef = doc(db, "roadhazards", hazardId);
+    await updateDoc(hazardRef, {
+      status: 1,
+    });
+
+    toast.success("Hazard status updated to In Progress");
+  } catch (error) {
+    console.error("Error updating hazard status:", error);
+  }
+};
+
 const useCurrentUserData = () => {
   const [userData, setUserData] = useState(null);
 
@@ -25,7 +45,7 @@ const useCurrentUserData = () => {
         if (docSnap.exists()) {
           setUserData(docSnap.data());
         } else {
-          console.log("No user document found");
+          console.error("No user document found");
         }
       }
     };
@@ -57,7 +77,6 @@ const HazardReport = () => {
           (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
         );
         toast.success("New Road Hazard Report!");
-        console.log("Road Hazards:", sorted);
         setRoadHazards(sorted);
       } else {
         setRoadHazards([]);
@@ -114,7 +133,7 @@ const HazardReport = () => {
               <button
                 type="button"
                 className="btn btn-icon btn-outline-primary"
-                onClick={() => navigate("/hazard-report-details", { state: { hazard } })}
+                onClick={() => sendResponseTeam(hazard) }
                 data-tooltip-id="hazard-tooltip"
                 data-tooltip-content="Update Status"
               >
@@ -154,6 +173,7 @@ const HazardReport = () => {
   const data = React.useMemo(() =>
     roadHazards.map((hazard, index) => ({
       index: index + 1,
+      id: hazard.id,
       roadHazard: hazard.roadHazard,
       imageUrl: hazard.imageUrl,
       fullAddress: hazard.fullAddress,
