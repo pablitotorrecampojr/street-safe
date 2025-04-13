@@ -16,20 +16,25 @@ const sendResponseTeam = async (hazard) => {
   let hazardId = hazard.id;
   console.log("Hazard ID:", hazardId);
 
-  if (!hazardId) { // Check only once if hazardId is falsy
+  if (!hazardId) {
     console.error("Invalid hazard data");
     return;
   }
 
   try {
     const hazardRef = doc(db, "roadhazards", hazardId);
-    await updateDoc(hazardRef, {
-      status: 1,
-    });
-
-    toast.success("Hazard status updated to In Progress");
+    const docSnapshot = await getDoc(hazardRef);
+    if (docSnapshot.exists()) {
+      await updateDoc(hazardRef, {
+        status: 1,
+      });
+      toast.success("Hazard status updated to In Progress");
+    } else {
+      toast.error("Hazard document not found");
+    }
   } catch (error) {
     console.error("Error updating hazard status:", error);
+    toast.error("Failed to update hazard status");
   }
 };
 
