@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getDatabase, ref, onValue } from "firebase/database";
+import { getDatabase, ref, onValue, get, update } from "firebase/database";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { useTable } from "react-table";
-import { auth, db } from "../firebase/firebase";
+import { auth, db, realtimeDb } from "../firebase/firebase";
 import Aside from "../components/Aside";
 import Navbar from "../components/NavBar";
 import LoadingScreen from '../webview/LoadingScreen';
@@ -13,25 +13,27 @@ import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 
 const sendResponseTeam = async (hazard) => {
-  let hazardId = hazard.id;
+  const hazardId = hazard?.id;
+  console.log("Hazard object:", hazard);
   console.log("Hazard ID:", hazardId);
 
   if (!hazardId) {
     console.error("Invalid hazard data");
+    toast.error("Hazard ID is missing");
     return;
   }
 
   try {
-    const hazardRef = doc(db, "roadhazards", hazardId);
-    const docSnapshot = await getDoc(hazardRef);
-    if (docSnapshot.exists()) {
-      await updateDoc(hazardRef, {
-        status: 1,
-      });
-      toast.success("Hazard status updated to In Progress");
-    } else {
-      toast.error("Hazard document not found");
+    const hazardRef = ref(realtimeDb, `roadhazards/${hazardId}`);
+    const snapshot = await get(hazardRef);
+
+    if (!snapshot.exists()) {
+      toast.error("Hazard not found in Realtime Database");
+      return;
     }
+
+    await update(hazardRef, { status: 1 });
+    toast.success("Hazard status updated to In Progress");
   } catch (error) {
     console.error("Error updating hazard status:", error);
     toast.error("Failed to update hazard status");
