@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getDatabase, ref, onValue, get, update } from "firebase/database";
+import { getDatabase, ref, onValue, get, update, query, orderByChild, equalTo } from "firebase/database";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { useTable } from "react-table";
 import { auth, db, realtimeDb } from "../firebase/firebase";
@@ -24,13 +24,20 @@ const sendResponseTeam = async (hazard) => {
   }
 
   try {
-    const hazardRef = ref(realtimeDb, `roadhazards/${hazardId}`);
-    const snapshot = await get(hazardRef);
+    const hazardQuery = query(
+      ref(realtimeDb, "roadhazards"),
+      orderByChild("id"),
+      equalTo(hazardId)
+    );
 
+    const snapshot = await get(hazardQuery);
     if (!snapshot.exists()) {
       toast.error("Hazard not found in Realtime Database");
       return;
     }
+
+    const hazardKey = Object.keys(snapshot.val())[0];
+    const hazardRef = ref(realtimeDb, `roadhazards/${hazardKey}`);
 
     await update(hazardRef, { status: 1 });
     toast.success("Hazard status updated to In Progress");
