@@ -138,41 +138,49 @@ const HazardReport = () => {
               <button
                 type="button"
                 className="btn btn-icon btn-outline-primary"
-                onClick={() => sendResponseTeam(hazard) }
+                onClick={() => sendResponseTeam(hazard)}
                 data-tooltip-id="hazard-tooltip"
                 data-tooltip-content="Update Status"
               >
                 <span className="tf-icons bx bx-pie-chart-alt"></span>
               </button>
-
+    
               <button
                 type="button"
                 className="btn btn-icon btn-outline-warning"
-                onClick={() => window.open(`/maps-fragment?selectedLat=${hazard.latitude}&selectedLng=${hazard.longitude}&fromAdmin=true`)}
+                onClick={() =>
+                  window.open(
+                    `/maps-fragment?selectedLat=${hazard.latitude}&selectedLng=${hazard.longitude}&fromAdmin=true`
+                  )
+                }
                 data-tooltip-id="hazard-tooltip"
                 data-tooltip-content="View location on map"
               >
-               <span className="tf-icons bx bx-navigation"></span>
+                <span className="tf-icons bx bx-navigation"></span>
               </button>
-
-              <button
-                type="button"
-                className="btn btn-icon btn-outline-danger"
-                onClick={() => navigate("/hazard-report-details", { state: { hazard } })}
-                data-tooltip-id="hazard-tooltip"
-                data-tooltip-content="Flag as National Road Hazard"
-              >
-                <span className="tf-icons bx bx-traffic-cone"></span>
-              </button>
-
+    
+              {userData?.role === "2" && (
+                <button
+                  type="button"
+                  className="btn btn-icon btn-outline-danger"
+                  onClick={() =>
+                    navigate("/hazard-report-details", { state: { hazard } })
+                  }
+                  data-tooltip-id="hazard-tooltip"
+                  data-tooltip-content="Flag as National Road Hazard"
+                >
+                  <span className="tf-icons bx bx-traffic-cone"></span>
+                </button>
+              )}
+    
               <Tooltip id="hazard-tooltip" />
             </div>
           );
         }
-
+    
         return <i>Admins can only view Hazard Reports</i>;
       },
-    },
+    }
   ], [roadHazards, userData, navigate]);
 
   const data = React.useMemo(() =>
