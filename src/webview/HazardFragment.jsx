@@ -75,10 +75,10 @@ export default function HazardFragment() {
                         <button
                           key={key}
                           type="button"
-                          className={`btn btn-outline-${hazard_color[key]} ${activeTab === key ? 'active' : ''}`}
+                          className={`badge btn btn-outline-${hazard_color[key]} ${activeTab === key ? 'active' : ''}`}
                           onClick={() => setActiveTab(key)}
                         >
-                          <span className={`badge rounded-pill bg-label-${hazard_color[key]}`}>
+                          <span className={`label-${hazard_color[key]}`}>
                             <i className={`${hazard_icons[key]}`}></i>
                           </span>
                         </button>
