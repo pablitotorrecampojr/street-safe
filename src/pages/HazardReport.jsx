@@ -14,6 +14,7 @@ import "react-tooltip/dist/react-tooltip.css";
 import { hazard_icons, hazard_color } from "../constants/hazard-report";
 
 const sendResponseTeam = async (hazard) => {
+  //TODO: this function will set the hazard status to 1 (in progress)
   const hazardId = hazard?.id;
   console.log("Hazard object:", hazard);
   console.log("Hazard ID:", hazardId);
@@ -42,6 +43,42 @@ const sendResponseTeam = async (hazard) => {
 
     await update(hazardRef, { status: 1 });
     toast.success("Hazard status updated to In Progress");
+  } catch (error) {
+    console.error("Error updating hazard status:", error);
+    toast.error("Failed to update hazard status");
+  }
+};
+
+const setHazardToResolved = async (hazard) => {
+  //TODO: this function will set the hazard status to 2 (resolved)
+  const hazardId = hazard?.id;
+  console.log("Hazard object:", hazard);
+  console.log("Hazard ID:", hazardId);
+
+  if (!hazardId) {
+    console.error("Invalid hazard data");
+    toast.error("Hazard ID is missing");
+    return;
+  }
+
+  try {
+    const hazardQuery = query(
+      ref(realtimeDb, "roadhazards"),
+      orderByChild("id"),
+      equalTo(hazardId)
+    );
+
+    const snapshot = await get(hazardQuery);
+    if (!snapshot.exists()) {
+      toast.error("Hazard not found in Realtime Database");
+      return;
+    }
+
+    const hazardKey = Object.keys(snapshot.val())[0];
+    const hazardRef = ref(realtimeDb, `roadhazards/${hazardKey}`);
+
+    await update(hazardRef, { status: 2 });
+    toast.success("Hazard status updated to Resolved");
   } catch (error) {
     console.error("Error updating hazard status:", error);
     toast.error("Failed to update hazard status");
@@ -159,12 +196,12 @@ const HazardReport = () => {
                  */
                 <button
                 type="button"
-                  className={`btn btn-icon btn-outline-${hazard_color[hazard.status]}`}
+                  className={`btn btn-icon btn-outline-${hazard_color[hazard.status+ 1]}`}
                   onClick={() => sendResponseTeam(hazard)}
                   data-tooltip-id="hazard-tooltip"
                   data-tooltip-content="Send Response Team"
                 >
-                  <span className={`tf-icons bx ${hazard_icons[hazard.status]}`}></span>
+                  <span className={`tf-icons bx ${hazard_icons[hazard.status + 1]}`}></span>
                 </button>
               )}
 
@@ -175,18 +212,18 @@ const HazardReport = () => {
                  */
                  <button
                  type="button"
-                   className="btn btn-icon btn-outline-success"
-                   onClick={() => sendResponseTeam(hazard)}
+                   className={`btn btn-icon btn-outline-${hazard_color[hazard.status + 1]}`}
+                   onClick={() => setHazardToResolved(hazard)}
                    data-tooltip-id="hazard-tooltip"
                    data-tooltip-content="Set Hazard to Resolved"
                  >
-                   <span className="tf-icons bx bx-check-circle"></span>
+                   <span className={`tf-icons bx ${hazard_icons[hazard.status + 1]}`}></span>
                  </button>
               )}
     
               <button
                 type="button"
-                className="btn btn-icon btn-outline-warning"
+                className="btn btn-icon btn-outline-primary"
                 onClick={() =>
                   window.open(
                     `/maps-fragment?selectedLat=${hazard.latitude}&selectedLng=${hazard.longitude}&fromAdmin=true`
