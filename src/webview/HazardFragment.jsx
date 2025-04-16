@@ -61,7 +61,7 @@ export default function HazardFragment() {
                 <div className="col-md-6 mb-4 mb-md-0 mx-auto">
                   <h1 className="text-center fw-bold">Report Status</h1>
 
-                  <div className="row justify-content-center">
+                  <div className="row justify-content-center" hidden={loading}>
                     <div className="btn-group mt-4" role="group" aria-label="Basic example">
                       <button
                         type="button"
