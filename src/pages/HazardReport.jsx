@@ -144,15 +144,38 @@ const HazardReport = () => {
         if (userData?.role === "1" || userData?.role === "2") {
           return (
             <div className="flex gap-2">
-              <button
+              
+              {hazard.status === 0 && (
+                /**
+                 * TODO: show button when hazard is pending
+                 * ? this will be used to send the hazard to the response team
+                 */
+                <button
                 type="button"
-                className="btn btn-icon btn-outline-primary"
-                onClick={() => sendResponseTeam(hazard)}
-                data-tooltip-id="hazard-tooltip"
-                data-tooltip-content="Update Status"
-              >
-                <span className="tf-icons bx bx-pie-chart-alt"></span>
-              </button>
+                  className="btn btn-icon btn-outline-primary"
+                  onClick={() => sendResponseTeam(hazard)}
+                  data-tooltip-id="hazard-tooltip"
+                  data-tooltip-content="Send Response Team"
+                >
+                  <span className="tf-icons bx bx-loader"></span>
+                </button>
+              )}
+
+              {hazard.status === 1 && (
+                /**
+                 * TODO: show button when hazard is in progress
+                 * ? this will used to update hazard to completed
+                 */
+                 <button
+                 type="button"
+                   className="btn btn-icon btn-outline-success"
+                   onClick={() => sendResponseTeam(hazard)}
+                   data-tooltip-id="hazard-tooltip"
+                   data-tooltip-content="Set Hazard to Resolved"
+                 >
+                   <span className="tf-icons bx bx-task"></span>
+                 </button>
+              )}
     
               <button
                 type="button"
