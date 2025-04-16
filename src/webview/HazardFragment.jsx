@@ -57,7 +57,7 @@ export default function HazardFragment() {
             <div className="container-xxl flex-grow-1 container-p-y">
               <div className="row">
                 <div className="col-md-6 mb-4 mb-md-0">
-                  <h1 className="text-center fw-bold">Hazards</h1>
+                  <h1 className="text-center fw-bold">Report Status</h1>
                   {loading ? (
                     <LoadingScreen loadingText="Fetching Map Data..." />
                   ) : filteredHazards.length === 0 ? (
