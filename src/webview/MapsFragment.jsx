@@ -5,6 +5,7 @@ import { getDatabase, ref, onValue } from "firebase/database";
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet'; 
 import LoadingScreen from './LoadingScreen';
+import { useNavigate } from 'react-router-dom';
 
 export default function MapsFragment() {
     const location = useLocation();
@@ -16,6 +17,7 @@ export default function MapsFragment() {
     const selectedLat = params.get("selectedLat") || null;
     const selectedLng = params.get("selectedLng") || null;
     const fromAdmin = params.get('fromAdmin') || null;
+    const navigate = useNavigate();
 
     useEffect(() => {
         const db = getDatabase();
@@ -124,7 +126,12 @@ export default function MapsFragment() {
                                                 <div>
                                                     <h4>☢️ {hazard.roadHazard} ☢️</h4>
                                                     <p>📌 {hazard.fullAddress.replace("Address:", "")}</p>
-                                                    <a href="#">View full detail</a>
+                                                    <a href="#"
+                                                        onClick={() => {
+                                                            navigate(`/hazard-details?hazardId=${hazard.id}&lat=${userLatitude}&lng=${userLongitude}`);
+                                                        }}
+                                                        className="btn-link"
+                                                    > <span className='bx bx-map-alt'></span> View full detail</a>
                                                 </div>
                                             </Popup>
                                         </Marker>

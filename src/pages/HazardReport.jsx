@@ -220,6 +220,22 @@ const HazardReport = () => {
                    <span className={`tf-icons bx ${hazard_icons[hazard.status + 1]}`}></span>
                  </button>
               )}
+              {hazard.status === 2 && (
+                /**
+                 * TODO: this button will be used to show that the hazard is already resolved
+                 */
+                <button 
+                  type="button"
+                  className={`btn btn-icon btn-outline-${hazard_color[hazard.status]}`}
+                  onClick={() => {
+                    toast.info('Hazard is already resolved');
+                  }}
+                  data-tooltip-id="hazard-tooltip"
+                  data-tooltip-content="Set Hazard to Resolved"
+                >
+                  <span className={`tf-icons bx ${hazard_icons[hazard.status]}`}></span>
+                </button>
+              )}
     
               <button
                 type="button"
