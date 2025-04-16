@@ -11,6 +11,7 @@ import LoadingScreen from '../webview/LoadingScreen';
 import { hazard_status } from "../constants/hazard-report";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
+import { hazard_icons, hazard_color } from "../constants/hazard-report";
 
 const sendResponseTeam = async (hazard) => {
   const hazardId = hazard?.id;
@@ -134,7 +135,13 @@ const HazardReport = () => {
     {
       Header: "Status",
       accessor: "status",
-      Cell: ({ value }) => hazard_status[value],
+      Cell: ({ value }) => {
+        return (
+          <span className={`badge rounded-pill bg-label-${hazard_color[value]}`}>
+            {hazard_status[value]}
+          </span>
+        )
+      },
     },
     {
       Header: "Action",
@@ -152,12 +159,12 @@ const HazardReport = () => {
                  */
                 <button
                 type="button"
-                  className="btn btn-icon btn-outline-primary"
+                  className={`btn btn-icon btn-outline-${hazard_color[hazard.status]}`}
                   onClick={() => sendResponseTeam(hazard)}
                   data-tooltip-id="hazard-tooltip"
                   data-tooltip-content="Send Response Team"
                 >
-                  <span className="tf-icons bx bx-loader"></span>
+                  <span className={`tf-icons bx ${hazard_icons[hazard.status]}`}></span>
                 </button>
               )}
 
@@ -173,7 +180,7 @@ const HazardReport = () => {
                    data-tooltip-id="hazard-tooltip"
                    data-tooltip-content="Set Hazard to Resolved"
                  >
-                   <span className="tf-icons bx bx-task"></span>
+                   <span className="tf-icons bx bx-check-circle"></span>
                  </button>
               )}
     

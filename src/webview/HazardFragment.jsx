@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { getDatabase, ref, onValue } from "firebase/database";
 import { hazard_status } from "../constants/hazard-report";
 import LoadingScreen from './LoadingScreen';
+import { hazard_icons } from '../constants/hazard-report';
 
 export default function HazardFragment() {
   const location = useLocation();
@@ -66,7 +67,7 @@ export default function HazardFragment() {
                       </div>
                     </div>
                   ) : (
-                    <div className="accordion mt-3" id="accordionExample">
+                    <div className="accordion mt-4" id="accordionExample">
                       {filteredHazards.map((hazard, index) => {
                         const headingId = `heading${index}`;
                         const collapseId = `collapse${index}`;
@@ -84,7 +85,7 @@ export default function HazardFragment() {
                                 aria-expanded={isActive}
                                 onClick={() => handleAccordionClick(index)}
                               >
-                                {hazard.roadHazard || `Hazard ${index + 1}`}
+                               <span className={`tf-icons bx ${hazard_icons[hazard.status]} mr-4`}></span> {hazard.roadHazard || `Hazard ${index + 1}`}
                               </button>
                             </h2>
 
