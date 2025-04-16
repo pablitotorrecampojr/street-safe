@@ -108,6 +108,49 @@ const useCurrentUserData = () => {
   return userData;
 };
 
+const useUserAreaCoverage = (userData) => {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    if (!userData) return;
+
+    const role = userData?.role;
+    if (role == 0) {
+      setData({ status: 400, message: "User role is not valid" });
+      return;
+    }
+
+    const barangay = userData?.barangay;
+    const municipality = userData?.municipality;
+    const district = userData?.district;
+    const url =
+      role === "2"
+        ? `https://nominatim.openstreetmap.org/search?q=${barangay}, ${municipality}, Cebu&format=json`
+        : `/maps-fragment?selectedLat=${district}&selectedLng=${municipality}`;
+
+    const userCoverage = async () => {
+      try {
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const json = await response.json();
+        console.log("User coverage data:", json);
+        setData({ status: 200, data: json });
+      } catch (error) {
+        console.error("Error fetching user coverage:", error);
+        setData({ status: 500, message: "Fetch failed" });
+      }
+    };
+
+    userCoverage();
+  }, [userData]);
+
+  return data;
+};
+
 const HazardReport = () => {
   const navigate = useNavigate();
   const [roadHazards, setRoadHazards] = useState([]);
@@ -116,9 +159,10 @@ const HazardReport = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState(null);
   const userData = useCurrentUserData();
+  const userCoverage = useUserAreaCoverage(userData);
 
-  // Fetch hazard reports from Firebase Realtime DB
   useEffect(() => {
+    //TODO: this function will fetch the roadhazards from the database
     const db = getDatabase();
     const roadhazardsRef = ref(db, "roadhazards");
 
@@ -142,7 +186,6 @@ const HazardReport = () => {
     return () => unsubscribe();
   }, []);
 
-  // Columns for react-table
   const columns = React.useMemo(() => [
     {
       Header: "#",
@@ -338,6 +381,13 @@ const HazardReport = () => {
               {loading ? (
                 <LoadingScreen loadingText="Fetching Hazard Report..." />
               ) : (
+                <>
+                <div className="card mb-4">
+                  <div className="card-header">
+                    <h5 className="card-title mb-0"><strong>Hazard Report Within: </strong> 📌 {userData?.barangay}, {userData?.municipality}, Cebu </h5>
+                  </div>
+                </div>
+
                 <div className="card">
                   <div className="card-body">
                     <table {...getTableProps()} className="table table-striped">
@@ -365,6 +415,7 @@ const HazardReport = () => {
                     </table>
                   </div>
                 </div>
+                </>
               )}
             </div>
           </div>
