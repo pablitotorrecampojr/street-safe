@@ -6,14 +6,18 @@ import LoadingScreen from './LoadingScreen';
 import { toast } from 'react-toastify';
 import { realtimeDb } from "../firebase/firebase";
 import 'leaflet/dist/leaflet.css';
+import { useNavigate } from 'react-router-dom';
 
 export default function HazardDetails() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const hazardId = params.get("hazardId") || null;
+  const userLatitude = params.get("lat") || 10.3385155;
+  const userLongitude = params.get("lng") || 123.91217342595031;
 
   const [roadHazards, setRoadHazards] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchHazard = async () => {
@@ -55,8 +59,40 @@ export default function HazardDetails() {
             <div className="container-xxl flex-grow-1 container-p-y">
               <div className="row">
                 <div className="col-md-6 mb-4 mb-md-0">
-                  <h1 className="text-center fw-bold">Hazard Details</h1>
-                  {/* Render your hazard details here using `roadHazards` */}
+                  {Object.entries(roadHazards).map(([key, hazard]) => (
+                    <div className="card shadow mt-4" key={key}>
+                        <div className="card-header bg-light d-flex justify-content-between align-items-center">
+                        <button
+                            className="btn btn-sm"
+                            onClick={() => navigate('/maps-fragment?lat=' + userLatitude + '&lng=' + userLongitude)}
+                        >
+                            <i className="bx bx-arrow-back"></i>
+                        </button>
+                        <h1 className="fw-bold m-0 text-center flex-grow-1">Hazard Details</h1>
+                        <div></div> 
+                        </div>
+                        <div className="card-body">
+                            <img
+                                src={`data:image/jpeg;base64,${hazard.imageUrl}`}
+                                alt="Hazard Preview"
+                                className="img-fluid mb-3"
+                                style={{ maxHeight: "300px", objectFit: "contain" }}
+                            />
+                            <p className='mb-2'>
+                                <strong>Report ID:</strong> {hazard.id}
+                            </p>
+                            <p className='mb-2'>
+                                <strong>Hazard:</strong> {hazard.roadHazard}
+                            </p>
+                            <p className="mb-2">
+                                <strong>Status:</strong> {hazard_status[hazard.status]}
+                            </p>
+                            <p className="mb-0">
+                                <strong>Location:</strong> {hazard.fullAddress}
+                            </p>
+                        </div>
+                    </div>
+                    ))}
                 </div>
               </div>
             </div>

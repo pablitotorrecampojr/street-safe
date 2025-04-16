@@ -127,7 +127,11 @@ export default function MapsFragment() {
                                                     <h4>☢️ {hazard.roadHazard} ☢️</h4>
                                                     <p>📌 {hazard.fullAddress.replace("Address:", "")}</p>
                                                     <a href="#"
-                                                    >View full detail</a>
+                                                        onClick={() => {
+                                                            navigate(`/hazard-details?hazardId=${hazard.id}&lat=${userLatitude}&lng=${userLongitude}`);
+                                                        }}
+                                                        className="btn-link"
+                                                    > <span className='bx bx-map-alt'></span> View full detail</a>
                                                 </div>
                                             </Popup>
                                         </Marker>
