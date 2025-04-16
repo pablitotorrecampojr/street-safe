@@ -221,6 +221,9 @@ const HazardReport = () => {
                  </button>
               )}
               {hazard.status === 2 && (
+                /**
+                 * TODO: this button will be used to show that the hazard is already resolved
+                 */
                 <button 
                   type="button"
                   className={`btn btn-icon btn-outline-${hazard_color[hazard.status]}`}
