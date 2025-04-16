@@ -12,7 +12,10 @@ export default function MapsFragment() {
     const userLatitude = params.get("lat") || 10.3385155;
     const userLongitude = params.get("lng") || 123.91217342595031;
     const [roadHazards, setRoadHazards] = useState([]);
-    const [loading, setLoading] = useState(true); // ← add loading state
+    const [loading, setLoading] = useState(true);
+    const selectedLat = params.get("selectedLat") || null;
+    const selectedLng = params.get("selectedLng") || null;
+    const fromAdmin = params.get('fromAdmin') || null;
 
     useEffect(() => {
         const db = getDatabase();
@@ -68,6 +71,21 @@ export default function MapsFragment() {
         popupAnchor: [0, -30], 
     });
 
+    const selectedHazard = new L.DivIcon({
+        className: 'custom-svg-icon',
+        html: `
+             <div class="selected-hazard">
+                <svg class="selected-hazard-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-radioactive" viewBox="0 0 16 16">
+                    <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8"/>
+                    <path d="M9.653 5.496A3 3 0 0 0 8 5c-.61 0-1.179.183-1.653.496L4.694 2.992A5.97 5.97 0 0 1 8 2c1.222 0 2.358.365 3.306.992zm1.342 2.324a3 3 0 0 1-.884 2.312 3 3 0 0 1-.769.552l1.342 2.683c.57-.286 1.09-.66 1.538-1.103a6 6 0 0 0 1.767-4.624zm-5.679 5.548 1.342-2.684A3 3 0 0 1 5.005 7.82l-2.994-.18a6 6 0 0 0 3.306 5.728ZM10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0"/>
+                </svg>
+            </div>
+        `,
+        iconSize: [200, 200], 
+        iconAnchor: [15, 30],  
+        popupAnchor: [0, -30], 
+    });
+
     return (
         <div className="layout-wrapper layout-content-navbar">
             <div className="layout-container">
@@ -76,26 +94,31 @@ export default function MapsFragment() {
                         {loading ? (
                             <LoadingScreen loadingText="Fetching Map Data..." />
                         ) : (
-                            <MapContainer center={[userLatitude, userLongitude]} zoom={15} style={{ height: '100%', width: '100%' }}>
+                            <MapContainer 
+                                center={!fromAdmin ? [userLatitude, userLongitude] : [selectedLat, selectedLng]} 
+                                zoom={!fromAdmin ? 15 : 19} 
+                                style={{ height: '100%', width: '100%' }}>
                                 <TileLayer
                                     attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 />
-                                <Marker 
-                                    position={[userLatitude, userLongitude]} 
-                                    icon={userIcon}>
-                                    <Popup>
-                                        You are Here!
-                                    </Popup>
-                                </Marker>
+                                {!fromAdmin && (
+                                     <Marker 
+                                        position={[userLatitude, userLongitude]} 
+                                        icon={userIcon}>
+                                        <Popup>
+                                            You are Here!
+                                        </Popup>
+                                    </Marker>
+                                )}
                                 {roadHazards.map((hazard, index) => {
                                     const { latitude, longitude } = hazard;
-
+                                    const isSelectedHazard = ( latitude == selectedLat && longitude == selectedLng );
                                     return (
                                         <Marker
                                             key={index}
                                             position={[latitude, longitude]}
-                                            icon={hazardIcon}
+                                            icon={ isSelectedHazard ? selectedHazard : hazardIcon }
                                         >
                                             <Popup>
                                                 <div>

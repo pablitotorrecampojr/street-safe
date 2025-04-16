@@ -4,5 +4,8 @@
         "Authorities",
         "Municipalities",
         "User"
+    ],
+    "role_inex": [
+        0, 1, 2, 3
     ]
 }

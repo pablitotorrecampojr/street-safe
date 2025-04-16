@@ -6,18 +6,27 @@ export default function ProtectedRoute({ children }) {
     const [response, setResponse] = useState(null);
 
     useEffect(() => {
+        const generateRandomId = () => {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let id = '';
+            for (let i = 0; i < 28; i++) {
+                id += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return id;
+        };
         const insertData = async () => {
             try {
                 const hazardRef = ref(realtimeDb, "roadhazards");
                 const newHazard = {
                     imageUrl: "base64Image",
                     dateSubmitted: "2025-04-11 00:00:00",
-                    fullAddress: "Banilad Rd, Cebu City, 6000 Cebu",
+                    fullAddress: "Turquoise St, Cebu City, 6000 Cebu",
                     roadHazard: "Test Data",
                     status: 0,
-                    latitude: 10.325945,
-                    longitude: 123.907919,
-                    userid: "vCdg9SpVlreJSEnHLY4De2HSW4F2"
+                    latitude: 10.362220,
+                    longitude: 123.913778,
+                    userid: "opbG2JQJBpZj4sjZ9i0PsqynbkQ2",
+                    id: generateRandomId(),
                 };
 
                 const newRef = push(hazardRef);
