@@ -108,7 +108,7 @@ const useCurrentUserData = () => {
   return userData;
 };
 
-const useUserAreaCoverage = (userData) => {
+const getUserAreaCoverage = (userData) => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
@@ -137,8 +137,8 @@ const useUserAreaCoverage = (userData) => {
           },
         });
         const json = await response.json();
-        console.log("User coverage data:", json);
-        setData({ status: 200, data: json });
+        console.log("User coverage data:", json[0]?.boundingbox );
+        setData({ status: 200, data: json[0]?.boundingbox });
       } catch (error) {
         console.error("Error fetching user coverage:", error);
         setData({ status: 500, message: "Fetch failed" });
@@ -159,21 +159,30 @@ const HazardReport = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState(null);
   const userData = useCurrentUserData();
-  const userCoverage = useUserAreaCoverage(userData);
+  const userCoverage = getUserAreaCoverage(userData);
 
   useEffect(() => {
-    //TODO: this function will fetch the roadhazards from the database
+    if (!userCoverage || userCoverage.status !== 200 || !userCoverage.data) return;
+  
     const db = getDatabase();
     const roadhazardsRef = ref(db, "roadhazards");
-
+  
     const unsubscribe = onValue(roadhazardsRef, (snapshot) => {
       if (snapshot.exists()) {
         const data = Object.values(snapshot.val());
         const sorted = data.sort(
           (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
         );
+  
+        const [minLat, maxLat, minLng, maxLng] = userCoverage.data.map(Number);
+        const filtered = sorted.filter((hazard) => {
+          const lat = parseFloat(hazard.latitude);
+          const lng = parseFloat(hazard.longitude);
+          return lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng;
+        });
+  
         toast.success("New Road Hazard Report!");
-        setRoadHazards(sorted);
+        setRoadHazards(filtered);
       } else {
         setRoadHazards([]);
       }
@@ -182,9 +191,10 @@ const HazardReport = () => {
       toast.error("Error fetching roadhazards");
       setLoading(false);
     });
-
+  
     return () => unsubscribe();
-  }, []);
+  }, [userCoverage]);
+  
 
   const columns = React.useMemo(() => [
     {
