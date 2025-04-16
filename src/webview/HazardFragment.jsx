@@ -1,9 +1,8 @@
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { getDatabase, ref, onValue } from "firebase/database";
-import { hazard_status } from "../constants/hazard-report";
 import LoadingScreen from './LoadingScreen';
-import { hazard_icons, hazard_color } from '../constants/hazard-report';
+import { hazard_icons, hazard_color, hazard_status } from '../constants/hazard-report';
 
 export default function HazardFragment() {
   const location = useLocation();
@@ -13,6 +12,7 @@ export default function HazardFragment() {
   const [roadHazards, setRoadHazards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(null);
+  const [activeTab, setActiveTab] = useState("all");
 
   const handleAccordionClick = (index) => {
     setActiveIndex(prev => (prev === index ? null : index));
@@ -45,9 +45,11 @@ export default function HazardFragment() {
     return () => unsubscribe();
   }, []);
 
-  const filteredHazards = roadHazards.filter(
-    hazard => String(hazard.userid) === String(userId)
-  );
+  const filteredHazards = roadHazards.filter(hazard => {
+    const matchUser = String(hazard.userid) === String(userId);
+    const matchStatus = activeTab === "all" || String(hazard.status) === activeTab;
+    return matchUser && matchStatus;
+  });
 
   return (
     <div className="layout-wrapper layout-content-navbar">
@@ -56,12 +58,38 @@ export default function HazardFragment() {
           <div className="content-wrapper">
             <div className="container-xxl flex-grow-1 container-p-y">
               <div className="row">
-                <div className="col-md-6 mb-4 mb-md-0">
+                <div className="col-md-6 mb-4 mb-md-0 mx-auto">
                   <h1 className="text-center fw-bold">Report Status</h1>
+
+                  <div className="row justify-content-center" hidden={loading}>
+                    <div className="btn-group mt-4" role="group" aria-label="Basic example">
+                      <button
+                        type="button"
+                        className={`btn btn-outline-primary ${activeTab === "all" ? 'active' : ''}`}
+                        onClick={() => setActiveTab("all")}
+                      >
+                        All
+                      </button>
+
+                      {Object.entries(hazard_status).map(([key, status]) => (
+                        <button
+                          key={key}
+                          type="button"
+                          className={`badge btn btn-outline-${hazard_color[key]} ${activeTab === key ? 'active' : ''}`}
+                          onClick={() => setActiveTab(key)}
+                        >
+                          <span className={`label-${hazard_color[key]}`}>
+                            <i className={`${hazard_icons[key]}`}></i>
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   {loading ? (
                     <LoadingScreen loadingText="Fetching Map Data..." />
                   ) : filteredHazards.length === 0 ? (
-                    <div className="card">
+                    <div className="card mt-4">
                       <div className="card-body">
                         <h1 className="text-center">No Data Found!</h1>
                       </div>
@@ -85,7 +113,10 @@ export default function HazardFragment() {
                                 aria-expanded={isActive}
                                 onClick={() => handleAccordionClick(index)}
                               >
-                               <span className={`badge rounded-pill bg-label-${hazard_color[hazard.status]} mr-4`}><i className={hazard_icons[hazard.status]}></i></span> {hazard.roadHazard || `Hazard ${index + 1}`}
+                                <span className={`badge rounded-pill bg-label-${hazard_color[hazard.status]} mr-4`}>
+                                  <i className={hazard_icons[hazard.status]}></i>
+                                </span>
+                                {hazard.roadHazard || `Hazard ${index + 1}`}
                               </button>
                             </h2>
 
@@ -121,7 +152,7 @@ export default function HazardFragment() {
             </div>
           </div>
         </div>
-      </div>
+      </div> 
     </div>
   );
 }

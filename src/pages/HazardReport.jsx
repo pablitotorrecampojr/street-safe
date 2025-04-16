@@ -108,6 +108,49 @@ const useCurrentUserData = () => {
   return userData;
 };
 
+const getUserAreaCoverage = (userData) => {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    if (!userData) return;
+
+    const role = userData?.role;
+    if (role == 0) {
+      setData({ status: 400, message: "User role is not valid" });
+      return;
+    }
+
+    const barangay = userData?.barangay;
+    const municipality = userData?.municipality;
+    const district = userData?.district;
+    const url =
+      role === "2"
+        ? `https://nominatim.openstreetmap.org/search?q=${barangay}, ${municipality}, Cebu&format=json`
+        : `/maps-fragment?selectedLat=${district}&selectedLng=${municipality}`;
+
+    const userCoverage = async () => {
+      try {
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const json = await response.json();
+        console.log("User coverage data:", json[0]?.boundingbox );
+        setData({ status: 200, data: json[0]?.boundingbox });
+      } catch (error) {
+        console.error("Error fetching user coverage:", error);
+        setData({ status: 500, message: "Fetch failed" });
+      }
+    };
+
+    userCoverage();
+  }, [userData]);
+
+  return data;
+};
+
 const HazardReport = () => {
   const navigate = useNavigate();
   const [roadHazards, setRoadHazards] = useState([]);
@@ -116,20 +159,30 @@ const HazardReport = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState(null);
   const userData = useCurrentUserData();
+  const userCoverage = getUserAreaCoverage(userData);
 
-  // Fetch hazard reports from Firebase Realtime DB
   useEffect(() => {
+    if (!userCoverage || userCoverage.status !== 200 || !userCoverage.data) return;
+  
     const db = getDatabase();
     const roadhazardsRef = ref(db, "roadhazards");
-
+  
     const unsubscribe = onValue(roadhazardsRef, (snapshot) => {
       if (snapshot.exists()) {
         const data = Object.values(snapshot.val());
         const sorted = data.sort(
           (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
         );
+  
+        const [minLat, maxLat, minLng, maxLng] = userCoverage.data.map(Number);
+        const filtered = sorted.filter((hazard) => {
+          const lat = parseFloat(hazard.latitude);
+          const lng = parseFloat(hazard.longitude);
+          return lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng;
+        });
+  
         toast.success("New Road Hazard Report!");
-        setRoadHazards(sorted);
+        setRoadHazards(filtered);
       } else {
         setRoadHazards([]);
       }
@@ -138,11 +191,11 @@ const HazardReport = () => {
       toast.error("Error fetching roadhazards");
       setLoading(false);
     });
-
+  
     return () => unsubscribe();
-  }, []);
+  }, [userCoverage]);
+  
 
-  // Columns for react-table
   const columns = React.useMemo(() => [
     {
       Header: "#",
@@ -338,6 +391,13 @@ const HazardReport = () => {
               {loading ? (
                 <LoadingScreen loadingText="Fetching Hazard Report..." />
               ) : (
+                <>
+                <div className="card mb-4">
+                  <div className="card-header">
+                    <h5 className="card-title mb-0"><strong>Hazard Report Within: </strong> 📌 {userData?.barangay}, {userData?.municipality}, Cebu </h5>
+                  </div>
+                </div>
+
                 <div className="card">
                   <div className="card-body">
                     <table {...getTableProps()} className="table table-striped">
@@ -365,6 +425,7 @@ const HazardReport = () => {
                     </table>
                   </div>
                 </div>
+                </>
               )}
             </div>
           </div>
