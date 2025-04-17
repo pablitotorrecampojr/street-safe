@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getDatabase, ref, onValue, get, update, query, orderByChild, equalTo } from "firebase/database";
+import { getDatabase, ref, onValue, get, update, query, orderByChild, equalTo, set } from "firebase/database";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { useTable } from "react-table";
 import { auth, db, realtimeDb } from "../firebase/firebase";
@@ -12,6 +12,8 @@ import { hazard_status } from "../constants/hazard-report";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 import { hazard_icons, hazard_color } from "../constants/hazard-report";
+import districtSorted from "../constants/districts-sorted.json";
+import districts from '../constants/districts.json'
 
 const sendResponseTeam = async (hazard) => {
   //TODO: this function will set the hazard status to 1 (in progress)
@@ -52,8 +54,6 @@ const sendResponseTeam = async (hazard) => {
 const setHazardToResolved = async (hazard) => {
   //TODO: this function will set the hazard status to 2 (resolved)
   const hazardId = hazard?.id;
-  console.log("Hazard object:", hazard);
-  console.log("Hazard ID:", hazardId);
 
   if (!hazardId) {
     console.error("Invalid hazard data");
@@ -85,7 +85,42 @@ const setHazardToResolved = async (hazard) => {
   }
 };
 
+const flagHazardAsNationalRoad = async (hazard, userData) => {
+  const hazardId = hazard?.id;
+  const municipality = userData?.municipality;
+  const barangay = userData?.barangay;
+  if (!hazardId) {
+    console.error("Invalid hazard data");
+    toast.error("Hazard ID is missing");
+    return;
+  }
+
+  try {
+    const hazardQuery = query(
+      ref(realtimeDb, "roadhazards"),
+      orderByChild("id"),
+      equalTo(hazardId)
+    );
+
+    const snapshot = await get(hazardQuery);
+    if (!snapshot.exists()) {
+      toast.error("Hazard not found in Realtime Database");
+      return;
+    }
+
+    const hazardKey = Object.keys(snapshot.val())[0];
+    const hazardRef = ref(realtimeDb, `roadhazards/${hazardKey}`);
+
+    await update(hazardRef, { nationalRoadFlg: true, municipality: municipality, barangay: barangay });
+    toast.success("Set as National Road Hazard");
+  } catch (error) {
+    console.error("Error updating hazard status:", error);
+    toast.error("Failed to update hazard status");
+  }
+}
+
 const useCurrentUserData = () => {
+  //TODO: this function will get the current user data from firestore
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
@@ -115,19 +150,16 @@ const getUserAreaCoverage = (userData) => {
     if (!userData) return;
 
     const role = userData?.role;
-    if (role == 0) {
-      setData({ status: 400, message: "User role is not valid" });
+    if (role == "0") {
+      setData({ 
+        status: 400, 
+        errorId: "user_id_admin",
+        message: "User role is not valid",
+      });
       return;
     }
 
-    const barangay = userData?.barangay;
-    const municipality = userData?.municipality;
-    const district = userData?.district;
-    const url =
-      role === "2"
-        ? `https://nominatim.openstreetmap.org/search?q=${barangay}, ${municipality}, Cebu&format=json`
-        : `/maps-fragment?selectedLat=${district}&selectedLng=${municipality}`;
-
+    const url = `https://nominatim.openstreetmap.org/search?q=${userData?.barangay}, ${userData?.municipality}, Cebu&format=json`
     const userCoverage = async () => {
       try {
         const response = await fetch(url, {
@@ -137,10 +169,13 @@ const getUserAreaCoverage = (userData) => {
           },
         });
         const json = await response.json();
-        console.log("User coverage data:", json[0]?.boundingbox );
         setData({ status: 200, data: json[0]?.boundingbox });
       } catch (error) {
-        console.error("Error fetching user coverage:", error);
+        console.error({
+          status: 500,
+          message: "Fetch failed",
+          error: error.message,
+        });
         setData({ status: 500, message: "Fetch failed" });
       }
     };
@@ -149,6 +184,20 @@ const getUserAreaCoverage = (userData) => {
   }, [userData]);
 
   return data;
+};
+
+const isWithinDistrict = (hazardData, barangays) => {
+  const listOfBarangays = barangays;
+  const hazardBarangay = hazardData?.barangay;
+  const hazardMunicipality = hazardData?.municipality;
+  console.log("Districts Data:", {
+    hazardBarangay: hazardBarangay,
+    hazardMunicipality: hazardMunicipality,
+    barangays: listOfBarangays,
+  });
+  if (!listOfBarangays) return false;
+  
+  return true;
 };
 
 const HazardReport = () => {
@@ -162,39 +211,70 @@ const HazardReport = () => {
   const userCoverage = getUserAreaCoverage(userData);
 
   useEffect(() => {
-    if (!userCoverage || userCoverage.status !== 200 || !userCoverage.data) return;
-  
     const db = getDatabase();
     const roadhazardsRef = ref(db, "roadhazards");
   
-    const unsubscribe = onValue(roadhazardsRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const data = Object.values(snapshot.val());
-        const sorted = data.sort(
-          (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
-        );
+    const unsubscribe = onValue(
+      roadhazardsRef,
+      (snapshot) => {
+        if (snapshot.exists()) {
+          let data = Object.values(snapshot.val());
+          
+          //TODO: filter out the hazards that are flag as national road hazard
+          if (userData?.role === "2") {
+            data = data.filter((hazard) => !hazard.nationalRoadFlg);
+          }
+
+          //TODO filter out hazard that are national road hazard
+          if (userData?.role === "1") {
+            data = data.filter((hazard) => hazard.nationalRoadFlg);
+          }
+
+          const sorted = data.sort(
+            (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
+          );
   
-        const [minLat, maxLat, minLng, maxLng] = userCoverage.data.map(Number);
-        const filtered = sorted.filter((hazard) => {
-          const lat = parseFloat(hazard.latitude);
-          const lng = parseFloat(hazard.longitude);
-          return lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng;
-        });
+          let finalData = sorted;
   
-        toast.success("New Road Hazard Report!");
-        setRoadHazards(filtered);
-      } else {
-        setRoadHazards([]);
+          /**
+           * TODO: filter out the hazards that are not within the user's area coverage
+           * ? if the user is municipality
+           */
+          if (userData?.role === "2") {
+            const [minLat, maxLat, minLng, maxLng] = userCoverage.data.map(Number);
+            console.log("User Coverage Data:", userCoverage.data);
+            finalData = sorted.filter((hazard) => {
+              const lat = parseFloat(hazard.latitude);
+              const lng = parseFloat(hazard.longitude);
+              return lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng;
+            });
+            toast.success("New Road Hazard Report!");
+          }
+          
+          //TODO: if the user is authorities
+          if (userData?.role === "1") {
+            finalData = sorted.filter((hazard) => {
+              return (
+                hazard.nationalRoadFlg &&
+                isWithinDistrict(hazard, districtSorted[districts.districts[userData?.district].district])
+              );
+            });
+          }
+          
+          setRoadHazards(finalData);
+        } else {
+          setRoadHazards([]);
+        }
+        setLoading(false);
+      },
+      (error) => {
+        toast.error("Error fetching roadhazards");
+        setLoading(false);
       }
-      setLoading(false);
-    }, (error) => {
-      toast.error("Error fetching roadhazards");
-      setLoading(false);
-    });
+    );
   
     return () => unsubscribe();
-  }, [userCoverage]);
-  
+  }, [userCoverage, userData]);
 
   const columns = React.useMemo(() => [
     {
@@ -305,12 +385,15 @@ const HazardReport = () => {
               </button>
     
               {userData?.role === "2" && (
+                /**
+                 * TODO: this button will be used to flag the hazard as national road hazard
+                 * ? this will be used to send the hazard to the national road hazard team 
+                 * ? This button will only be shown to the municipality role
+                 */
                 <button
                   type="button"
                   className="btn btn-icon btn-outline-danger"
-                  onClick={() =>
-                    navigate("/hazard-report-details", { state: { hazard } })
-                  }
+                  onClick={() => flagHazardAsNationalRoad(hazard, userData)}
                   data-tooltip-id="hazard-tooltip"
                   data-tooltip-content="Flag as National Road Hazard"
                 >
@@ -392,11 +475,13 @@ const HazardReport = () => {
                 <LoadingScreen loadingText="Fetching Hazard Report..." />
               ) : (
                 <>
-                <div className="card mb-4">
-                  <div className="card-header">
-                    <h5 className="card-title mb-0"><strong>Hazard Report Within: </strong> 📌 {userData?.barangay}, {userData?.municipality}, Cebu </h5>
+                {userData?.role == '2' && (
+                  <div className="card mb-4">
+                    <div className="card-header">
+                      <h5 className="card-title mb-0"><strong>Hazard Report Within: </strong> 📌 {userData?.barangay}, {userData?.municipality}, Cebu </h5>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div className="card">
                   <div className="card-body">

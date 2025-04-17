@@ -2,47 +2,58 @@
   "districts": {
     "0": {
       "name": "Cebu City North Legislative name",
-      "code": "Cebu City DEO"
+      "code": "Cebu City DEO",
+      "district": "Cebu City North District"
     },
     "1": {
       "name": "Cebu City South Legislative name",
-      "code": "Cebu City DEO"
+      "code": "Cebu City DEO",
+      "district": "Cebu City South District"
     },
     "2": {
-      "name": "Fourth Legislative name",
-      "code": "Cebu 1st DEO"
+      "name": "First Legislative name",
+      "code": "Cebu 1st DEO",
+      "district": "1st District"
     },
     "3": {
-      "name": "First Legislative name",
-      "code": "Cebu 2nd DEO"
+      "name": "Second Legislative name",
+      "code": "Cebu 2nd DEO",
+      "district": "2nd District"
     },
     "4": {
       "name": "Third Legislative name",
-      "code": "Cebu 3rd DEO"
+      "code": "Cebu 3rd DEO",
+      "district": "3rd District"
     },
     "5": {
-      "name": "Second Legislative name",
-      "code": "Cebu 4th DEO"
+      "name": "Fourth Legislative name",
+      "code": "Cebu 4th DEO",
+      "district": "4th District"
     },
     "6": {
       "name": "Fifth Legislative name",
-      "code": "Cebu 5th DEO"
+      "code": "Cebu 5th DEO",
+      "district": "5th District"
     },
     "7": {
       "name": "Sixth Legislative name",
-      "code": "Cebu 6th DEO"
+      "code": "Cebu 6th DEO",
+      "district": "6th District"
     },
     "8": {
       "name": "Lapu-Lapu City Lone name",
-      "code": "Cebu 6th DEO"
+      "code": "Cebu 6th DEO",
+      "district": "7th District"
     },
     "9": {
       "name": "Mandaue City Lone name",
-      "code": "Cebu 6th DEO"
+      "code": "Cebu 6th DEO",
+      "district": "6th District"
     },
     "10": {
       "name": "Seventh Legislative name",
-      "code": "Cebu 7th DEO"
+      "code": "Cebu 7th DEO",
+      "district": "7th District"
     }
   }
 }
