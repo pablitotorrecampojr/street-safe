@@ -156,7 +156,7 @@ const getUserAreaCoverage = (userData) => {
       return;
     }
 
-    const url = 'https://nominatim.openstreetmap.org/search?q=${barangay}, ${municipality}, Cebu&format=json`'
+    const url = `https://nominatim.openstreetmap.org/search?q=${userData?.barangay}, ${userData?.municipality}, Cebu&format=json`
     const userCoverage = async () => {
       try {
         const response = await fetch(url, {
