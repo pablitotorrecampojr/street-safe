@@ -156,14 +156,7 @@ const getUserAreaCoverage = (userData) => {
       return;
     }
 
-    const barangay = userData?.barangay;
-    const municipality = userData?.municipality;
-    const district = userData?.district;
-    const url =
-      role === "2"
-        ? `https://nominatim.openstreetmap.org/search?q=${barangay}, ${municipality}, Cebu&format=json`
-        : `/maps-fragment?selectedLat=${district}&selectedLng=${municipality}`;
-
+    const url = 'https://nominatim.openstreetmap.org/search?q=${barangay}, ${municipality}, Cebu&format=json`'
     const userCoverage = async () => {
       try {
         const response = await fetch(url, {
@@ -208,7 +201,18 @@ const HazardReport = () => {
       roadhazardsRef,
       (snapshot) => {
         if (snapshot.exists()) {
-          const data = Object.values(snapshot.val());
+          let data = Object.values(snapshot.val());
+          
+          //TODO: filter out the hazards that are flag as national road hazard
+          if (userData?.role === "2") {
+            data = data.filter((hazard) => !hazard.nationalRoadFlg);
+          }
+
+          //TODO filter out hazard that are national road hazard
+          if (userData?.role === "1") {
+            data = data.filter((hazard) => hazard.nationalRoadFlg);
+          }
+
           const sorted = data.sort(
             (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
           );
@@ -223,9 +227,10 @@ const HazardReport = () => {
               const lng = parseFloat(hazard.longitude);
               return lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng;
             });
+            toast.success("New Road Hazard Report!");
           }
   
-          toast.success("New Road Hazard Report!");
+          
           setRoadHazards(finalData);
         } else {
           setRoadHazards([]);
@@ -240,8 +245,6 @@ const HazardReport = () => {
   
     return () => unsubscribe();
   }, [userCoverage, userData]);
-  
-  
 
   const columns = React.useMemo(() => [
     {
