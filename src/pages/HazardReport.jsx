@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getDatabase, ref, onValue, get, update, query, orderByChild, equalTo } from "firebase/database";
+import { getDatabase, ref, onValue, get, update, query, orderByChild, equalTo, set } from "firebase/database";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { useTable } from "react-table";
 import { auth, db, realtimeDb } from "../firebase/firebase";
@@ -12,6 +12,8 @@ import { hazard_status } from "../constants/hazard-report";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 import { hazard_icons, hazard_color } from "../constants/hazard-report";
+import districtSorted from "../constants/districts-sorted.json";
+import districts from '../constants/districts.json'
 
 const sendResponseTeam = async (hazard) => {
   //TODO: this function will set the hazard status to 1 (in progress)
@@ -83,9 +85,10 @@ const setHazardToResolved = async (hazard) => {
   }
 };
 
-const flagHazardAsNationalRoad = async (hazard, userDataMunicipality) => {
+const flagHazardAsNationalRoad = async (hazard, userData) => {
   const hazardId = hazard?.id;
-  const municipality = userDataMunicipality
+  const municipality = userData?.municipality;
+  const barangay = userData?.barangay;
   if (!hazardId) {
     console.error("Invalid hazard data");
     toast.error("Hazard ID is missing");
@@ -108,7 +111,7 @@ const flagHazardAsNationalRoad = async (hazard, userDataMunicipality) => {
     const hazardKey = Object.keys(snapshot.val())[0];
     const hazardRef = ref(realtimeDb, `roadhazards/${hazardKey}`);
 
-    await update(hazardRef, { nationalRoadFlg: true, municipality: municipality });
+    await update(hazardRef, { nationalRoadFlg: true, municipality: municipality, barangay: barangay });
     toast.success("Set as National Road Hazard");
   } catch (error) {
     console.error("Error updating hazard status:", error);
@@ -183,6 +186,20 @@ const getUserAreaCoverage = (userData) => {
   return data;
 };
 
+const isWithinDistrict = (hazardData, barangays) => {
+  const listOfBarangays = barangays;
+  const hazardBarangay = hazardData?.barangay;
+  const hazardMunicipality = hazardData?.municipality;
+  console.log("Districts Data:", {
+    hazardBarangay: hazardBarangay,
+    hazardMunicipality: hazardMunicipality,
+    barangays: listOfBarangays,
+  });
+  if (!listOfBarangays) return false;
+  
+  return true;
+};
+
 const HazardReport = () => {
   const navigate = useNavigate();
   const [roadHazards, setRoadHazards] = useState([]);
@@ -219,6 +236,10 @@ const HazardReport = () => {
   
           let finalData = sorted;
   
+          /**
+           * TODO: filter out the hazards that are not within the user's area coverage
+           * ? if the user is municipality
+           */
           if (userData?.role === "2") {
             const [minLat, maxLat, minLng, maxLng] = userCoverage.data.map(Number);
             console.log("User Coverage Data:", userCoverage.data);
@@ -229,7 +250,16 @@ const HazardReport = () => {
             });
             toast.success("New Road Hazard Report!");
           }
-  
+          
+          //TODO: if the user is authorities
+          if (userData?.role === "1") {
+            finalData = sorted.filter((hazard) => {
+              return (
+                hazard.nationalRoadFlg &&
+                isWithinDistrict(hazard, districtSorted[districts.districts[userData?.district].district])
+              );
+            });
+          }
           
           setRoadHazards(finalData);
         } else {
@@ -363,7 +393,7 @@ const HazardReport = () => {
                 <button
                   type="button"
                   className="btn btn-icon btn-outline-danger"
-                  onClick={() => flagHazardAsNationalRoad(hazard, userData?.municipality)}
+                  onClick={() => flagHazardAsNationalRoad(hazard, userData)}
                   data-tooltip-id="hazard-tooltip"
                   data-tooltip-content="Flag as National Road Hazard"
                 >

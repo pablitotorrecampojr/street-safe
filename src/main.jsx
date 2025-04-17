@@ -30,8 +30,6 @@ import InsertHazard from './firebase/InsertHazard';
 import {app} from './firebase/firebase';
 import './index.css';
 
-console.log("Firebase App Initialized:", app);
-
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
