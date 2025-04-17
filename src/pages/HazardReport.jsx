@@ -52,8 +52,6 @@ const sendResponseTeam = async (hazard) => {
 const setHazardToResolved = async (hazard) => {
   //TODO: this function will set the hazard status to 2 (resolved)
   const hazardId = hazard?.id;
-  console.log("Hazard object:", hazard);
-  console.log("Hazard ID:", hazardId);
 
   if (!hazardId) {
     console.error("Invalid hazard data");
@@ -85,7 +83,41 @@ const setHazardToResolved = async (hazard) => {
   }
 };
 
+const flagHazardAsNationalRoad = async (hazard) => {
+  const hazardId = hazard?.id;
+
+  if (!hazardId) {
+    console.error("Invalid hazard data");
+    toast.error("Hazard ID is missing");
+    return;
+  }
+
+  try {
+    const hazardQuery = query(
+      ref(realtimeDb, "roadhazards"),
+      orderByChild("id"),
+      equalTo(hazardId)
+    );
+
+    const snapshot = await get(hazardQuery);
+    if (!snapshot.exists()) {
+      toast.error("Hazard not found in Realtime Database");
+      return;
+    }
+
+    const hazardKey = Object.keys(snapshot.val())[0];
+    const hazardRef = ref(realtimeDb, `roadhazards/${hazardKey}`);
+
+    await update(hazardRef, { nationalRoadFlg: true });
+    toast.success("Hazard status updated to Resolved");
+  } catch (error) {
+    console.error("Error updating hazard status:", error);
+    toast.error("Failed to update hazard status");
+  }
+}
+
 const useCurrentUserData = () => {
+  //TODO: this function will get the current user data from firestore
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
@@ -137,10 +169,13 @@ const getUserAreaCoverage = (userData) => {
           },
         });
         const json = await response.json();
-        console.log("User coverage data:", json[0]?.boundingbox );
         setData({ status: 200, data: json[0]?.boundingbox });
       } catch (error) {
-        console.error("Error fetching user coverage:", error);
+        console.error({
+          status: 500,
+          message: "Fetch failed",
+          error: error.message,
+        });
         setData({ status: 500, message: "Fetch failed" });
       }
     };
@@ -305,12 +340,15 @@ const HazardReport = () => {
               </button>
     
               {userData?.role === "2" && (
+                /**
+                 * TODO: this button will be used to flag the hazard as national road hazard
+                 * ? this will be used to send the hazard to the national road hazard team 
+                 * ? This button will only be shown to the municipality role
+                 */
                 <button
                   type="button"
                   className="btn btn-icon btn-outline-danger"
-                  onClick={() =>
-                    navigate("/hazard-report-details", { state: { hazard } })
-                  }
+                  onClick={() => flagHazardAsNationalRoad(hazard)}
                   data-tooltip-id="hazard-tooltip"
                   data-tooltip-content="Flag as National Road Hazard"
                 >
