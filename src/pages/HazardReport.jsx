@@ -83,9 +83,13 @@ const setHazardToResolved = async (hazard) => {
   }
 };
 
-const flagHazardAsNationalRoad = async (hazard) => {
+const flagHazardAsNationalRoad = async (hazard, userDataMunicipality) => {
   const hazardId = hazard?.id;
-
+  const municipality = userDataMunicipality
+  console.log("flagHazardAsNationalRoad", {
+    "hazard id": hazardId,
+    "municipality": municipality
+  })
   if (!hazardId) {
     console.error("Invalid hazard data");
     toast.error("Hazard ID is missing");
@@ -217,6 +221,7 @@ const HazardReport = () => {
   
           if (userData?.role === "2") {
             const [minLat, maxLat, minLng, maxLng] = userCoverage.data.map(Number);
+            console.log("User Coverage Data:", userCoverage.data);
             finalData = sorted.filter((hazard) => {
               const lat = parseFloat(hazard.latitude);
               const lng = parseFloat(hazard.longitude);
@@ -359,7 +364,7 @@ const HazardReport = () => {
                 <button
                   type="button"
                   className="btn btn-icon btn-outline-danger"
-                  onClick={() => flagHazardAsNationalRoad(hazard)}
+                  onClick={() => flagHazardAsNationalRoad(hazard, userData?.municipality)}
                   data-tooltip-id="hazard-tooltip"
                   data-tooltip-content="Flag as National Road Hazard"
                 >
@@ -441,11 +446,13 @@ const HazardReport = () => {
                 <LoadingScreen loadingText="Fetching Hazard Report..." />
               ) : (
                 <>
-                <div className="card mb-4">
-                  <div className="card-header">
-                    <h5 className="card-title mb-0"><strong>Hazard Report Within: </strong> 📌 {userData?.barangay}, {userData?.municipality}, Cebu </h5>
+                {userData?.role == '2' && (
+                  <div className="card mb-4">
+                    <div className="card-header">
+                      <h5 className="card-title mb-0"><strong>Hazard Report Within: </strong> 📌 {userData?.barangay}, {userData?.municipality}, Cebu </h5>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div className="card">
                   <div className="card-body">
