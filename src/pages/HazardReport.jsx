@@ -86,10 +86,6 @@ const setHazardToResolved = async (hazard) => {
 const flagHazardAsNationalRoad = async (hazard, userDataMunicipality) => {
   const hazardId = hazard?.id;
   const municipality = userDataMunicipality
-  console.log("flagHazardAsNationalRoad", {
-    "hazard id": hazardId,
-    "municipality": municipality
-  })
   if (!hazardId) {
     console.error("Invalid hazard data");
     toast.error("Hazard ID is missing");
@@ -112,8 +108,8 @@ const flagHazardAsNationalRoad = async (hazard, userDataMunicipality) => {
     const hazardKey = Object.keys(snapshot.val())[0];
     const hazardRef = ref(realtimeDb, `roadhazards/${hazardKey}`);
 
-    await update(hazardRef, { nationalRoadFlg: true });
-    toast.success("Hazard status updated to Resolved");
+    await update(hazardRef, { nationalRoadFlg: true, municipality: municipality });
+    toast.success("Set as National Road Hazard");
   } catch (error) {
     console.error("Error updating hazard status:", error);
     toast.error("Failed to update hazard status");
