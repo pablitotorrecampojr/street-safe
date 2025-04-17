@@ -43,7 +43,7 @@ const AccessControl = () => {
         Header: "District",
         accessor: "district",
         Cell: ({ value, row }) =>
-          value ? `${districtLists.districts[value].code}, ${districtLists.districts[value].name}` : "N/A",
+          value ? `${districtLists.districts[value].district} / ${districtLists.districts[value].code}` : "N/A",
       },
       {
         Header: "Registration Date",
