@@ -147,8 +147,12 @@ const getUserAreaCoverage = (userData) => {
     if (!userData) return;
 
     const role = userData?.role;
-    if (role == 0) {
-      setData({ status: 400, message: "User role is not valid" });
+    if (role == "0") {
+      setData({ 
+        status: 400, 
+        errorId: "user_id_admin",
+        message: "User role is not valid",
+      });
       return;
     }
 
@@ -197,38 +201,45 @@ const HazardReport = () => {
   const userCoverage = getUserAreaCoverage(userData);
 
   useEffect(() => {
-    if (!userCoverage || userCoverage.status !== 200 || !userCoverage.data) return;
-  
     const db = getDatabase();
     const roadhazardsRef = ref(db, "roadhazards");
   
-    const unsubscribe = onValue(roadhazardsRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const data = Object.values(snapshot.val());
-        const sorted = data.sort(
-          (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
-        );
+    const unsubscribe = onValue(
+      roadhazardsRef,
+      (snapshot) => {
+        if (snapshot.exists()) {
+          const data = Object.values(snapshot.val());
+          const sorted = data.sort(
+            (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
+          );
   
-        const [minLat, maxLat, minLng, maxLng] = userCoverage.data.map(Number);
-        const filtered = sorted.filter((hazard) => {
-          const lat = parseFloat(hazard.latitude);
-          const lng = parseFloat(hazard.longitude);
-          return lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng;
-        });
+          let finalData = sorted;
   
-        toast.success("New Road Hazard Report!");
-        setRoadHazards(filtered);
-      } else {
-        setRoadHazards([]);
+          if (userData?.role === "2") {
+            const [minLat, maxLat, minLng, maxLng] = userCoverage.data.map(Number);
+            finalData = sorted.filter((hazard) => {
+              const lat = parseFloat(hazard.latitude);
+              const lng = parseFloat(hazard.longitude);
+              return lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng;
+            });
+          }
+  
+          toast.success("New Road Hazard Report!");
+          setRoadHazards(finalData);
+        } else {
+          setRoadHazards([]);
+        }
+        setLoading(false);
+      },
+      (error) => {
+        toast.error("Error fetching roadhazards");
+        setLoading(false);
       }
-      setLoading(false);
-    }, (error) => {
-      toast.error("Error fetching roadhazards");
-      setLoading(false);
-    });
+    );
   
     return () => unsubscribe();
-  }, [userCoverage]);
+  }, [userCoverage, userData]);
+  
   
 
   const columns = React.useMemo(() => [
