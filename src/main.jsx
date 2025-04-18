@@ -22,6 +22,7 @@ import LoadingScreen from './webview/LoadingScreen';
 import MapsFragment from './webview/MapsFragment';
 import HazardFragment from './webview/HazardFragment';
 import HazardDetails from './webview/HazardDetails';
+import HomeFragment from './webview/HomeFragment';
 
 //TODO: scripts
 import InsertHazard from './firebase/InsertHazard';
@@ -39,6 +40,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/maps-fragment" element={<MapsFragment />} />
         <Route path="/hazards-fragment" element={<HazardFragment />} />
         <Route path="/hazard-details" element={<HazardDetails />} />
+        <Route path="/home-fragment" element={<HomeFragment />} />
         {/* public routes */}
         <Route path="/" element={<PublicRoute><SignIn /></PublicRoute>} />
         <Route path="/sign-up" element={<PublicRoute><SignUp /></PublicRoute>} />
