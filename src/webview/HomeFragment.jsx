@@ -57,7 +57,6 @@ export default function HomeFragment() {
             }
         );
         return () => unsubscribe();
-
     }, []);
 
     return (
@@ -146,7 +145,6 @@ export default function HomeFragment() {
                             </div>
                         </div>
                     )}
-                
                 </div>
             </div> 
         </div>

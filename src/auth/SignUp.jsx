@@ -94,12 +94,17 @@ const SignUp = () => {
           <div className="authentication-inner">
               <div className="card">
                 <div className="card-body">
-                    <div className="app-brand justify-content-center">
-                    <a href="/" className="app-brand-link gap-2">
-                        <span className="app-brand-text demo text-body fw-bolder">Street Safe</span>
+                  <div className="d-flex justify-content-center align-items-center">
+                    <a href="/" className="text-center">
+                      <img
+                        src="/public/logo.png"
+                        alt="Logo"
+                        height={100}
+                        width={100}
+                        className="rounded-circle mx-auto d-block"
+                      />
                     </a>
-                    </div>
-                    <h4 className="mb-2">Adventure starts here 🚀</h4>
+                  </div>
 
                     <form id="formAuthentication" className="mb-3" onSubmit={handleSubmit}>
                       <div className="mb-3">
