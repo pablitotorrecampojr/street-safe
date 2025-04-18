@@ -50,7 +50,18 @@ export default function Aside() {
       <aside id="layout-menu" className="layout-menu menu-vertical menu bg-menu-theme">
         <div className="app-brand demo">
             <a className="app-brand-link">
-              <span className="app-brand-text demo menu-text fw-bolder ms-2">Street Safe</span>
+              <div className="d-flex justify-content-center align-items-center p-1">
+                <a href="/" className="text-center">
+                  <img
+                    src="/public/logo.png"
+                    alt="Logo"
+                    height={80}
+                    width={80}
+                    className="rounded-circle mx-auto d-block"
+                  />
+                </a>
+              </div>
+              <span className="app-brand-text demo menu-text ms-2"><strong>Street Safe</strong></span>
             </a>
 
             <a className="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none" onClick={handleNavbarToggle}>
