@@ -68,7 +68,7 @@ export default function HomeFragment() {
                                             You have reported <span className="fw-bold">{roadHazards.length}</span> road hazards in total. Keep the community safe by reporting any road hazards you encounter.
                                         </p>
 
-                                        <a href="javascript:;" className="btn btn-sm btn-outline-primary"
+                                        <a className="btn btn-sm btn-outline-primary"
                                             onClick={() => { 
                                                 window.location.href = '/report-hazard?isHomeFramentButton=true';
                                             }}
