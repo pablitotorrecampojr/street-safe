@@ -28,7 +28,7 @@
 
         <!-- Main Activities and others -->
         <activity
-            android:name=".SignInActivity"
+            android:name=".LandingPage"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
