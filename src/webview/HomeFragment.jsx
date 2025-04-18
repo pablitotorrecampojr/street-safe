@@ -41,6 +41,8 @@ export default function HomeFragment() {
         return () => unsubscribe();
 
     }, []);
+
+
     return (
         <div className="layout-wrapper layout-content-navbar">
             <div className="layout-container">
@@ -66,7 +68,12 @@ export default function HomeFragment() {
                                             You have reported <span className="fw-bold">{roadHazards.length}</span> road hazards in total. Keep the community safe by reporting any road hazards you encounter.
                                         </p>
 
-                                        <a href="javascript:;" className="btn btn-sm btn-outline-primary">Report Hazards</a>
+                                        <a href="javascript:;" className="btn btn-sm btn-outline-primary"
+                                            onClick={() => { 
+                                                window.location.href = '/report-hazard?isHomeFramentButton=true';
+                                            }}
+                                        >Report Hazards
+                                        </a>
                                         </div>
                                     </div>
                                     <div className="col-sm-5 text-center text-sm-left">
