@@ -5,7 +5,7 @@ model = YOLO('yolov8n.pt')
 
 # Train the model using your custom dataset
 model.train(
-    data='./datasets/road_hazards/data.yaml',  # Adjust path if needed
+    data='dataset/data.yaml',
     epochs=50,
     imgsz=640
 )

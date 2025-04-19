@@ -1,7 +1,7 @@
 task: detect
 mode: train
 model: yolov8n.pt
-data: ./datasets/road_hazards/data.yaml
+data: dataset/data.yaml
 epochs: 50
 time: null
 patience: 100

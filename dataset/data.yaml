@@ -1,21 +1,13 @@
-train: datasets/road_hazards/train/images
-val: datasets/road_hazards/valid/images
+train: D:\Torrexx\Github\street-safe-python\dataset\train\images
+val: D:\Torrexx\Github\street-safe-python\dataset\valid\images
+test: D:\Torrexx\Github\street-safe-python\dataset\test\images
 
 nc: 5
-names:
-  - Potholes
-  - Alligator Cracks
-  # - Major Scalling
-  # - Shoving and Corrugation
-  # - Pumping and Depression
-  # - No/Faded Road Markings
-  # - Defects on Shoulders
-  # - Lush Vegetation
-  - Clogged Drains
-  - Open Manhole
-  # - No/Inadequate Sealant in Joints
-  - Cracks
-  # - Raveling
-  # - Unmaintained Signages and Road Markers
-  # - Unmaintained Bridges
-  # - Unmaintained Guardrails
+names: ['alligator_cracks', 'clogged_drains', 'cracks', 'open_manhole', 'pothole']
+
+roboflow:
+  workspace: streetsafeai
+  project: streetsafe_roadhazards
+  version: 10
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/streetsafeai/streetsafe_roadhazards/dataset/10
