@@ -7,7 +7,7 @@ import base64
 import re
 
 # Load YOLOv8 custom-trained model
-model = YOLO('runs/detect/train/weights/best.pt')  # Adjust path if needed
+model = YOLO('D:/Torrexx/Github/street-safe-python/runs/detect/train5/weights/best.pt')
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -28,12 +28,13 @@ def detect_hazard():
     try:
         image_bytes = base64.b64decode(image_b64)
         image = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+        image = image.resize((640, 640)) 
         image_np = np.array(image)
     except Exception as e:
         return jsonify({"error": f"Invalid image data: {str(e)}"}), 400
 
     # Run YOLOv8 detection
-    results = model.predict(source=image_np, save=False, conf=0.25)
+    results = model.predict(source=image_np, save=False, conf=0.1)
 
     detections = []
     if results and len(results[0].boxes) > 0:
