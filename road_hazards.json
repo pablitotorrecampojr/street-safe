@@ -1,0 +1,18 @@
+[
+  { "id": 1, "label": "Potholes" },
+  { "id": 2, "label": "Alligator Cracks" },
+  { "id": 3, "label": "Major Scalling" },
+  { "id": 4, "label": "Shoving and Corrugation" },
+  { "id": 5, "label": "Pumping and Depression" },
+  { "id": 6, "label": "No/Faded Road Markings" },
+  { "id": 7, "label": "Defects on Shoulders" },
+  { "id": 8, "label": "Lush Vegetation" },
+  { "id": 9, "label": "Clogged Drains" },
+  { "id": 10, "label": "Open Manhole" },
+  { "id": 11, "label": "No/Inadequate Sealant in Joints" },
+  { "id": 12, "label": "Cracks" },
+  { "id": 13, "label": "Raveling" },
+  { "id": 14, "label": "Unmaintained Signages and Road Markers" },
+  { "id": 15, "label": "Unmaintained Bridges" },
+  { "id": 16, "label": "Unmaintained Guardrails" }
+]
