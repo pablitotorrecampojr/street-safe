@@ -1,8 +1,15 @@
+from ultralytics import YOLO
+import numpy as np
 from flask import Flask, request, jsonify
 from PIL import Image
 import io
 import base64
+import re
 
+# Load YOLOv8 custom-trained model
+model = YOLO('D:/Torrexx/Github/street-safe-python/runs/detect/train5/weights/best.pt')
+
+# Initialize Flask app
 app = Flask(__name__)
 
 @app.route('/detect', methods=['POST'])
@@ -13,15 +20,39 @@ def detect_hazard():
     if not image_b64:
         return jsonify({"error": "No image provided"}), 400
 
-    # Decode Base64 string to bytes
-    image_bytes = base64.b64decode(image_b64)
-    image = Image.open(io.BytesIO(image_bytes))
+    # Strip base64 prefix if it exists
+    if image_b64.startswith("data:image"):
+        print("Stripping data URI prefix from base64 string...")
+        image_b64 = re.sub(r"^data:image\/[a-zA-Z]+;base64,", "", image_b64)
 
-    # Your detection logic here
-    hazard_type = "pothole"  # dummy result
-    confidence = 0.93        # dummy confidence
+    try:
+        image_bytes = base64.b64decode(image_b64)
+        image = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+        image = image.resize((640, 640)) 
+        image_np = np.array(image)
+    except Exception as e:
+        return jsonify({"error": f"Invalid image data: {str(e)}"}), 400
 
-    return jsonify({
-        "hazard": hazard_type,
-        "confidence": confidence
-    })
+    # Run YOLOv8 detection
+    results = model.predict(source=image_np, save=False, conf=0.1)
+
+    detections = []
+    if results and len(results[0].boxes) > 0:
+        for box in results[0].boxes:
+            cls_id = int(box.cls[0])
+            conf = float(box.conf[0])
+            x1, y1, x2, y2 = map(float, box.xyxy[0])
+            detections.append({
+                "class_id": cls_id,
+                "confidence": conf,
+                "bbox": [x1, y1, x2, y2],
+                "label": model.names[cls_id]
+            })
+    else:
+        print("No detections found.")
+
+    return jsonify({"detections": detections})
+
+# Run the Flask app
+if __name__ == '__main__':
+    app.run(debug=True)
