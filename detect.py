@@ -1,14 +1,13 @@
-import torch
+from ultralytics import YOLO
 import numpy as np
-import cv2
 from flask import Flask, request, jsonify
 from PIL import Image
 import io
 import base64
 import re
 
-# Load YOLOv5 model (once, at top of your file)
-model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+# Load YOLOv8 custom-trained model
+model = YOLO('runs/detect/train/weights/best.pt')  # Adjust path if needed
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -21,7 +20,7 @@ def detect_hazard():
     if not image_b64:
         return jsonify({"error": "No image provided"}), 400
 
-    # Check and remove data URI scheme if present
+    # Strip base64 prefix if it exists
     if image_b64.startswith("data:image"):
         print("Stripping data URI prefix from base64 string...")
         image_b64 = re.sub(r"^data:image\/[a-zA-Z]+;base64,", "", image_b64)
@@ -33,26 +32,25 @@ def detect_hazard():
     except Exception as e:
         return jsonify({"error": f"Invalid image data: {str(e)}"}), 400
 
-    # Debug: Check image shape
-    print("Image shape:", image_np.shape)
+    # Run YOLOv8 detection
+    results = model.predict(source=image_np, save=False, conf=0.25)
 
-    # Run detection
-    results = model(image_np)
-
-    # Debug: Check results
-    print("Detection results:", results)
-
-    detections = results.pandas().xyxy[0].to_dict(orient="records")
-
-    # Debug: Check if detections are empty
-    if not detections:
-        print("No detections found.")
+    detections = []
+    if results and len(results[0].boxes) > 0:
+        for box in results[0].boxes:
+            cls_id = int(box.cls[0])
+            conf = float(box.conf[0])
+            x1, y1, x2, y2 = map(float, box.xyxy[0])
+            detections.append({
+                "class_id": cls_id,
+                "confidence": conf,
+                "bbox": [x1, y1, x2, y2],
+                "label": model.names[cls_id]
+            })
     else:
-        print(f"Detections: {detections}")
+        print("No detections found.")
 
-    return jsonify({
-        "detections": detections
-    })
+    return jsonify({"detections": detections})
 
 # Run the Flask app
 if __name__ == '__main__':
