@@ -60,8 +60,9 @@ def detect_hazard():
     output_b64 = base64.b64encode(output_buffer.getvalue()).decode('utf-8')
 
     return jsonify({
+        "success": True,
         "detections": detections,
-        "image_with_boxes": f"data:image/png;base64,{output_b64}"
+        "image_with_boxes": f"{output_b64}"
     })
 
 if __name__ == '__main__':
