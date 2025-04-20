@@ -45,6 +45,8 @@ import java.util.*
 import java.util.concurrent.ExecutionException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import okhttp3.*
+import java.io.IOException
 
 class ReportFragment : Fragment() {
 
@@ -56,7 +58,7 @@ class ReportFragment : Fragment() {
     private var imageCapture: ImageCapture? = null
     private var latitude: Double? = null
     private var longitude: Double? = null
-
+    val client = OkHttpClient()
     private val requestCameraPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
@@ -130,6 +132,14 @@ class ReportFragment : Fragment() {
                         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                         val currentDateTime = dateFormat.format(Date())
                         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "anonymous"
+
+                        sendPostRequest(base64Image) { result ->
+                            if (result != null) {
+                                Log.d("POST_RESPONSE", result)
+                            } else {
+                                Log.d("POST_RESPONSE", "Request failed")
+                            }
+                        }
                         val report = hashMapOf(
                             "imageUrl" to base64Image,
                             "dateSubmitted" to currentDateTime,
@@ -166,6 +176,40 @@ class ReportFragment : Fragment() {
         }
 
     }
+
+    fun sendPostRequest(image: String, onResult: (String?) -> Unit) {
+        val url = "http://192.168.254.101:5000/detect"
+
+        val formBody = FormBody.Builder()
+            .add("image", image)
+            .build()
+
+        val request = Request.Builder()
+            .url(url)
+            .post(formBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("POST_REQUEST", "Request failed due to IOException: ${e.message}")
+                e.printStackTrace()
+                onResult(null)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val responseBody = response.body?.string()
+                if (response.isSuccessful) {
+                    Log.d("POST_REQUEST", "Success: $responseBody")
+                    onResult(responseBody)
+                } else {
+                    Log.e("POST_REQUEST", "Server responded with error: Code=${response.code}, Body=$responseBody")
+                    onResult(null)
+                }
+            }
+        })
+    }
+
+
     private fun checkAndOpenCamera() {
         if (ContextCompat.checkSelfPermission(requireContext(), cameraPermission) == PackageManager.PERMISSION_GRANTED) {
             openCamera()
