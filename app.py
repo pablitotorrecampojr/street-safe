@@ -44,9 +44,10 @@ def detect_hazard():
             x1, y1, x2, y2 = map(float, box.xyxy[0])
             label = f"{model.names[cls_id]}: {conf:.2f}"
             detections.append({
-                "class_id": cls_id,
-                "confidence": conf,
-                "bbox": [x1, y1, x2, y2],
+                # uncomment the following lines if you want to include class_id and confidence in the response
+                # "class_id": cls_id,
+                # "confidence": conf,
+                # "bbox": [x1, y1, x2, y2],
                 "label": model.names[cls_id]
             })
             # Draw box and label
