@@ -13,6 +13,8 @@ import android.webkit.WebViewClient
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.auth.FirebaseAuth
+
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -25,11 +27,13 @@ class HazardsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val user = FirebaseAuth.getInstance().currentUser
+        val userId = user?.uid
         val view = inflater.inflate(R.layout.fragment_maps, container, false)
         val webView = view.findViewById<WebView>(R.id.mapsWebView)
         webView.settings.javaScriptEnabled = true
         webView.webViewClient = WebViewClient()
-        val url = "${Constants.BASE_URL}hazards-fragment?userId="
+        val url = "${Constants.BASE_URL}hazards-fragment?userId=$userId"
         webView.loadUrl(url)
         return  view
     }
