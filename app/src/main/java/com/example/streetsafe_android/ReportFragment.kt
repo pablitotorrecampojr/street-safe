@@ -48,6 +48,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import java.io.IOException
 
 class ReportFragment : Fragment() {
@@ -133,38 +134,65 @@ class ReportFragment : Fragment() {
                         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                         val currentDateTime = dateFormat.format(Date())
                         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "anonymous"
+                        var imageWithBoxesBase64: String? = null
 
                         sendPostRequest(base64Image) { result ->
                             if (result != null) {
                                 Log.d("POST_RESPONSE", result)
+
+                                try {
+                                    val jsonObject = JSONObject(result)
+                                    val success = jsonObject.optBoolean("success", false)
+                                    val imageWithBoxesBase64 = jsonObject.getString("image_with_boxes") // now it's scoped here
+
+                                    if (success) {
+                                        Log.d("POST_RESULT", "true")
+
+                                        val report = hashMapOf(
+                                            "imageUrl" to imageWithBoxesBase64,
+                                            "dateSubmitted" to currentDateTime,
+                                            "fullAddress" to fullAddress,
+                                            "roadHazard" to selectedHazard,
+                                            "status" to 0,
+                                            "latitude" to latitude,
+                                            "longitude" to longitude,
+                                            "userid" to userId
+                                        )
+
+                                        val reportJson = JSONObject(report as Map<*, *>)
+                                        Log.d("ReportData", reportJson.toString(4))
+
+                                        val db = Firebase.database.reference
+                                        db.child("roadhazards").push().setValue(report)
+                                            .addOnSuccessListener {
+                                                Toast.makeText(requireContext(), "Report submitted!", Toast.LENGTH_SHORT).show()
+                                                // Navigate back to ReportFragment
+                                                val intent = Intent(requireContext(), MainActivity::class.java)
+                                                startActivity(intent)
+                                            }
+                                            .addOnFailureListener { e ->
+                                                Toast.makeText(requireContext(), "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                                                val intent = Intent(requireContext(), MainActivity::class.java)
+                                                startActivity(intent)
+                                            }
+
+                                        val intent = Intent(requireContext(), DetectionResultActivity::class.java)
+                                        intent.putExtra("image_with_boxes", imageWithBoxesBase64)
+                                        startActivity(intent)
+                                    } else {
+                                        Log.d("POST_RESULT", "false")
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e("POST_RESULT", "Failed to parse JSON: ${e.message}")
+                                }
+
                             } else {
                                 Log.d("POST_RESPONSE", "Request failed")
                             }
                         }
-                        val report = hashMapOf(
-                            "imageUrl" to base64Image,
-                            "dateSubmitted" to currentDateTime,
-                            "fullAddress" to fullAddress,
-                            "roadHazard" to selectedHazard,
-                            "status" to 0,
-                            "latitude" to latitude,
-                            "longitude" to longitude,
-                            "userid" to userId
-                        )
-                        Log.d("ReportDebug", base64Image)
-                        val db = Firebase.database.reference
-                        db.child("roadhazards").push().setValue(report)
-                            .addOnSuccessListener {
-                                Toast.makeText(requireContext(), "Report submitted!", Toast.LENGTH_SHORT).show()
-                                // Navigate back to ReportFragment
-                                val intent = Intent(requireContext(), MainActivity::class.java)
-                                startActivity(intent)
-                            }
-                            .addOnFailureListener { e ->
-                                Toast.makeText(requireContext(), "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
-                                val intent = Intent(requireContext(), MainActivity::class.java)
-                                startActivity(intent)
-                            }
+
+
+
                     }
 
                     override fun onError(exception: ImageCaptureException) {

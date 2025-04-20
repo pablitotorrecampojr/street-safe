@@ -41,7 +41,7 @@
         <activity android:name=".SignUpActivity" android:exported="false"/>
         <activity android:name=".EditProfileActivity" android:exported="false"/>
         <activity android:name=".SettingsActivity" android:exported="false"/>
-
+        <activity android:name=".DetectionResultActivity" android:exported="false"/>
         <!-- Web views -->
         <activity android:name=".LoadingScreen" android:exported="true"/>
 
