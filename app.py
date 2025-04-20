@@ -32,7 +32,7 @@ def detect_hazard():
         return jsonify({"error": f"Invalid image data: {str(e)}"}), 400
 
     # Run YOLOv8 detection
-    results = model.predict(source=image_np, save=False, conf=0.25)
+    results = model.predict(source=image_np, save=False, conf=0.1)
 
     detections = []
     draw = ImageDraw.Draw(image)
@@ -60,9 +60,9 @@ def detect_hazard():
     output_b64 = base64.b64encode(output_buffer.getvalue()).decode('utf-8')
 
     return jsonify({
-        "success": True,
+        "success": bool(detections),  # True if detections is not empty
         "detections": detections,
-        "image_with_boxes": f"{output_b64}"
+        "image_with_boxes": output_b64
     })
 
 if __name__ == '__main__':
