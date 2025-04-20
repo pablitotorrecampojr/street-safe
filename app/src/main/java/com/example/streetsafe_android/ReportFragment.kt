@@ -46,6 +46,8 @@ import java.util.concurrent.ExecutionException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 
 class ReportFragment : Fragment() {
@@ -180,34 +182,41 @@ class ReportFragment : Fragment() {
     fun sendPostRequest(image: String, onResult: (String?) -> Unit) {
         val url = "http://192.168.254.101:5000/detect"
 
-        val formBody = FormBody.Builder()
-            .add("image", image)
-            .build()
+        val json = """
+        {
+            "image": "$image"
+        }
+    """.trimIndent()
+
+        val mediaType = "application/json; charset=utf-8".toMediaType()
+        val requestBody = json.toRequestBody(mediaType)
 
         val request = Request.Builder()
             .url(url)
-            .post(formBody)
+            .post(requestBody)
+            .addHeader("Content-Type", "application/json")
             .build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Log.e("POST_REQUEST", "Request failed due to IOException: ${e.message}")
                 e.printStackTrace()
+                Log.e("POST_ERROR", "Request failed due to IOException: ${e.message}")
                 onResult(null)
             }
 
             override fun onResponse(call: Call, response: Response) {
-                val responseBody = response.body?.string()
                 if (response.isSuccessful) {
-                    Log.d("POST_REQUEST", "Success: $responseBody")
-                    onResult(responseBody)
+                    val responseData = response.body?.string()
+                    onResult(responseData)
                 } else {
-                    Log.e("POST_REQUEST", "Server responded with error: Code=${response.code}, Body=$responseBody")
+                    val errorBody = response.body?.string()
+                    Log.e("POST_ERROR", "Server responded with error: Code=${response.code}, Body=$errorBody")
                     onResult(null)
                 }
             }
         })
     }
+
 
 
     private fun checkAndOpenCamera() {
