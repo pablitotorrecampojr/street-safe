@@ -106,9 +106,8 @@ class ReportFragment : Fragment() {
         submitButton.setOnClickListener {
             val imageCapture = imageCapture ?: return@setOnClickListener
 
-            // Start the loading screen
             val intent = Intent(requireContext(), LoadingScreen::class.java)
-            intent.putExtra("loadingText", "Sending Data ...")
+            intent.putExtra("loadingText", "Processing Data ...")
             startActivity(intent)
 
             imageCapture.takePicture(
@@ -179,7 +178,7 @@ class ReportFragment : Fragment() {
 
     }
 
-    fun sendPostRequest(image: String, onResult: (String?) -> Unit) {
+    private fun sendPostRequest(image: String, onResult: (String?) -> Unit) {
         val url = "http://192.168.254.101:5000/detect"
 
         val json = """
@@ -216,8 +215,6 @@ class ReportFragment : Fragment() {
             }
         })
     }
-
-
 
     private fun checkAndOpenCamera() {
         if (ContextCompat.checkSelfPermission(requireContext(), cameraPermission) == PackageManager.PERMISSION_GRANTED) {
