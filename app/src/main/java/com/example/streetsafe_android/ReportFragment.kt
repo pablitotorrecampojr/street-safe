@@ -119,7 +119,6 @@ class ReportFragment : Fragment() {
                             Log.e("ImageCheck", "Invalid bitmap captured!")
                             Toast.makeText(requireContext(), "Image capture failed. Please try again.", Toast.LENGTH_SHORT).show()
 
-                            // Hide loading
                             progressBar.visibility = View.GONE
                             submitButton.isEnabled = true
                             return
@@ -141,7 +140,17 @@ class ReportFragment : Fragment() {
                                 try {
                                     val jsonObject = JSONObject(result)
                                     val success = jsonObject.optBoolean("success", false)
-                                    val imageWithBoxesBase64 = jsonObject.getString("image_with_boxes")
+                                    val imageWithBoxesBase64 = jsonObject.optString("image_with_boxes", null)
+
+                                    if (imageWithBoxesBase64 != null) {
+                                        requireActivity().runOnUiThread {
+                                            val imageBytes = Base64.decode(imageWithBoxesBase64, Base64.DEFAULT)
+                                            val decodedBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                                            capturedImageView.setImageBitmap(decodedBitmap)
+                                            capturedImageView.visibility = View.VISIBLE
+                                            previewView.visibility = View.GONE
+                                        }
+                                    }
 
                                     if (success) {
                                         val report = hashMapOf(
@@ -157,16 +166,8 @@ class ReportFragment : Fragment() {
 
                                         val reportJson = JSONObject(report as Map<*, *>)
                                         Log.d("ReportData", reportJson.toString(4))
-
-                                        requireActivity().runOnUiThread {
-                                            val imageBytes = Base64.decode(imageWithBoxesBase64, Base64.DEFAULT)
-                                            val decodedBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                                            capturedImageView.setImageBitmap(decodedBitmap)
-                                            capturedImageView.visibility = View.VISIBLE
-                                            previewView.visibility = View.GONE // Hide camera
-                                        }
                                     } else {
-                                        Log.d("POST_RESULT", "false")
+                                        Log.d("POST_RESULT", "false - image shown, but no hazard detected")
                                     }
                                 } catch (e: Exception) {
                                     Log.e("POST_RESULT", "Failed to parse JSON: ${e.message}")
