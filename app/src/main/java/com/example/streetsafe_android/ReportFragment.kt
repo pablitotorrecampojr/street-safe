@@ -183,6 +183,12 @@ class ReportFragment : Fragment() {
                                             // Show new buttons
                                             submitFinalButton.visibility = View.VISIBLE
                                             cancelButton.visibility = View.VISIBLE
+
+                                            cancelButton.setOnClickListener {
+                                                val fragmentTransaction = parentFragmentManager.beginTransaction()
+                                                fragmentTransaction.replace(id, ReportFragment())
+                                                fragmentTransaction.commit()
+                                            }
                                         }
                                     }
 
