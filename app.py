@@ -7,7 +7,8 @@ import base64
 import re
 
 # Load YOLOv8 custom-trained model
-model = YOLO('/Users/fdc-pablito-nc-web/Documents/Torrexx/street-safe-python/runs/detect/train5/weights/best.pt')
+# model = YOLO('/Users/fdc-pablito-nc-web/Documents/Torrexx/street-safe-python/runs/detect/train5/weights/best.pt')
+model = YOLO('D:\Torrexx\Github\street-safe-python\\runs\detect\\train5\\weights\\best.pt')
 
 # Initialize Flask app
 app = Flask(__name__)
