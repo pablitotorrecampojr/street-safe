@@ -68,7 +68,11 @@ def detect_hazard():
     else:
         print("No detections found.")
 
-    return jsonify({"detections": detections})
+    return jsonify({
+        "success": bool(detections), 
+        "detections": detections,
+        "image_with_boxes": output_b64
+    })
 
 # Run the Flask app
 if __name__ == '__main__':
