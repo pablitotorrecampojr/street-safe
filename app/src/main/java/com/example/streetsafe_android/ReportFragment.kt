@@ -51,7 +51,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 
 class ReportFragment : Fragment() {
-
     private val cameraPermission = Manifest.permission.CAMERA
     private val locationPermission = Manifest.permission.ACCESS_FINE_LOCATION
     private lateinit var previewView: PreviewView
@@ -92,23 +91,14 @@ class ReportFragment : Fragment() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         checkAndOpenCamera()
         checkAndRequestLocationPermission()
-        val spinner: Spinner = view.findViewById(R.id.spinnerDefects)
         val defects = loadDefectsFromJson()
-        val labels = defects.map { it.label }
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, labels)
         val capturedImageView = view.findViewById<ImageView>(R.id.capturedImageView)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = adapter
 
         val submitButton = view.findViewById<Button>(R.id.submitReport)
         val cityTextView = view.findViewById<TextView>(R.id.tvCity)
 
         submitButton.setOnClickListener {
             val imageCapture = imageCapture ?: return@setOnClickListener
-
-            val intent = Intent(requireContext(), LoadingScreen::class.java)
-            intent.putExtra("loadingText", "Processing Data ...")
-            startActivity(intent)
 
             imageCapture.takePicture(
                 ContextCompat.getMainExecutor(requireContext()),
@@ -129,42 +119,22 @@ class ReportFragment : Fragment() {
 
                         val base64Image = bitmapToBase64(bitmap)
                         val fullAddress = cityTextView.text.removePrefix("City: ").toString()
-                        val selectedHazard = spinner.selectedItem?.toString() ?: "Unknown"
                         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                         val currentDateTime = dateFormat.format(Date())
                         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "anonymous"
 
-                        sendPostRequest(base64Image) { result ->
-                            if (result != null) {
-                                Log.d("POST_RESPONSE", result)
-                            } else {
-                                Log.d("POST_RESPONSE", "Request failed")
-                            }
-                        }
                         val report = hashMapOf(
                             "imageUrl" to base64Image,
                             "dateSubmitted" to currentDateTime,
                             "fullAddress" to fullAddress,
-                            "roadHazard" to selectedHazard,
+                            "roadHazard" to "null",
                             "status" to 0,
                             "latitude" to latitude,
                             "longitude" to longitude,
                             "userid" to userId
                         )
                         Log.d("ReportDebug", base64Image)
-                        val db = Firebase.database.reference
-                        db.child("roadhazards").push().setValue(report)
-                            .addOnSuccessListener {
-                                Toast.makeText(requireContext(), "Report submitted!", Toast.LENGTH_SHORT).show()
-                                // Navigate back to ReportFragment
-                                val intent = Intent(requireContext(), MainActivity::class.java)
-                                startActivity(intent)
-                            }
-                            .addOnFailureListener { e ->
-                                Toast.makeText(requireContext(), "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
-                                val intent = Intent(requireContext(), MainActivity::class.java)
-                                startActivity(intent)
-                            }
+
                     }
 
                     override fun onError(exception: ImageCaptureException) {
@@ -176,44 +146,6 @@ class ReportFragment : Fragment() {
             )
         }
 
-    }
-
-    private fun sendPostRequest(image: String, onResult: (String?) -> Unit) {
-        val url = "http://192.168.254.101:5000/detect"
-
-        val json = """
-        {
-            "image": "$image"
-        }
-    """.trimIndent()
-
-        val mediaType = "application/json; charset=utf-8".toMediaType()
-        val requestBody = json.toRequestBody(mediaType)
-
-        val request = Request.Builder()
-            .url(url)
-            .post(requestBody)
-            .addHeader("Content-Type", "application/json")
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-                Log.e("POST_ERROR", "Request failed due to IOException: ${e.message}")
-                onResult(null)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    val responseData = response.body?.string()
-                    onResult(responseData)
-                } else {
-                    val errorBody = response.body?.string()
-                    Log.e("POST_ERROR", "Server responded with error: Code=${response.code}, Body=$errorBody")
-                    onResult(null)
-                }
-            }
-        })
     }
 
     private fun checkAndOpenCamera() {

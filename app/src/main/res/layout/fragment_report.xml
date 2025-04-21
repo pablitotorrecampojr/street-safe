@@ -8,9 +8,7 @@
     android:fillViewport="true"
     tools:context=".ReportFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ReportFragment">
@@ -22,7 +20,7 @@
             android:layout_height="500dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" >
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/capturedImageView"
@@ -35,7 +33,7 @@
             android:id="@+id/tvCity"
             android:layout_width="299dp"
             android:layout_height="48dp"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="24dp"
             android:background="@drawable/rounded_edittext"
             android:text="Address: "
             app:layout_constraintEnd_toEndOf="parent"
@@ -46,25 +44,16 @@
             android:id="@+id/submitReport"
             android:layout_width="299dp"
             android:layout_height="44dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/rounded_button"
             android:text="Submit Report"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinnerDefects" />
-
-        <Spinner
-            android:id="@+id/spinnerDefects"
-            android:layout_width="299dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/spinner_with_icon"
-            android:paddingEnd="36dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvCity" />
+            app:layout_constraintTop_toBottomOf="@+id/tvCity"
+            app:layout_constraintVertical_bias="0.03" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
