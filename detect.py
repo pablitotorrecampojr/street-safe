@@ -5,9 +5,26 @@ from PIL import Image
 import io
 import base64
 import re
+import os
+import gdown
+
+# Google Drive model download setup
+MODEL_PATH = 'street-safe-python/best.pt'
+GDRIVE_FILE_ID = '1K73vo398C6xZHM_bCQUNjhhhobZHUyq9'
+
+def download_model_if_needed():
+    if not os.path.exists(MODEL_PATH):
+        os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
+        url = f'https://drive.google.com/uc?id={GDRIVE_FILE_ID}'
+        print("Downloading model from Google Drive...")
+        gdown.download(url, MODEL_PATH, quiet=False)
+        print("Model downloaded.")
+
+# Download the model if not already present
+download_model_if_needed()
 
 # Load YOLOv8 custom-trained model
-model = YOLO('D:/Torrexx/Github/street-safe-python/runs/detect/train5/weights/best.pt')
+model = YOLO(MODEL_PATH)
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -51,7 +68,11 @@ def detect_hazard():
     else:
         print("No detections found.")
 
-    return jsonify({"detections": detections})
+    return jsonify({
+        "success": bool(detections), 
+        "detections": detections,
+        "image_with_boxes": output_b64
+    })
 
 # Run the Flask app
 if __name__ == '__main__':
