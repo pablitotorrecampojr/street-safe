@@ -40,7 +40,6 @@ class SignInActivity : AppCompatActivity() {
         val signInButton = findViewById<Button>(R.id.signinButton)
         val signUpLink = findViewById<TextView>(R.id.signupLink)
         val googleSignInButton = findViewById<Button>(R.id.googleSignInButton)
-        val facebookSignInButton = findViewById<Button>(R.id.facebookSignInButton)
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
@@ -97,9 +96,7 @@ class SignInActivity : AppCompatActivity() {
             signInGoogle()
         }
 
-        facebookSignInButton.setOnClickListener {
-            Toast.makeText(this, "Facebook Sign-In coming soon!", Toast.LENGTH_SHORT).show()
-        }
+
     }
 
     private fun signInGoogle() {
