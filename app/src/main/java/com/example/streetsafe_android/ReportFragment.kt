@@ -50,6 +50,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.IOException
+import android.util.Base64
 
 class ReportFragment : Fragment() {
 
@@ -157,16 +158,13 @@ class ReportFragment : Fragment() {
                                         val reportJson = JSONObject(report as Map<*, *>)
                                         Log.d("ReportData", reportJson.toString(4))
 
-                                        val intent = Intent(requireContext(), DetectionResultActivity::class.java)
-                                        intent.putExtra("image_with_boxes", imageWithBoxesBase64)
-                                        intent.putExtra("dateSubmitted", currentDateTime)
-                                        intent.putExtra("fullAddress", fullAddress)
-                                        intent.putExtra("roadHazard", selectedHazard)
-                                        intent.putExtra("status", 0)
-                                        intent.putExtra("latitude", latitude)
-                                        intent.putExtra("longitude", longitude)
-                                        intent.putExtra("userid", userId)
-                                        startActivity(intent)
+                                        val decodedBytes = Base64.decode(imageWithBoxesBase64, Base64.DEFAULT)
+                                        val decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+                                        requireActivity().runOnUiThread {
+                                            capturedImageView.setImageBitmap(decodedBitmap)
+//                                            capturedImageView.visibility = View.VISIBLE
+                                            Toast.makeText(requireContext(), "Detection complete!", Toast.LENGTH_SHORT).show()
+                                        }
                                     } else {
                                         Log.d("POST_RESULT", "false")
                                     }
