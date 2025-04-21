@@ -162,14 +162,31 @@ class ReportFragment : Fragment() {
                                             "No hazards detected."
                                         }
 
+                                        if (success) {
+                                            val report = hashMapOf(
+                                                "imageUrl" to imageWithBoxesBase64,
+                                                "dateSubmitted" to currentDateTime,
+                                                "fullAddress" to fullAddress,
+                                                "roadHazard" to detectionText,
+                                                "status" to 0,
+                                                "latitude" to latitude,
+                                                "longitude" to longitude,
+                                                "userid" to userId
+                                            )
+
+                                            val reportJson = JSONObject(report as Map<*, *>)
+                                            Log.d("ReportData", reportJson.toString(4))
+                                        } else {
+                                            Log.d("POST_RESULT", "false - image shown, but no hazard detected")
+                                        }
+
                                         requireActivity().runOnUiThread {
+                                            // Set detection text
                                             val detectionTextView = view?.findViewById<TextView>(R.id.detectionTextView)
                                             detectionTextView?.text = detectionText
                                             detectionTextView?.visibility = View.VISIBLE
-                                        }
 
-
-                                        requireActivity().runOnUiThread {
+                                            // Set image with bounding boxes
                                             val imageBytes = Base64.decode(imageWithBoxesBase64, Base64.DEFAULT)
                                             val decodedBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                                             capturedImageView.setImageBitmap(decodedBitmap)
@@ -184,6 +201,7 @@ class ReportFragment : Fragment() {
                                             submitFinalButton.visibility = View.VISIBLE
                                             cancelButton.visibility = View.VISIBLE
 
+                                            // Restart fragment on cancel
                                             cancelButton.setOnClickListener {
                                                 val fragmentTransaction = parentFragmentManager.beginTransaction()
                                                 fragmentTransaction.replace(id, ReportFragment())
@@ -192,23 +210,7 @@ class ReportFragment : Fragment() {
                                         }
                                     }
 
-                                    if (success) {
-                                        val report = hashMapOf(
-                                            "imageUrl" to imageWithBoxesBase64,
-                                            "dateSubmitted" to currentDateTime,
-                                            "fullAddress" to fullAddress,
-                                            "roadHazard" to "null",
-                                            "status" to 0,
-                                            "latitude" to latitude,
-                                            "longitude" to longitude,
-                                            "userid" to userId
-                                        )
 
-                                        val reportJson = JSONObject(report as Map<*, *>)
-                                        Log.d("ReportData", reportJson.toString(4))
-                                    } else {
-                                        Log.d("POST_RESULT", "false - image shown, but no hazard detected")
-                                    }
                                 } catch (e: Exception) {
                                     Log.e("POST_RESULT", "Failed to parse JSON: ${e.message}")
                                 }
