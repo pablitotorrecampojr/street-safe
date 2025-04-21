@@ -192,6 +192,11 @@ class ReportFragment : Fragment() {
 
                                             // Submit final button click - send report to Firebase
                                             submitFinalButton.setOnClickListener {
+                                                val intent = Intent(requireContext(), LoadingScreen::class.java)
+                                                intent.putExtra("loadingText", "Processing Data ...")
+                                                startActivity(intent)
+
+
                                                 val report = hashMapOf(
                                                     "imageUrl" to imageWithBoxesBase64,
                                                     "dateSubmitted" to currentDateTime,
