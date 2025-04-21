@@ -162,24 +162,6 @@ class ReportFragment : Fragment() {
                                             "No hazards detected."
                                         }
 
-                                        if (success) {
-                                            val report = hashMapOf(
-                                                "imageUrl" to imageWithBoxesBase64,
-                                                "dateSubmitted" to currentDateTime,
-                                                "fullAddress" to fullAddress,
-                                                "roadHazard" to detectionText,
-                                                "status" to 0,
-                                                "latitude" to latitude,
-                                                "longitude" to longitude,
-                                                "userid" to userId
-                                            )
-
-                                            val reportJson = JSONObject(report as Map<*, *>)
-                                            Log.d("ReportData", reportJson.toString(4))
-                                        } else {
-                                            Log.d("POST_RESULT", "false - image shown, but no hazard detected")
-                                        }
-
                                         requireActivity().runOnUiThread {
                                             // Set detection text
                                             val detectionTextView = view?.findViewById<TextView>(R.id.detectionTextView)
@@ -201,15 +183,44 @@ class ReportFragment : Fragment() {
                                             submitFinalButton.visibility = View.VISIBLE
                                             cancelButton.visibility = View.VISIBLE
 
-                                            // Restart fragment on cancel
+                                            // Cancel button click - restart fragment
                                             cancelButton.setOnClickListener {
                                                 val fragmentTransaction = parentFragmentManager.beginTransaction()
                                                 fragmentTransaction.replace(id, ReportFragment())
                                                 fragmentTransaction.commit()
                                             }
+
+                                            // Submit final button click - send report to Firebase
+                                            submitFinalButton.setOnClickListener {
+                                                val report = hashMapOf(
+                                                    "imageUrl" to imageWithBoxesBase64,
+                                                    "dateSubmitted" to currentDateTime,
+                                                    "fullAddress" to fullAddress,
+                                                    "roadHazard" to detectedLabels.joinToString(", "),
+                                                    "status" to 0,
+                                                    "latitude" to latitude,
+                                                    "longitude" to longitude,
+                                                    "userid" to userId
+                                                )
+
+                                                val reportJson = JSONObject(report as Map<*, *>)
+                                                Log.d("ReportData", reportJson.toString(4))
+
+                                                val db = Firebase.database.reference
+                                                db.child("roadhazards").push().setValue(report)
+                                                    .addOnSuccessListener {
+                                                        Toast.makeText(requireContext(), "Report submitted!", Toast.LENGTH_SHORT).show()
+                                                        val intent = Intent(requireContext(), MainActivity::class.java)
+                                                        startActivity(intent)
+                                                    }
+                                                    .addOnFailureListener { e ->
+                                                        Toast.makeText(requireContext(), "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                                                        val intent = Intent(requireContext(), MainActivity::class.java)
+                                                        startActivity(intent)
+                                                    }
+                                            }
                                         }
                                     }
-
 
                                 } catch (e: Exception) {
                                     Log.e("POST_RESULT", "Failed to parse JSON: ${e.message}")
