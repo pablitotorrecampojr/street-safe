@@ -70,6 +70,36 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <Button
+            android:id="@+id/submitFinalButton"
+            android:layout_width="299dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_button"
+            android:text="Submit"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/capturedImageView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="299dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rounded_button"
+            android:text="Cancel"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/submitFinalButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -102,6 +102,9 @@ class ReportFragment : Fragment() {
         val cityTextView = view.findViewById<TextView>(R.id.tvCity)
         progressBar = view.findViewById(R.id.progressBar)
 
+        val submitFinalButton = view.findViewById<Button>(R.id.submitFinalButton)
+        val cancelButton = view.findViewById<Button>(R.id.cancelButton)
+
         submitButton.setOnClickListener {
             val imageCapture = imageCapture ?: return@setOnClickListener
 
@@ -149,6 +152,14 @@ class ReportFragment : Fragment() {
                                             capturedImageView.setImageBitmap(decodedBitmap)
                                             capturedImageView.visibility = View.VISIBLE
                                             previewView.visibility = View.GONE
+
+                                            // Hide old UI
+                                            cityTextView.visibility = View.GONE
+                                            submitButton.visibility = View.GONE
+
+                                            // Show new buttons
+                                            submitFinalButton.visibility = View.VISIBLE
+                                            cancelButton.visibility = View.VISIBLE
                                         }
                                     }
 
