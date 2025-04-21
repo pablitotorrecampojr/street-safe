@@ -1,6 +1,12 @@
-train: D:\Torrexx\Github\street-safe-python\dataset\train\images
-val: D:\Torrexx\Github\street-safe-python\dataset\valid\images
-test: D:\Torrexx\Github\street-safe-python\dataset\test\images
+# train: D:\Torrexx\Github\street-safe-python\dataset\train\images
+# val: D:\Torrexx\Github\street-safe-python\dataset\valid\images
+# test: D:\Torrexx\Github\street-safe-python\dataset\test\images
+
+# local compatible version
+train: /Users/fdc-pablito-nc-web/Documents/Torrexx/street-safe-python/dataset/train/images
+val: /Users/fdc-pablito-nc-web/Documents/Torrexx/street-safe-python/dataset/valid/images
+test: /Users/fdc-pablito-nc-web/Documents/Torrexx/street-safe-python/dataset/test/images
+
 
 nc: 5
 names: ['alligator_cracks', 'clogged_drains', 'cracks', 'open_manhole', 'pothole']
