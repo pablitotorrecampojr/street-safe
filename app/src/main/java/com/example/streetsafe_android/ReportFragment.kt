@@ -5,7 +5,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.ImageFormat
 import android.graphics.Rect
 import android.graphics.YuvImage
@@ -48,7 +47,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import java.io.IOException
+import android.util.Base64
+import android.graphics.BitmapFactory
 
 class ReportFragment : Fragment() {
     private val cameraPermission = Manifest.permission.CAMERA
@@ -113,8 +115,6 @@ class ReportFragment : Fragment() {
                             return
                         } else {
                             Log.d("ImageCheck", "Valid bitmap captured: ${bitmap.width}x${bitmap.height}")
-                            capturedImageView.setImageBitmap(bitmap)
-                            capturedImageView.visibility = View.VISIBLE
                         }
 
                         val base64Image = bitmapToBase64(bitmap)
@@ -123,18 +123,50 @@ class ReportFragment : Fragment() {
                         val currentDateTime = dateFormat.format(Date())
                         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "anonymous"
 
-                        val report = hashMapOf(
-                            "imageUrl" to base64Image,
-                            "dateSubmitted" to currentDateTime,
-                            "fullAddress" to fullAddress,
-                            "roadHazard" to "null",
-                            "status" to 0,
-                            "latitude" to latitude,
-                            "longitude" to longitude,
-                            "userid" to userId
-                        )
-                        Log.d("ReportDebug", base64Image)
 
+                        Log.d("ReportDebug", base64Image)
+                        sendPostRequest(base64Image) { result ->
+                            if (result != null) {
+                                Log.d("POST_RESPONSE", result)
+
+                                try {
+                                    val jsonObject = JSONObject(result)
+                                    val success = jsonObject.optBoolean("success", false)
+                                    val imageWithBoxesBase64 = jsonObject.getString("image_with_boxes") // now it's scoped here
+
+                                    if (success) {
+                                        Log.d("POST_RESULT", "true")
+
+                                        val report = hashMapOf(
+                                            "imageUrl" to imageWithBoxesBase64,
+                                            "dateSubmitted" to currentDateTime,
+                                            "fullAddress" to fullAddress,
+                                            "roadHazard" to "null",
+                                            "status" to 0,
+                                            "latitude" to latitude,
+                                            "longitude" to longitude,
+                                            "userid" to userId
+                                        )
+
+                                        val reportJson = JSONObject(report as Map<*, *>)
+                                        Log.d("ReportData", reportJson.toString(4))
+                                        requireActivity().runOnUiThread {
+                                            val imageBytes = Base64.decode(imageWithBoxesBase64, Base64.DEFAULT)
+                                            val decodedBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                                            capturedImageView.setImageBitmap(decodedBitmap)
+                                            capturedImageView.visibility = View.VISIBLE
+                                        }
+                                    } else {
+                                        Log.d("POST_RESULT", "false")
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e("POST_RESULT", "Failed to parse JSON: ${e.message}")
+                                }
+
+                            } else {
+                                Log.d("POST_RESPONSE", "Request failed")
+                            }
+                        }
                     }
 
                     override fun onError(exception: ImageCaptureException) {
@@ -146,6 +178,44 @@ class ReportFragment : Fragment() {
             )
         }
 
+    }
+
+    private fun sendPostRequest(image: String, onResult: (String?) -> Unit) {
+        val url = "http://192.168.107.46:5000/detect"
+
+        val json = """
+        {
+            "image": "$image"
+        }
+    """.trimIndent()
+
+        val mediaType = "application/json; charset=utf-8".toMediaType()
+        val requestBody = json.toRequestBody(mediaType)
+
+        val request = Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .addHeader("Content-Type", "application/json")
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+                Log.e("POST_ERROR", "Request failed due to IOException: ${e.message}")
+                onResult(null)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val responseData = response.body?.string()
+                    onResult(responseData)
+                } else {
+                    val errorBody = response.body?.string()
+                    Log.e("POST_ERROR", "Server responded with error: Code=${response.code}, Body=$errorBody")
+                    onResult(null)
+                }
+            }
+        })
     }
 
     private fun checkAndOpenCamera() {
