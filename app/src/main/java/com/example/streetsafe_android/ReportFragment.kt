@@ -207,7 +207,7 @@ class ReportFragment : Fragment() {
     }
 
     private fun sendPostRequest(image: String, onResult: (String?) -> Unit) {
-        val url = "http://192.168.254.101:5000/detect"
+        val url = "http://192.168.107.46:5000/detect"
 
         val json = """
         {
