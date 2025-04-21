@@ -107,10 +107,6 @@ class ReportFragment : Fragment() {
         submitButton.setOnClickListener {
             val imageCapture = imageCapture ?: return@setOnClickListener
 
-            val intent = Intent(requireContext(), LoadingScreen::class.java)
-            intent.putExtra("loadingText", "Processing Data ...")
-            startActivity(intent)
-
             imageCapture.takePicture(
                 ContextCompat.getMainExecutor(requireContext()),
                 object : ImageCapture.OnImageCapturedCallback() {
@@ -134,7 +130,6 @@ class ReportFragment : Fragment() {
                         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                         val currentDateTime = dateFormat.format(Date())
                         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "anonymous"
-                        var imageWithBoxesBase64: String? = null
 
                         sendPostRequest(base64Image) { result ->
                             if (result != null) {
@@ -162,22 +157,15 @@ class ReportFragment : Fragment() {
                                         val reportJson = JSONObject(report as Map<*, *>)
                                         Log.d("ReportData", reportJson.toString(4))
 
-                                        val db = Firebase.database.reference
-                                        db.child("roadhazards").push().setValue(report)
-                                            .addOnSuccessListener {
-                                                Toast.makeText(requireContext(), "Report submitted!", Toast.LENGTH_SHORT).show()
-                                                // Navigate back to ReportFragment
-                                                val intent = Intent(requireContext(), MainActivity::class.java)
-                                                startActivity(intent)
-                                            }
-                                            .addOnFailureListener { e ->
-                                                Toast.makeText(requireContext(), "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
-                                                val intent = Intent(requireContext(), MainActivity::class.java)
-                                                startActivity(intent)
-                                            }
-
                                         val intent = Intent(requireContext(), DetectionResultActivity::class.java)
                                         intent.putExtra("image_with_boxes", imageWithBoxesBase64)
+                                        intent.putExtra("dateSubmitted", currentDateTime)
+                                        intent.putExtra("fullAddress", fullAddress)
+                                        intent.putExtra("roadHazard", selectedHazard)
+                                        intent.putExtra("status", 0)
+                                        intent.putExtra("latitude", latitude)
+                                        intent.putExtra("longitude", longitude)
+                                        intent.putExtra("userid", userId)
                                         startActivity(intent)
                                     } else {
                                         Log.d("POST_RESULT", "false")
@@ -207,7 +195,7 @@ class ReportFragment : Fragment() {
     }
 
     private fun sendPostRequest(image: String, onResult: (String?) -> Unit) {
-        val url = "http://192.168.254.101:5000/detect"
+        val url = "http://192.168.107.46:5000/detect"
 
         val json = """
         {
