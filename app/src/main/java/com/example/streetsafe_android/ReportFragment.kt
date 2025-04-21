@@ -196,12 +196,17 @@ class ReportFragment : Fragment() {
                                                 intent.putExtra("loadingText", "Processing Data ...")
                                                 startActivity(intent)
 
+                                                val formattedLabels = detectedLabels.map { label ->
+                                                    label.split("_").joinToString(" ") { word ->
+                                                        word.replaceFirstChar { it.uppercase() }
+                                                    }
+                                                }
 
                                                 val report = hashMapOf(
                                                     "imageUrl" to imageWithBoxesBase64,
                                                     "dateSubmitted" to currentDateTime,
                                                     "fullAddress" to fullAddress,
-                                                    "roadHazard" to detectedLabels.joinToString(", "),
+                                                    "roadHazard" to formattedLabels,
                                                     "status" to 0,
                                                     "latitude" to latitude,
                                                     "longitude" to longitude,
