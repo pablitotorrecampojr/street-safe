@@ -146,6 +146,29 @@ class ReportFragment : Fragment() {
                                     val imageWithBoxesBase64 = jsonObject.optString("image_with_boxes", null)
 
                                     if (imageWithBoxesBase64 != null) {
+
+                                        val detectionsArray = jsonObject.optJSONArray("detections")
+                                        val detectedLabels = mutableSetOf<String>() // ensures uniqueness
+
+                                        for (i in 0 until detectionsArray.length()) {
+                                            val detection = detectionsArray.getJSONObject(i)
+                                            val label = detection.optString("label", "unknown")
+                                            detectedLabels.add(label)
+                                        }
+
+                                        val detectionText = if (detectedLabels.isNotEmpty()) {
+                                            "Detected Hazards:\n" + detectedLabels.joinToString(", ")
+                                        } else {
+                                            "No hazards detected."
+                                        }
+
+                                        requireActivity().runOnUiThread {
+                                            val detectionTextView = view?.findViewById<TextView>(R.id.detectionTextView)
+                                            detectionTextView?.text = detectionText
+                                            detectionTextView?.visibility = View.VISIBLE
+                                        }
+
+
                                         requireActivity().runOnUiThread {
                                             val imageBytes = Base64.decode(imageWithBoxesBase64, Base64.DEFAULT)
                                             val decodedBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
@@ -201,8 +224,8 @@ class ReportFragment : Fragment() {
     }
 
     private fun sendPostRequest(image: String, onResult: (String?) -> Unit) {
-        val url = "http://192.168.107.46:5000/detect"
-
+        //val url = "http://192.168.107.46:5000/detect"
+        val url = "http://192.168.254.101:5000/detect"
         val json = """
         {
             "image": "$image"
