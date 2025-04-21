@@ -51,6 +51,7 @@ import org.json.JSONObject
 import java.io.IOException
 import android.util.Base64
 import android.graphics.BitmapFactory
+import android.widget.ProgressBar
 
 class ReportFragment : Fragment() {
     private val cameraPermission = Manifest.permission.CAMERA
@@ -87,6 +88,7 @@ class ReportFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_report, container, false)
     }
 
+    lateinit var progressBar: ProgressBar
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         previewView = view.findViewById(R.id.previewView)
@@ -98,9 +100,13 @@ class ReportFragment : Fragment() {
 
         val submitButton = view.findViewById<Button>(R.id.submitReport)
         val cityTextView = view.findViewById<TextView>(R.id.tvCity)
+        progressBar = view.findViewById(R.id.progressBar)
 
         submitButton.setOnClickListener {
             val imageCapture = imageCapture ?: return@setOnClickListener
+
+            progressBar.visibility = View.VISIBLE
+            submitButton.isEnabled = false
 
             imageCapture.takePicture(
                 ContextCompat.getMainExecutor(requireContext()),
@@ -112,9 +118,11 @@ class ReportFragment : Fragment() {
                         if (bitmap == null || bitmap.width <= 10 || bitmap.height <= 10) {
                             Log.e("ImageCheck", "Invalid bitmap captured!")
                             Toast.makeText(requireContext(), "Image capture failed. Please try again.", Toast.LENGTH_SHORT).show()
+
+                            // Hide loading
+                            progressBar.visibility = View.GONE
+                            submitButton.isEnabled = true
                             return
-                        } else {
-                            Log.d("ImageCheck", "Valid bitmap captured: ${bitmap.width}x${bitmap.height}")
                         }
 
                         val base64Image = bitmapToBase64(bitmap)
@@ -123,20 +131,19 @@ class ReportFragment : Fragment() {
                         val currentDateTime = dateFormat.format(Date())
                         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "anonymous"
 
-
-                        Log.d("ReportDebug", base64Image)
                         sendPostRequest(base64Image) { result ->
-                            if (result != null) {
-                                Log.d("POST_RESPONSE", result)
+                            requireActivity().runOnUiThread {
+                                progressBar.visibility = View.GONE
+                                submitButton.isEnabled = true
+                            }
 
+                            if (result != null) {
                                 try {
                                     val jsonObject = JSONObject(result)
                                     val success = jsonObject.optBoolean("success", false)
-                                    val imageWithBoxesBase64 = jsonObject.getString("image_with_boxes") // now it's scoped here
+                                    val imageWithBoxesBase64 = jsonObject.getString("image_with_boxes")
 
                                     if (success) {
-                                        Log.d("POST_RESULT", "true")
-
                                         val report = hashMapOf(
                                             "imageUrl" to imageWithBoxesBase64,
                                             "dateSubmitted" to currentDateTime,
@@ -150,11 +157,13 @@ class ReportFragment : Fragment() {
 
                                         val reportJson = JSONObject(report as Map<*, *>)
                                         Log.d("ReportData", reportJson.toString(4))
+
                                         requireActivity().runOnUiThread {
                                             val imageBytes = Base64.decode(imageWithBoxesBase64, Base64.DEFAULT)
                                             val decodedBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                                             capturedImageView.setImageBitmap(decodedBitmap)
                                             capturedImageView.visibility = View.VISIBLE
+                                            previewView.visibility = View.GONE // Hide camera
                                         }
                                     } else {
                                         Log.d("POST_RESULT", "false")
@@ -162,7 +171,6 @@ class ReportFragment : Fragment() {
                                 } catch (e: Exception) {
                                     Log.e("POST_RESULT", "Failed to parse JSON: ${e.message}")
                                 }
-
                             } else {
                                 Log.d("POST_RESPONSE", "Request failed")
                             }
@@ -171,8 +179,8 @@ class ReportFragment : Fragment() {
 
                     override fun onError(exception: ImageCaptureException) {
                         Toast.makeText(requireContext(), "Capture failed: ${exception.message}", Toast.LENGTH_SHORT).show()
-                        val intent = Intent(requireContext(), MainActivity::class.java)
-                        startActivity(intent)
+                        progressBar.visibility = View.GONE
+                        submitButton.isEnabled = true
                     }
                 }
             )
