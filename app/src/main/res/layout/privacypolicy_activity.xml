@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- Back Button -->
+
+    <!-- Title -->
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="37dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Back"
+        android:src="@drawable/icons_backbutton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Privacy Policy"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Policy Text -->
+    <ScrollView
+        android:id="@+id/policyScrollView"
+        android:layout_width="315dp"
+        android:layout_height="623dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleText">
+
+        <TextView
+            android:id="@+id/policyText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Street Safe is committed to protecting your personal data in compliance with the Data Privacy Act of 2012 (Republic Act No. 10173) of the Philippines. We collect only the minimum data required to operate effectively—such as location, photos, and hazard details submitted by users. These are used solely to help identify and map road safety concerns in real time. \n\n All personal information you provide is handled with the highest standards of security and confidentiality. We ensure your data is not shared with third parties without your explicit consent, unless required by law. You retain your rights as a data subject under RA 10173, including the right to access, correct, or delete your data.
+
+\n \n By using the Street Safe app, you acknowledge and agree to the collection and use of your information in accordance with this Privacy Policy and Republic Act No. 10173. For questions or concerns, you may contact our Data Protection Officer via the app’s support section."
+            android:textColor="#000000"
+            android:textSize="16sp" />
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
