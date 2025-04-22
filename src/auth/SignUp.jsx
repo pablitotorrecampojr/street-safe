@@ -97,7 +97,7 @@ const SignUp = () => {
                   <div className="d-flex justify-content-center align-items-center">
                     <a href="/" className="text-center">
                       <img
-                        src="/public/logo.png"
+                        src="./logo.png"
                         alt="Logo"
                         height={100}
                         width={100}

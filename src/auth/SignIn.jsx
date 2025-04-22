@@ -8,6 +8,8 @@ import { toast } from "react-toastify";
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     email: "",
     password: ""
@@ -43,6 +45,10 @@ const SignIn = () => {
     }
   };
 
+  const toggleShowPassword = () => {
+    setShowPassword(prev => !prev);
+  };
+
   return (
     <div>
       <div className="container-xxl">
@@ -54,7 +60,7 @@ const SignIn = () => {
                   <div className="d-flex justify-content-center align-items-center mb-4">
                     <a href="/" className="text-center">
                       <img
-                        src="/public/logo.png"
+                        src="./logo.png"
                         alt="Logo"
                         height={100}
                         width={100}
@@ -86,7 +92,7 @@ const SignIn = () => {
                       </div>
                       <div className="input-group input-group-merge">
                         <input
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           id="password"
                           className="form-control"
                           name="password"
@@ -95,7 +101,9 @@ const SignIn = () => {
                           value={formData.password}
                           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                         />
-                        <span className="input-group-text cursor-pointer"><i className="bx bx-hide"></i></span>
+                        <span className="input-group-text cursor-pointer" onClick={toggleShowPassword}>
+                          <i className={`bx ${showPassword ? "bx-show" : "bx-hide"}`}></i>
+                        </span>
                       </div>
                       {errors.password && <p className="error">{errors.password}</p>}
                     </div>
