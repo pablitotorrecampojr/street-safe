@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Switch
 import android.widget.Toast
 import android.widget.ToggleButton
@@ -120,9 +121,7 @@ class EditProfileActivity : AppCompatActivity() {
 
         // Handle back button click
         backButton.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("FRAGMENT_TO_LOAD", "ProfileFragment")
-            startActivity(intent)
+            finish() //
         }
     }
 }

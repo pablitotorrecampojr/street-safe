@@ -70,7 +70,7 @@ class ProfileFragment : Fragment() {
         }
 
         binding.settingsButton.setOnClickListener {
-            startActivity(Intent(requireContext(), SettingsActivity::class.java))
+            startActivity(Intent(requireContext(), AboutActivity::class.java))
         }
 
         binding.notificationButton.setOnClickListener {
