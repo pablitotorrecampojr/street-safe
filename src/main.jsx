@@ -65,14 +65,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             }
           /> 
           <Route
-            path="/notification"
-            element={
-              <ProtectedRoute>
-                <Notification />
-              </ProtectedRoute>
-            }
-          /> 
-          <Route
             path="/edit-profile"
             element={
               <ProtectedRoute>

@@ -32,7 +32,7 @@ export default function Aside() {
       { name: 'Dashboard', path: '/dashboard', icon: 'bx bx-home-circle', permissions: [0, 1, 2] },
       { name: 'Access Control', path: '/access-control', icon: 'bx bx-cog', permissions: [0] },
       { name: 'Hazard Report', path: '/hazard-report', icon: 'bx bx-error-circle', permissions: [0, 1, 2] },
-      { name: 'Notification', path: '/notification', icon: 'bx bx-bell', permissions: [0, 1, 2] },
+      // { name: 'Notification', path: '/notification', icon: 'bx bx-bell', permissions: [0, 1, 2] },
     ];
 
     const handleNavbarToggle = () => { 
@@ -53,7 +53,7 @@ export default function Aside() {
               <div className="d-flex justify-content-center align-items-center p-1">
                 <a href="/" className="text-center">
                   <img
-                    src="/public/logo.png"
+                    src="./logo.png"
                     alt="Logo"
                     height={80}
                     width={80}
