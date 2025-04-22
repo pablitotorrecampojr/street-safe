@@ -53,7 +53,7 @@ export default function Aside() {
               <div className="d-flex justify-content-center align-items-center p-1">
                 <a href="/" className="text-center">
                   <img
-                    src="/public/logo.png"
+                    src="./logo.png"
                     alt="Logo"
                     height={80}
                     width={80}
