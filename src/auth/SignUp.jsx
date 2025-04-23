@@ -5,6 +5,7 @@ import municipalities from '../constants/municipalities.json';
 import districts from '../constants/districts.json';
 import { toast } from "react-toastify";
 import {signUp} from '../firebase/auth';
+import { set } from "firebase/database";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -17,6 +18,8 @@ const SignUp = () => {
     barangay: "",
     password: "",
     confirmPassword: "",
+    validIdFront: null,
+    validIdBack: null,
   });
   const [errors, setErrors] = useState({});
   const handleChange = (e) => {
@@ -42,6 +45,22 @@ const SignUp = () => {
   
       return updatedData;
     });
+  };
+
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    const file = files[0];
+  
+    if (!file) return;
+  
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: reader.result,
+      }));
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e) => {
@@ -73,6 +92,22 @@ const SignUp = () => {
       newErrors.email = "Please enter a valid email address";
       return;
     }
+
+    if (!formData.validIdFront || !formData.validIdBack) {
+      toast.error("Please upload both front and back of your valid ID.");
+      return;
+    }
+
+    // Optional: file type/size check
+    const allowedTypes = ["image/jpeg", "image/png"];
+    if (!allowedTypes.includes(formData.validIdFront.type) || !allowedTypes.includes(formData.validIdBack.type)) {
+      toast.error("Only JPG and PNG files are allowed for valid IDs.");
+      return;
+    }
+    if (formData.validIdFront.size > 2 * 1024 * 1024 || formData.validIdBack.size > 2 * 1024 * 1024) {
+      toast.error("Each file must be less than 2MB.");
+      return;
+    }    
 
     try {
       const response = await signUp(formData);
@@ -198,12 +233,24 @@ const SignUp = () => {
 
                       <div class="mb-3">
                         <label for="formFile" class="form-label">Valid ID (Front)</label>
-                        <input class="form-control" type="file" id="validIdFront" />
+                        <input
+                          className="form-control"
+                          type="file"
+                          id="validIdFront"
+                          name="validIdFront"
+                          onChange={handleFileChange}
+                        />
                       </div>
 
                       <div class="mb-3">
                         <label for="formFile" class="form-label">Valid ID (Back)</label>
-                        <input class="form-control" type="file" id="validIdBack" />
+                        <input
+                          className="form-control"
+                          type="file"
+                          id="validIdBack"
+                          name="validIdBack"
+                          onChange={handleFileChange}
+                        />
                       </div>
 
                       <div className="mb-3 form-password-toggle">
