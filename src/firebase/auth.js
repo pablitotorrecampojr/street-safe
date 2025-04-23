@@ -7,7 +7,7 @@ export const signUp = async (formData) => {
         if (!formData || !formData.fullname || !formData.email || !formData.password) {
             return { status: 400, message: "Invalid form data. Please provide all required fields." };
         }
-        const { fullname, email, role, district, municipality, barangay, password, validIdFront, validIBack } = formData;
+        const { fullname, email, role, district, municipality, barangay, password, validIdFront, validIdBack } = formData;
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await signOut(auth);
         const displayName = `${fullname}`;
@@ -23,6 +23,7 @@ export const signUp = async (formData) => {
             barangay,
             validIdFront,
             validIdBack,
+            accountStatus: 0,
             uid: user.uid, 
             createdAt: new Date().toISOString().slice(0, 10)
         });
