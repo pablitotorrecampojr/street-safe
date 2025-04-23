@@ -53,11 +53,22 @@ const SignUp = () => {
   
     if (!file) return;
   
+    const allowedTypes = ["image/jpeg", "image/png"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Only JPG and PNG files are allowed for valid IDs.");
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Each file must be less than 2MB.");
+      return;
+    }    
+  
     const reader = new FileReader();
     reader.onloadend = () => {
       setFormData((prevData) => ({
         ...prevData,
-        [name]: reader.result,
+        [name]: reader.result, 
       }));
     };
     reader.readAsDataURL(file);
@@ -97,17 +108,6 @@ const SignUp = () => {
       toast.error("Please upload both front and back of your valid ID.");
       return;
     }
-
-    // Optional: file type/size check
-    const allowedTypes = ["image/jpeg", "image/png"];
-    if (!allowedTypes.includes(formData.validIdFront.type) || !allowedTypes.includes(formData.validIdBack.type)) {
-      toast.error("Only JPG and PNG files are allowed for valid IDs.");
-      return;
-    }
-    if (formData.validIdFront.size > 2 * 1024 * 1024 || formData.validIdBack.size > 2 * 1024 * 1024) {
-      toast.error("Each file must be less than 2MB.");
-      return;
-    }    
 
     try {
       const response = await signUp(formData);
@@ -231,8 +231,8 @@ const SignUp = () => {
                         </div>
                       )}
 
-                      <div class="mb-3">
-                        <label for="formFile" class="form-label">Valid ID (Front)</label>
+                      <div className="mb-3">
+                        <label className="form-label">Valid ID (Front)</label>
                         <input
                           className="form-control"
                           type="file"
@@ -242,8 +242,8 @@ const SignUp = () => {
                         />
                       </div>
 
-                      <div class="mb-3">
-                        <label for="formFile" class="form-label">Valid ID (Back)</label>
+                      <div className="mb-3">
+                        <label className="form-label">Valid ID (Back)</label>
                         <input
                           className="form-control"
                           type="file"
