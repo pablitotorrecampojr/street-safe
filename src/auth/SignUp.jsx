@@ -196,6 +196,16 @@ const SignUp = () => {
                         </div>
                       )}
 
+                      <div class="mb-3">
+                        <label for="formFile" class="form-label">Valid ID (Front)</label>
+                        <input class="form-control" type="file" id="validIdFront" />
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="formFile" class="form-label">Valid ID (Back)</label>
+                        <input class="form-control" type="file" id="validIdBack" />
+                      </div>
+
                       <div className="mb-3 form-password-toggle">
                           <label className="form-label">Password</label>
                           <div className="input-group input-group-merge">
