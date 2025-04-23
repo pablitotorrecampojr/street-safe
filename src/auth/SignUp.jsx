@@ -144,7 +144,7 @@ const SignUp = () => {
                         > 
                           <option value="">Choose option</option>
                           {accountSetting.role.map((role, index) => {
-                           if (index < 3) {
+                           if (index < 3 && index != 0) {
                             return (
                               <option key={index} value={index}>
                                 {role}
