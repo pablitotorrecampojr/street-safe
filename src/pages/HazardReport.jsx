@@ -384,7 +384,7 @@ const HazardReport = () => {
                 <span className="tf-icons bx bx-navigation"></span>
               </button>
     
-              {userData?.role === "2" && (
+              {(userData?.role === "2" && !hazard.nationalRoadFlg == true) && (
                 /**
                  * TODO: this button will be used to flag the hazard as national road hazard
                  * ? this will be used to send the hazard to the national road hazard team 
