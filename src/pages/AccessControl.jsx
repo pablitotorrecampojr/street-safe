@@ -33,7 +33,7 @@ const AccessControl = () => {
         Header: "Municipality",
         accessor: "municipality",
         Cell: ({ row }) =>
-          row.original.barangay ? row.original.municipality : "N/A",
+        row.original.barangay ? row.original.municipality : "N/A",
       },
       {
         Header: "Barangay",
