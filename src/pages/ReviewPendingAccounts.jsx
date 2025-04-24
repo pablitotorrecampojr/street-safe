@@ -28,6 +28,36 @@ export default function ReviewPendingAccounts() {
                   <h1 style={{ fontSize: '20px' }} className='fw-bold'>Pending Accounts</h1>
                 </div>
               </div>
+
+              <div className="card">
+                <div className="card-body">
+                  <div className="table-responsive text-nowrap">
+                    <table className="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Project</th>
+                          <th>Client</th>
+                          <th>Users</th>
+                          <th>Status</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="table-border-bottom-0">
+                        <tr>
+                          <td><i className="fab fa-angular fa-lg text-danger me-3"></i> <strong>Angular Project</strong></td>
+                          <td>Albert Cook</td>
+                          <td>
+                            Sample Data
+                          </td>
+                          <td><span className="badge bg-label-primary me-1">Active</span></td>
+                          <td>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           </div>

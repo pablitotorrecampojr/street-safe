@@ -476,8 +476,8 @@ const HazardReport = () => {
               ) : (
                 <>
                   <div className="row mb-4 p-1">
-                      <h1 style={{ fontSize: '20px' }} className='fw-bold'>Hazard Report</h1>
-                    </div>
+                    <h1 style={{ fontSize: '20px' }} className='fw-bold'>Hazard Report</h1>
+                  </div>
                   {userData?.role == '2' && (
                     <div className="card mb-4">
                       <div className="card-header">
