@@ -15,6 +15,10 @@ import accountSetting from "../constants/account-setting.json";
 export default function ReviewPendingAccounts() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalImageUrl, setModalImageUrl] = useState(null);
+  const [modalTitle, setModalTitle] = useState(null);
+
   const navigate = useNavigate();
   const handleNavbarToggle = () => { 
     const htmlElement = document.getElementById("main-html");
@@ -40,8 +44,41 @@ export default function ReviewPendingAccounts() {
     fetchUsers();
   }, []);
 
+  const handleImageClick = (imageUrl, title) => { 
+    setModalImageUrl(imageUrl);
+    setModalTitle(title);
+    setModalVisible(true);
+  }
+
   return (
     <div className="layout-wrapper layout-content-navbar">
+      {modalVisible && (
+        <div className="modal fade show d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">{modalTitle}</h5>
+                <button
+                  type="button"
+                  className="close"
+                  onClick={() => setModalVisible(false)}
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body d-flex justify-content-center align-items-center">
+                <img src={modalImageUrl} alt="Hazard Preview" style={{ maxWidth: "100%", maxHeight: "100%" }} />
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setModalVisible(false)}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="layout-container">
           <Aside />
           <div className="layout-page">
@@ -82,10 +119,10 @@ export default function ReviewPendingAccounts() {
                                 <td>{ (index) + 1}</td>
                                 <td>{ user.fullname }</td>
                                 <td>{ user.email }</td>
-                                <td>{ user.role }</td>
-                                <td>{ user.barangay }</td>
-                                <td>{ user.municipality }</td>
-                                <td>{ user.district }</td>
+                                <td>{ accountSetting["role"][user.role] }</td>
+                                <td>{ user.barangay ? user.barangay : 'N/A' }</td>
+                                <td>{ user.municipality ? user.municipality : 'N/A' }</td>
+                                <td>{ user.district ? user.district : 'N/A' }</td>
                                 <td>
                                   {new Date(user.createdAt).toLocaleDateString("en-US", {
                                     year: "numeric",
@@ -93,16 +130,28 @@ export default function ReviewPendingAccounts() {
                                     day: "2-digit",
                                   })}
                                 </td>
-                                <td><a href="#" className='btn-link'>Front Id</a></td>
-                                <td><a href="#" className='btn-link'>Back Id</a></td>
+                                <td className='text-center'> 
+                                  <button type="button" 
+                                    className="btn rounded-pill btn-sm btn-outline-primary"
+                                    onClick={() => {  handleImageClick(user.validIdFront, "Valid ID Front") }}
+                                    >View Image
+                                  </button>
+                                </td>
+                                <td className='text-center'> 
+                                  <button type="button" 
+                                    className="btn rounded-pill btn-sm btn-outline-primary"
+                                     onClick={() => {  handleImageClick(user.validIdBack, "Valid ID Front") }}
+                                    >View Image
+                                  </button>
+                                </td>
                                 <td> <span class={ `badge bg-label-${accountSetting["pending_accounts_color"][user.accountStatus]} me-1` }>{ accountSetting["pending_accounts"][user.accountStatus] }</span></td>
                                 <td>
                                   <div className='flex gap-2'>
                                     <button
                                       type="button"
                                       className={`btn btn-icon btn-outline-success`}
-                                      data-tooltip-id="hazard-tooltip"
-                                      data-tooltip-content="Send Response Team"
+                                      data-tooltip-id="pendingAccount-tooltip"
+                                      data-tooltip-content="Accept Account"
                                       style={{height: '25px', width: '25px'}}
                                     >
                                       <span className={`tf-icons bx bx-check`}></span>
@@ -110,12 +159,13 @@ export default function ReviewPendingAccounts() {
                                     <button
                                       type="button"
                                       className={`btn btn-icon btn-outline-danger`}
-                                      data-tooltip-id="hazard-tooltip"
-                                      data-tooltip-content="Send Response Team"
+                                      data-tooltip-id="pendingAccount-tooltip"
+                                      data-tooltip-content="Block Account"
                                       style={{height: '25px', width: '25px'}}
                                     >
                                       <span className={`tf-icons bx bx-x`}></span>
                                     </button>
+                                    <Tooltip id="pendingAccount-tooltip" />
                                   </div>
                                 </td>
                               </tr>
