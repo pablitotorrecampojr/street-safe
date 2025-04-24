@@ -20,11 +20,11 @@ export default function ProtectedRoute({ children }) {
                 const newHazard = {
                     imageUrl: "base64Image",
                     dateSubmitted: "2025-04-11 00:00:00",
-                    fullAddress: "Place outside Daang Lungsod, Alcoy, Cebu",
-                    roadHazard: "Test Data",
+                    fullAddress: "Somewhere in Apas, Cebu City, Cebu",
+                    roadHazard: "Dummy Data",
                     status: 0,
-                    latitude: 9.673407,
-                    longitude: 123.4902,
+                    latitude: 10.339278,
+                    longitude: 123.904334,
                     userid: "opbG2JQJBpZj4sjZ9i0PsqynbkQ2",
                     id: generateRandomId(),
                 };
