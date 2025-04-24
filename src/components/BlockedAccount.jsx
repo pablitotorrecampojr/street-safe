@@ -12,7 +12,7 @@ export default function PendingAccount () {
         }
     };
     return (
-       <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
             <div className="demo-inline-spacing">
                 <div className="container-xxl container-p-y">
                     <div className="misc-wrapper">
@@ -26,6 +26,6 @@ export default function PendingAccount () {
                     </div>
                 </div>
             </div>
-    </div>
+        </div>
     )
 }
