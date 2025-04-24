@@ -6,7 +6,7 @@ import Aside from '../components/Aside';
 import Navbar from '../components/NavBar';
 import Profile from '../components/Profile';
 
-const Notification = () => {
+const ReviewPendingAccounts = () => {
   const navigate = useNavigate();
   const handleNavbarToggle = () => { 
     const htmlElement = document.getElementById("main-html");

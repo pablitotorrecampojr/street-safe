@@ -12,7 +12,7 @@ import SignIn from './auth/SignIn'; // Sign In component
 import Dashboard from './pages/Dashboard'; // Dashboard component
 import SignUp from './auth/SignUp'; // Sign Up component
 import HazardReport from './pages/HazardReport'; 
-import Notification from './pages/Notification';
+import Notification from './pages/ReviewPendingAccounts';
 import EditProfile from './pages/EditProfile';
 import AccessControl from './pages/AccessControl';
 import PageNotFound from './pages/PageNotFound';

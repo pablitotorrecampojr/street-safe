@@ -32,7 +32,7 @@ export default function Aside() {
       { name: 'Dashboard', path: '/dashboard', icon: 'bx bx-home-circle', permissions: [0, 1, 2] },
       { name: 'Access Control', path: '/access-control', icon: 'bx bx-cog', permissions: [0] },
       { name: 'Hazard Report', path: '/hazard-report', icon: 'bx bx-error-circle', permissions: [0, 1, 2] },
-      // { name: 'Notification', path: '/notification', icon: 'bx bx-bell', permissions: [0, 1, 2] },
+      { name: 'Review Pending Accounts', path: '/review-pending-accounts', icon: 'bx bx-bell', permissions: [0] },
     ];
 
     const handleNavbarToggle = () => { 
