@@ -487,29 +487,31 @@ const HazardReport = () => {
                   )}
                   <div className="card">
                     <div className="card-body">
-                      <table {...getTableProps()} className="table table-striped">
-                        <thead>
-                          {headerGroups.map((headerGroup) => (
-                            <tr {...headerGroup.getHeaderGroupProps()}>
-                              {headerGroup.headers.map((column) => (
-                                <th key={column.id} {...column.getHeaderProps()}>{column.render("Header")}</th>
-                              ))}
-                            </tr>
-                          ))}
-                        </thead>
-                        <tbody {...getTableBodyProps()}>
-                          {rows.map((row) => {
-                            prepareRow(row);
-                            return (
-                              <tr {...row.getRowProps()}>
-                                {row.cells.map((cell) => (
-                                  <td key={cell.id} {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                      <div className="table-responsive text-nowrap">
+                        <table {...getTableProps()} className="table table-striped">
+                          <thead>
+                            {headerGroups.map((headerGroup) => (
+                              <tr {...headerGroup.getHeaderGroupProps()}>
+                                {headerGroup.headers.map((column) => (
+                                  <th key={column.id} {...column.getHeaderProps()}>{column.render("Header")}</th>
                                 ))}
                               </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
+                            ))}
+                          </thead>
+                          <tbody {...getTableBodyProps()}>
+                            {rows.map((row) => {
+                              prepareRow(row);
+                              return (
+                                <tr {...row.getRowProps()}>
+                                  {row.cells.map((cell) => (
+                                    <td key={cell.id} {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                                  ))}
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
                 </>

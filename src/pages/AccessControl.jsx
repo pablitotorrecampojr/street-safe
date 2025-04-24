@@ -116,45 +116,47 @@ const AccessControl = () => {
               </div>
               <div className="card">
                 <div className="card-body">
-                  <table {...getTableProps()} className="table table-striped">
-                    <thead>
-                      {headerGroups.map((headerGroup) => (
-                        <tr
-                          key={headerGroup.id || Math.random()}
-                          {...headerGroup.getHeaderGroupProps()}
-                        >
-                          {headerGroup.headers.map((column) => (
-                            <th
-                              key={column.id || column.accessor}
-                              {...column.getHeaderProps()}
-                            >
-                              {column.render("Header")}
-                            </th>
-                          ))}
-                        </tr>
-                      ))}
-                    </thead>
-                    <tbody {...getTableBodyProps()}>
-                      {rows.map((row) => {
-                        prepareRow(row);
-                        return (
+                  <div className="table-responsive text-nowrap">
+                    <table {...getTableProps()} className="table table-striped">
+                      <thead>
+                        {headerGroups.map((headerGroup) => (
                           <tr
-                            key={row.id || row.original.id}
-                            {...row.getRowProps()}
+                            key={headerGroup.id || Math.random()}
+                            {...headerGroup.getHeaderGroupProps()}
                           >
-                            {row.cells.map((cell) => (
-                              <td
-                                key={cell.column.id || cell.column.accessor}
-                                {...cell.getCellProps()}
+                            {headerGroup.headers.map((column) => (
+                              <th
+                                key={column.id || column.accessor}
+                                {...column.getHeaderProps()}
                               >
-                                {cell.render("Cell")}
-                              </td>
+                                {column.render("Header")}
+                              </th>
                             ))}
                           </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                        ))}
+                      </thead>
+                      <tbody {...getTableBodyProps()}>
+                        {rows.map((row) => {
+                          prepareRow(row);
+                          return (
+                            <tr
+                              key={row.id || row.original.id}
+                              {...row.getRowProps()}
+                            >
+                              {row.cells.map((cell) => (
+                                <td
+                                  key={cell.column.id || cell.column.accessor}
+                                  {...cell.getCellProps()}
+                                >
+                                  {cell.render("Cell")}
+                                </td>
+                              ))}
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
