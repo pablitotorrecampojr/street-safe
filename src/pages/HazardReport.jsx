@@ -236,20 +236,20 @@ const HazardReport = () => {
   
           let finalData = sorted;
   
-          /**
-           * TODO: filter out the hazards that are not within the user's area coverage
-           * ? if the user is municipality
-           */
-          if (userData?.role === "2") {
-            const [minLat, maxLat, minLng, maxLng] = userCoverage.data.map(Number);
-            console.log("User Coverage Data:", userCoverage.data);
-            finalData = sorted.filter((hazard) => {
-              const lat = parseFloat(hazard.latitude);
-              const lng = parseFloat(hazard.longitude);
-              return lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng;
-            });
-            toast.success("New Road Hazard Report!");
-          }
+          // /**
+          //  * TODO: filter out the hazards that are not within the user's area coverage
+          //  * ? if the user is municipality
+          //  */
+          // if (userData?.role === "2") {
+          //   const [minLat, maxLat, minLng, maxLng] = userCoverage.data.map(Number);
+          //   console.log("User Coverage Data:", userCoverage.data);
+          //   finalData = sorted.filter((hazard) => {
+          //     const lat = parseFloat(hazard.latitude);
+          //     const lng = parseFloat(hazard.longitude);
+          //     return lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng;
+          //   });
+          //   toast.success("New Road Hazard Report!");
+          // }
           
           //TODO: if the user is authorities
           if (userData?.role === "1") {
