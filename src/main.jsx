@@ -16,6 +16,7 @@ import Notification from './pages/ReviewPendingAccounts';
 import EditProfile from './pages/EditProfile';
 import AccessControl from './pages/AccessControl';
 import PageNotFound from './pages/PageNotFound';
+import ReviewPendingAccounts from './pages/ReviewPendingAccounts';
 
 //TODO: import web view components
 import LoadingScreen from './webview/LoadingScreen';
@@ -78,7 +79,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                 <AccessControl />
               </ProtectedRoute>
             }
-        /> 
+          /> 
+           <Route
+            path="/pending-accounts"
+            element={
+              <ProtectedRoute>
+                <ReviewPendingAccounts />
+              </ProtectedRoute>
+            }
+          /> 
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>

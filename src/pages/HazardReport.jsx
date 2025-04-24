@@ -475,41 +475,43 @@ const HazardReport = () => {
                 <LoadingScreen loadingText="Fetching Hazard Report..." />
               ) : (
                 <>
-                {userData?.role == '2' && (
-                  <div className="card mb-4">
-                    <div className="card-header">
-                      <h5 className="card-title mb-0"><strong>Hazard Report Within: </strong> 📌 {userData?.barangay}, {userData?.municipality}, Cebu </h5>
+                  <div className="row mb-4 p-1">
+                      <h1 style={{ fontSize: '20px' }} className='fw-bold'>Hazard Report</h1>
                     </div>
-                  </div>
-                )}
-
-                <div className="card">
-                  <div className="card-body">
-                    <table {...getTableProps()} className="table table-striped">
-                      <thead>
-                        {headerGroups.map((headerGroup) => (
-                          <tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map((column) => (
-                              <th {...column.getHeaderProps()}>{column.render("Header")}</th>
-                            ))}
-                          </tr>
-                        ))}
-                      </thead>
-                      <tbody {...getTableBodyProps()}>
-                        {rows.map((row) => {
-                          prepareRow(row);
-                          return (
-                            <tr {...row.getRowProps()}>
-                              {row.cells.map((cell) => (
-                                <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                  {userData?.role == '2' && (
+                    <div className="card mb-4">
+                      <div className="card-header">
+                        <h5 className="card-title mb-0"><strong>Hazard Report Within: </strong> 📌 {userData?.barangay}, {userData?.municipality}, Cebu </h5>
+                      </div>
+                    </div>
+                  )}
+                  <div className="card">
+                    <div className="card-body">
+                      <table {...getTableProps()} className="table table-striped">
+                        <thead>
+                          {headerGroups.map((headerGroup) => (
+                            <tr {...headerGroup.getHeaderGroupProps()}>
+                              {headerGroup.headers.map((column) => (
+                                <th key={column.id} {...column.getHeaderProps()}>{column.render("Header")}</th>
                               ))}
                             </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
+                          ))}
+                        </thead>
+                        <tbody {...getTableBodyProps()}>
+                          {rows.map((row) => {
+                            prepareRow(row);
+                            return (
+                              <tr {...row.getRowProps()}>
+                                {row.cells.map((cell) => (
+                                  <td key={cell.id} {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                                ))}
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
-                </div>
                 </>
               )}
             </div>
