@@ -44,7 +44,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         {/* public routes */}
         <Route path="/" element={<PublicRoute><SignIn /></PublicRoute>} />
         <Route path="/sign-up" element={<PublicRoute><SignUp /></PublicRoute>} />
-
         <Route path="/insert-hazard" element={<InsertHazard />} />
 
         {/* private routes */}
