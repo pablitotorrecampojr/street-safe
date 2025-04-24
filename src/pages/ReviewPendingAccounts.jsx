@@ -11,6 +11,7 @@ import { auth, db } from '../firebase/firebase';
 import LoadingScreen from '../webview/LoadingScreen';
 import { Tooltip } from "react-tooltip";
 import accountSetting from "../constants/account-setting.json";
+import districts from "../constants/districts.json"; 
 
 export default function ReviewPendingAccounts() {
   const [users, setUsers] = useState([]);
@@ -31,7 +32,7 @@ export default function ReviewPendingAccounts() {
     const fetchUsers = async () => {
       try {
         const usersRef = collection(db, "users");
-        const q = query(usersRef, where("accountStatus", "==", 0));
+        const q = query(usersRef, where("accountStatus", "in", [0, 2]));
         const querySnapshot = await getDocs(q);
         const users = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setUsers(users);
@@ -147,7 +148,7 @@ export default function ReviewPendingAccounts() {
                                   <td>{accountSetting["role"][user.role]}</td>
                                   <td>{user.barangay || 'N/A'}</td>
                                   <td>{user.municipality || 'N/A'}</td>
-                                  <td>{user.district || 'N/A'}</td>
+                                  <td>{ user.role == 1 ? `${districts["districts"]?.[user.district]?.district} / ${districts["districts"]?.[user.district]?.name}` : 'N/A'}</td>
                                   <td>
                                     {new Date(user.createdAt).toLocaleDateString("en-US", {
                                       year: "numeric",
@@ -184,22 +185,24 @@ export default function ReviewPendingAccounts() {
                                         type="button"
                                         className="btn btn-icon btn-outline-success"
                                         data-tooltip-id="pendingAccount-tooltip"
-                                        data-tooltip-content="Accept Account"
+                                        data-tooltip-content={user.accountStatus == 0 ? "Approve Account" : "Unblock Account"}
                                         style={{ height: '25px', width: '25px' }}
                                         onClick={() => approveAccount(user.id)}
                                       >
                                         <span className="tf-icons bx bx-check"></span>
                                       </button>
-                                      <button
-                                        type="button"
-                                        className="btn btn-icon btn-outline-danger"
-                                        data-tooltip-id="pendingAccount-tooltip"
-                                        data-tooltip-content="Block Account"
-                                        style={{ height: '25px', width: '25px' }}
-                                        onClick={() => blockAccount(user.id)}
-                                      >
-                                        <span className="tf-icons bx bx-x"></span>
-                                      </button>
+                                      {user.accountStatus == 0 && (
+                                        <button
+                                          type="button"
+                                          className="btn btn-icon btn-outline-danger"
+                                          data-tooltip-id="pendingAccount-tooltip"
+                                          data-tooltip-content="Block Account"
+                                          style={{ height: '25px', width: '25px' }}
+                                          onClick={() => blockAccount(user.id)}
+                                        >
+                                          <span className="tf-icons bx bx-x"></span>
+                                        </button>
+                                      )}
                                       <Tooltip id="pendingAccount-tooltip" />
                                     </div>
                                   </td>

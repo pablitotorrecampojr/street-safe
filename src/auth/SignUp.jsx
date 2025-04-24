@@ -59,7 +59,7 @@ const SignUp = () => {
       return;
     }
 
-    if (file.size > 2 * 1024 * 1024) {
+    if (file.size > 1 * 1024 * 1024) {
       toast.error("Each file must be less than 2MB.");
       return;
     }    
@@ -112,10 +112,11 @@ const SignUp = () => {
     try {
       const response = await signUp(formData);
       if (response.status === 200) {
-          toast.success(response.message);
-          navigate("/");
+        toast.success(response.message);
+        navigate("/");
       } else {
-          toast.error(response.message);
+        console.error(response);
+        toast.error(response.message);
       }
     } catch (error) {
       toast.error("Something went wrong. Please try again.");

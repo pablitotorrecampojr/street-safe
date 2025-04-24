@@ -3,6 +3,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from './firebase';
 import Spinners from "../components/Spinners";
 import PendingAccount from "../components/PendingAccount";
+import BlockedAccount from "../components/BlockedAccount";
 import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -28,8 +29,14 @@ export default function ProtectedRoute({ children }) {
 
     if (loading || checkingUserData) return <Spinners />;
 
+    //TODO: render pending page if accountStatus is pending account
     if (user && userData?.accountStatus === 0) {
         return <PendingAccount />;
+    }
+
+    //TODO: render pending page if accountStatus is blocked account
+    if (user && userData?.accountStatus === 2) {
+        return <BlockedAccount />;
     }
 
     return user ? children : <Navigate to="/" replace />;

@@ -11,7 +11,7 @@
     "pending_accounts": [
         "Pending",
         "Approved",
-        "Rejected"
+        "Blocked"
     ],
     "pending_accounts_color": [
         "info",
