@@ -10,6 +10,7 @@ import { doc, getDocs, collection, where, query } from "firebase/firestore";
 import { auth, db } from '../firebase/firebase';
 import LoadingScreen from '../webview/LoadingScreen';
 import { Tooltip } from "react-tooltip";
+import accountSetting from "../constants/account-setting.json";
 
 export default function ReviewPendingAccounts() {
   const [users, setUsers] = useState([]);
@@ -94,7 +95,7 @@ export default function ReviewPendingAccounts() {
                                 </td>
                                 <td><a href="#" className='btn-link'>Front Id</a></td>
                                 <td><a href="#" className='btn-link'>Back Id</a></td>
-                                <td>{ user.accountStatus }</td>
+                                <td> <span class={ `badge bg-label-${accountSetting["pending_accounts_color"][user.accountStatus]} me-1` }>{ accountSetting["pending_accounts"][user.accountStatus] }</span></td>
                                 <td>
                                   <div className='flex gap-2'>
                                     <button
@@ -102,16 +103,18 @@ export default function ReviewPendingAccounts() {
                                       className={`btn btn-icon btn-outline-success`}
                                       data-tooltip-id="hazard-tooltip"
                                       data-tooltip-content="Send Response Team"
+                                      style={{height: '25px', width: '25px'}}
                                     >
-                                      <span className={`tf-icons bx bx-person`}></span>
+                                      <span className={`tf-icons bx bx-check`}></span>
                                     </button>
                                     <button
                                       type="button"
                                       className={`btn btn-icon btn-outline-danger`}
                                       data-tooltip-id="hazard-tooltip"
                                       data-tooltip-content="Send Response Team"
+                                      style={{height: '25px', width: '25px'}}
                                     >
-                                      <span className={`tf-icons bx bx-person`}></span>
+                                      <span className={`tf-icons bx bx-x`}></span>
                                     </button>
                                   </div>
                                 </td>
