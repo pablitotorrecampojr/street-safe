@@ -6,7 +6,7 @@ import Aside from '../components/Aside';
 import Navbar from '../components/NavBar';
 import Profile from '../components/Profile';
 import { useEffect, useState } from "react";
-import { doc, getDocs, collection, where, query } from "firebase/firestore";
+import { doc, getDocs, collection, where, query, setDoc } from "firebase/firestore";
 import { auth, db } from '../firebase/firebase';
 import LoadingScreen from '../webview/LoadingScreen';
 import { Tooltip } from "react-tooltip";
@@ -48,6 +48,30 @@ export default function ReviewPendingAccounts() {
     setModalImageUrl(imageUrl);
     setModalTitle(title);
     setModalVisible(true);
+  }
+
+  const approveAccount = async (userId) => {
+    try {
+      const userRef = doc(db, "users", userId);
+      await setDoc(userRef, { accountStatus: 1 }, { merge: true });
+      toast.success("Account approved successfully");
+      setUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
+    } catch (error) {
+      console.error("Error approving account:", error);
+      toast.error("Error approving account");
+    }
+  };
+
+  const blockAccount = async (userId) => { 
+    try {
+      const userRef = doc(db, "users", userId);
+      await setDoc(userRef, { accountStatus: 2 }, { merge: true });
+      toast.success("Account blocked successfully");
+      setUsers(users.filter(user => user.id !== userId));
+    } catch (error) {
+      console.error("Error blocked account:", error);
+      toast.error("Error blocking account");
+    }
   }
 
   return (
@@ -144,7 +168,7 @@ export default function ReviewPendingAccounts() {
                                     >View Image
                                   </button>
                                 </td>
-                                <td> <span class={ `badge bg-label-${accountSetting["pending_accounts_color"][user.accountStatus]} me-1` }>{ accountSetting["pending_accounts"][user.accountStatus] }</span></td>
+                                <td> <span className={ `badge bg-label-${accountSetting["pending_accounts_color"][user.accountStatus]} me-1` }>{ accountSetting["pending_accounts"][user.accountStatus] }</span></td>
                                 <td>
                                   <div className='flex gap-2'>
                                     <button
@@ -153,6 +177,7 @@ export default function ReviewPendingAccounts() {
                                       data-tooltip-id="pendingAccount-tooltip"
                                       data-tooltip-content="Accept Account"
                                       style={{height: '25px', width: '25px'}}
+                                      onClick={() => approveAccount(user.id)}
                                     >
                                       <span className={`tf-icons bx bx-check`}></span>
                                     </button>
@@ -162,6 +187,7 @@ export default function ReviewPendingAccounts() {
                                       data-tooltip-id="pendingAccount-tooltip"
                                       data-tooltip-content="Block Account"
                                       style={{height: '25px', width: '25px'}}
+                                      onClick={() => blockAccount(user.id)}
                                     >
                                       <span className={`tf-icons bx bx-x`}></span>
                                     </button>
