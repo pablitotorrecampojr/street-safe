@@ -186,6 +186,19 @@ const getUserAreaCoverage = (userData) => {
   return data;
 };
 
+const getHazardArea = async (lat, lng) => {
+  const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+
+  try {
+    const response = await fetch(url);
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error("Failed to get hazard area", error);
+    return null;
+  }
+};
+
 const isWithinDistrict = (hazardData, barangays) => {
   const listOfBarangays = barangays;
   const hazardBarangay = hazardData?.barangay;
@@ -217,55 +230,54 @@ const HazardReport = () => {
     const unsubscribe = onValue(
       roadhazardsRef,
       (snapshot) => {
-        if (snapshot.exists()) {
-          let data = Object.values(snapshot.val());
-          
-          //TODO: filter out the hazards that are flag as national road hazard
-          if (userData?.role === "2") {
-            data = data.filter((hazard) => !hazard.nationalRoadFlg);
-          }
-
-          //TODO filter out hazard that are national road hazard
-          if (userData?.role === "1") {
-            data = data.filter((hazard) => hazard.nationalRoadFlg);
-          }
-
-          const sorted = data.sort(
-            (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
-          );
+        const processHazards = async () => {
+          if (snapshot.exists()) {
+            let data = Object.values(snapshot.val());
   
-          let finalData = sorted;
+            if (userData?.role === "2") {
+              data = data.filter((hazard) => !hazard.nationalRoadFlg);
+            }
   
-          /**
-           * TODO: filter out the hazards that are not within the user's area coverage
-           * ? if the user is municipality
-           */
-          if (userData?.role === "2") {
-            const [minLat, maxLat, minLng, maxLng] = userCoverage.data.map(Number);
-            console.log("User Coverage Data:", userCoverage.data);
-            finalData = sorted.filter((hazard) => {
-              const lat = parseFloat(hazard.latitude);
-              const lng = parseFloat(hazard.longitude);
-              return lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng;
-            });
-            toast.success("New Road Hazard Report!");
-          }
-          
-          //TODO: if the user is authorities
-          if (userData?.role === "1") {
-            finalData = sorted.filter((hazard) => {
-              return (
-                hazard.nationalRoadFlg &&
-                isWithinDistrict(hazard, districtSorted[districts.districts[userData?.district].district])
+            if (userData?.role === "1") {
+              data = data.filter((hazard) => hazard.nationalRoadFlg);
+            }
+  
+            const sorted = data.sort(
+              (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
+            );
+  
+            let finalData = sorted;
+  
+            if (userData?.role === "2") {
+              const filtered = await Promise.all(
+                sorted.map(async (hazard) => {
+                  const area = await getHazardArea(hazard.latitude, hazard.longitude);
+                  const displayName = area?.display_name || "";
+                  const isInCanduman = displayName.includes("Canduman") && displayName.includes("Mandaue");
+                  return isInCanduman ? hazard : null;
+                })
               );
-            });
+  
+              finalData = filtered.filter((h) => h !== null);
+            }
+  
+            if (userData?.role === "1") {
+              finalData = sorted.filter((hazard) => {
+                return (
+                  hazard.nationalRoadFlg &&
+                  isWithinDistrict(hazard, districtSorted[districts.districts[userData?.district].district])
+                );
+              });
+            }
+  
+            setRoadHazards(finalData);
+          } else {
+            setRoadHazards([]);
           }
-          
-          setRoadHazards(finalData);
-        } else {
-          setRoadHazards([]);
-        }
-        setLoading(false);
+          setLoading(false);
+        };
+  
+        processHazards();
       },
       (error) => {
         toast.error("Error fetching roadhazards");
