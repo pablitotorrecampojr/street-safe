@@ -203,14 +203,13 @@ const HazardReport = () => {
             );
   
             let finalData = sorted;
-  
+            console.log(finalData)
             if (userData?.role === "2") {
               const filtered = await Promise.all(
                 sorted.map(async (hazard) => {
-                  const area = await getHazardArea(hazard.latitude, hazard.longitude);
-                  const displayName = area?.display_name || "";
-                  const isInCanduman = displayName.includes("Canduman") && displayName.includes("Mandaue");
-                  return isInCanduman ? hazard : null;
+                  const displayName = hazard?.fullAddress || "";
+                  const isWithinArea = displayName.includes(userData?.barangay) && displayName.includes(userData?.municipality);
+                  return isWithinArea ? hazard : null;
                 })
               );
   
@@ -254,14 +253,14 @@ const HazardReport = () => {
       accessor: "roadHazard",
       Cell: ({ value, row }) => (
         <button
-          className="btn btn-link text-left"
+          className={`btn btn-link text-left ${value ? "text-primary" : "text-danger fw-bold"}`}
           onClick={() => {
             setModalImageUrl(`data:image/jpeg;base64,${row.original.imageUrl}`);
             setModalVisible(true);
             setModalTitle(row.original.roadHazard);
           }}
         >
-          {value}
+          {value ? value : 'No identified'}
         </button>
       ),
     },

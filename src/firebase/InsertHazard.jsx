@@ -20,7 +20,7 @@ export default function ProtectedRoute({ children }) {
                 const newHazard = {
                     imageUrl: "base64Image",
                     dateSubmitted: "2025-04-11 00:00:00",
-                    fullAddress: "Somewhere in Apas, Cebu City, Cebu",
+                    fullAddress: "NEW Somewhere in Apas, Cebu City, Cebu",
                     roadHazard: "Dummy Data",
                     status: 0,
                     latitude: 10.339278,
