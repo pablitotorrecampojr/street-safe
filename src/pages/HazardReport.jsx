@@ -143,49 +143,6 @@ const useCurrentUserData = () => {
   return userData;
 };
 
-const getUserAreaCoverage = (userData) => {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    if (!userData) return;
-
-    const role = userData?.role;
-    if (role == "0") {
-      setData({ 
-        status: 400, 
-        errorId: "user_id_admin",
-        message: "User role is not valid",
-      });
-      return;
-    }
-
-    const url = `https://nominatim.openstreetmap.org/search?q=${userData?.barangay}, ${userData?.municipality}, Cebu&format=json`
-    const userCoverage = async () => {
-      try {
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const json = await response.json();
-        setData({ status: 200, data: json[0]?.boundingbox });
-      } catch (error) {
-        console.error({
-          status: 500,
-          message: "Fetch failed",
-          error: error.message,
-        });
-        setData({ status: 500, message: "Fetch failed" });
-      }
-    };
-
-    userCoverage();
-  }, [userData]);
-
-  return data;
-};
-
 const getHazardArea = async (lat, lng) => {
   const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
 
