@@ -178,7 +178,6 @@ const HazardReport = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState(null);
   const userData = useCurrentUserData();
-  const userCoverage = getUserAreaCoverage(userData);
 
   useEffect(() => {
     const db = getDatabase();
@@ -243,7 +242,7 @@ const HazardReport = () => {
     );
   
     return () => unsubscribe();
-  }, [userCoverage, userData]);
+  }, [userData]);
 
   const columns = React.useMemo(() => [
     {
