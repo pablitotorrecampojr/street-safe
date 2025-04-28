@@ -203,6 +203,7 @@ class ReportFragment : Fragment() {
                                                 }
 
                                                 val report = hashMapOf(
+                                                    "id" to generateRandomId(),
                                                     "imageUrl" to imageWithBoxesBase64,
                                                     "dateSubmitted" to currentDateTime,
                                                     "fullAddress" to fullAddress,
@@ -250,6 +251,15 @@ class ReportFragment : Fragment() {
             )
         }
 
+    }
+
+    fun generateRandomId(): String {
+        val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        val id = StringBuilder()
+        repeat(28) {
+            id.append(chars.random())
+        }
+        return id.toString()
     }
 
     private fun sendPostRequest(image: String, onResult: (String?) -> Unit) {
