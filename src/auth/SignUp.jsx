@@ -5,6 +5,7 @@ import municipalities from '../constants/municipalities.json';
 import districts from '../constants/districts.json';
 import { toast } from "react-toastify";
 import {signUp} from '../firebase/auth';
+import { set } from "firebase/database";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -17,6 +18,8 @@ const SignUp = () => {
     barangay: "",
     password: "",
     confirmPassword: "",
+    validIdFront: null,
+    validIdBack: null,
   });
   const [errors, setErrors] = useState({});
   const handleChange = (e) => {
@@ -42,6 +45,33 @@ const SignUp = () => {
   
       return updatedData;
     });
+  };
+
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    const file = files[0];
+  
+    if (!file) return;
+  
+    const allowedTypes = ["image/jpeg", "image/png"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Only JPG and PNG files are allowed for valid IDs.");
+      return;
+    }
+
+    if (file.size > 1 * 1024 * 1024) {
+      toast.error("Each file must be less than 2MB.");
+      return;
+    }    
+  
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: reader.result, 
+      }));
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e) => {
@@ -74,13 +104,19 @@ const SignUp = () => {
       return;
     }
 
+    if (!formData.validIdFront || !formData.validIdBack) {
+      toast.error("Please upload both front and back of your valid ID.");
+      return;
+    }
+
     try {
       const response = await signUp(formData);
       if (response.status === 200) {
-          toast.success(response.message);
-          navigate("/");
+        toast.success(response.message);
+        navigate("/");
       } else {
-          toast.error(response.message);
+        console.error(response);
+        toast.error(response.message);
       }
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
@@ -144,7 +180,7 @@ const SignUp = () => {
                         > 
                           <option value="">Choose option</option>
                           {accountSetting.role.map((role, index) => {
-                           if (index < 3) {
+                           if (index < 3 && index != 0) {
                             return (
                               <option key={index} value={index}>
                                 {role}
@@ -195,6 +231,28 @@ const SignUp = () => {
                           </select>
                         </div>
                       )}
+
+                      <div className="mb-3">
+                        <label className="form-label">Valid ID (Front)</label>
+                        <input
+                          className="form-control"
+                          type="file"
+                          id="validIdFront"
+                          name="validIdFront"
+                          onChange={handleFileChange}
+                        />
+                      </div>
+
+                      <div className="mb-3">
+                        <label className="form-label">Valid ID (Back)</label>
+                        <input
+                          className="form-control"
+                          type="file"
+                          id="validIdBack"
+                          name="validIdBack"
+                          onChange={handleFileChange}
+                        />
+                      </div>
 
                       <div className="mb-3 form-password-toggle">
                           <label className="form-label">Password</label>

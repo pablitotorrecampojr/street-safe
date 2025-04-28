@@ -7,5 +7,15 @@
     ],
     "role_inex": [
         0, 1, 2, 3
+    ],
+    "pending_accounts": [
+        "Pending",
+        "Approved",
+        "Blocked"
+    ],
+    "pending_accounts_color": [
+        "info",
+        "success",
+        "danger"
     ]
 }

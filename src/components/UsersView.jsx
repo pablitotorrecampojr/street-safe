@@ -6,10 +6,12 @@ import * as SolidIcons from "@fortawesome/free-solid-svg-icons";
 import * as RegularIcons from "@fortawesome/free-regular-svg-icons";
 import * as BrandIcons from "@fortawesome/free-brands-svg-icons";
 import accountSetting from "../constants/account-setting.json";
+import Spinners from "./Spinners";
 
 export default function UsersView({ icon = "faUser", color = "primary", role = "0" }) {
     const [user, setUser] = useState(null);
     const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(true);
   
     useEffect(() => {
         const fetchUsers = async () => {
@@ -18,6 +20,7 @@ export default function UsersView({ icon = "faUser", color = "primary", role = "
                 const usersSnapshot = await getDocs(usersCollection);
                 const usersList = usersSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
                 setUserData(usersList);
+                setLoading(false);
             } catch (error) {
                 console.error("Error fetching users:", error);
             }
@@ -47,7 +50,15 @@ export default function UsersView({ icon = "faUser", color = "primary", role = "
               </div>
             </div>
             <h1 className="fw-semibold d-block mb-1">{roleName}</h1>
-            <h3 className="card-title mb-2">{ filteredUsers }</h3>
+            {loading ? (
+              <div className="p-1">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            ) : (
+              <h3 className="card-title mb-2">{filteredUsers}</h3>
+            )}
           </div>
         </div>
       </div>

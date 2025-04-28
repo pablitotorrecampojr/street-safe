@@ -143,47 +143,17 @@ const useCurrentUserData = () => {
   return userData;
 };
 
-const getUserAreaCoverage = (userData) => {
-  const [data, setData] = useState(null);
+const getHazardArea = async (lat, lng) => {
+  const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
 
-  useEffect(() => {
-    if (!userData) return;
-
-    const role = userData?.role;
-    if (role == "0") {
-      setData({ 
-        status: 400, 
-        errorId: "user_id_admin",
-        message: "User role is not valid",
-      });
-      return;
-    }
-
-    const url = `https://nominatim.openstreetmap.org/search?q=${userData?.barangay}, ${userData?.municipality}, Cebu&format=json`
-    const userCoverage = async () => {
-      try {
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const json = await response.json();
-        setData({ status: 200, data: json[0]?.boundingbox });
-      } catch (error) {
-        console.error({
-          status: 500,
-          message: "Fetch failed",
-          error: error.message,
-        });
-        setData({ status: 500, message: "Fetch failed" });
-      }
-    };
-
-    userCoverage();
-  }, [userData]);
-
-  return data;
+  try {
+    const response = await fetch(url);
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error("Failed to get hazard area", error);
+    return null;
+  }
 };
 
 const isWithinDistrict = (hazardData, barangays) => {
@@ -208,7 +178,6 @@ const HazardReport = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState(null);
   const userData = useCurrentUserData();
-  const userCoverage = getUserAreaCoverage(userData);
 
   useEffect(() => {
     const db = getDatabase();
@@ -217,55 +186,53 @@ const HazardReport = () => {
     const unsubscribe = onValue(
       roadhazardsRef,
       (snapshot) => {
-        if (snapshot.exists()) {
-          let data = Object.values(snapshot.val());
-          
-          //TODO: filter out the hazards that are flag as national road hazard
-          if (userData?.role === "2") {
-            data = data.filter((hazard) => !hazard.nationalRoadFlg);
-          }
-
-          //TODO filter out hazard that are national road hazard
-          if (userData?.role === "1") {
-            data = data.filter((hazard) => hazard.nationalRoadFlg);
-          }
-
-          const sorted = data.sort(
-            (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
-          );
+        const processHazards = async () => {
+          if (snapshot.exists()) {
+            let data = Object.values(snapshot.val());
   
-          let finalData = sorted;
+            if (userData?.role === "2") {
+              data = data.filter((hazard) => !hazard.nationalRoadFlg);
+            }
   
-          // /**
-          //  * TODO: filter out the hazards that are not within the user's area coverage
-          //  * ? if the user is municipality
-          //  */
-          // if (userData?.role === "2") {
-          //   const [minLat, maxLat, minLng, maxLng] = userCoverage.data.map(Number);
-          //   console.log("User Coverage Data:", userCoverage.data);
-          //   finalData = sorted.filter((hazard) => {
-          //     const lat = parseFloat(hazard.latitude);
-          //     const lng = parseFloat(hazard.longitude);
-          //     return lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng;
-          //   });
-          //   toast.success("New Road Hazard Report!");
-          // }
-          
-          //TODO: if the user is authorities
-          if (userData?.role === "1") {
-            finalData = sorted.filter((hazard) => {
-              return (
-                hazard.nationalRoadFlg &&
-                isWithinDistrict(hazard, districtSorted[districts.districts[userData?.district].district])
+            if (userData?.role === "1") {
+              data = data.filter((hazard) => hazard.nationalRoadFlg);
+            }
+  
+            const sorted = data.sort(
+              (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
+            );
+  
+            let finalData = sorted;
+            console.log(finalData)
+            if (userData?.role === "2") {
+              const filtered = await Promise.all(
+                sorted.map(async (hazard) => {
+                  const displayName = hazard?.fullAddress || "";
+                  const isWithinArea = displayName.includes(userData?.barangay) && displayName.includes(userData?.municipality);
+                  return isWithinArea ? hazard : null;
+                })
               );
-            });
+  
+              finalData = filtered.filter((h) => h !== null);
+            }
+  
+            if (userData?.role === "1") {
+              finalData = sorted.filter((hazard) => {
+                return (
+                  hazard.nationalRoadFlg &&
+                  isWithinDistrict(hazard, districtSorted[districts.districts[userData?.district].district])
+                );
+              });
+            }
+  
+            setRoadHazards(finalData);
+          } else {
+            setRoadHazards([]);
           }
-          
-          setRoadHazards(finalData);
-        } else {
-          setRoadHazards([]);
-        }
-        setLoading(false);
+          setLoading(false);
+        };
+  
+        processHazards();
       },
       (error) => {
         toast.error("Error fetching roadhazards");
@@ -274,7 +241,7 @@ const HazardReport = () => {
     );
   
     return () => unsubscribe();
-  }, [userCoverage, userData]);
+  }, [userData]);
 
   const columns = React.useMemo(() => [
     {
@@ -286,14 +253,14 @@ const HazardReport = () => {
       accessor: "roadHazard",
       Cell: ({ value, row }) => (
         <button
-          className="btn btn-link text-left"
+          className={`btn btn-link text-left ${value ? "text-primary" : "text-danger fw-bold"}`}
           onClick={() => {
             setModalImageUrl(`data:image/jpeg;base64,${row.original.imageUrl}`);
             setModalVisible(true);
             setModalTitle(row.original.roadHazard);
           }}
         >
-          {value}
+          {value ? value : 'No identified'}
         </button>
       ),
     },
@@ -384,7 +351,7 @@ const HazardReport = () => {
                 <span className="tf-icons bx bx-navigation"></span>
               </button>
     
-              {userData?.role === "2" && (
+              {(userData?.role === "2" && !hazard.nationalRoadFlg == true) && (
                 /**
                  * TODO: this button will be used to flag the hazard as national road hazard
                  * ? this will be used to send the hazard to the national road hazard team 
@@ -475,41 +442,45 @@ const HazardReport = () => {
                 <LoadingScreen loadingText="Fetching Hazard Report..." />
               ) : (
                 <>
-                {userData?.role == '2' && (
-                  <div className="card mb-4">
-                    <div className="card-header">
-                      <h5 className="card-title mb-0"><strong>Hazard Report Within: </strong> 📌 {userData?.barangay}, {userData?.municipality}, Cebu </h5>
+                  <div className="row mb-4 p-1">
+                    <h1 style={{ fontSize: '20px' }} className='fw-bold'>Hazard Report</h1>
+                  </div>
+                  {userData?.role == '2' && (
+                    <div className="card mb-4">
+                      <div className="card-header">
+                        <h5 className="card-title mb-0"><strong>Hazard Report Within: </strong> 📌 {userData?.barangay}, {userData?.municipality}, Cebu </h5>
+                      </div>
+                    </div>
+                  )}
+                  <div className="card">
+                    <div className="card-body">
+                      <div className="table-responsive text-nowrap">
+                        <table {...getTableProps()} className="table table-striped">
+                          <thead>
+                            {headerGroups.map((headerGroup) => (
+                              <tr {...headerGroup.getHeaderGroupProps()}>
+                                {headerGroup.headers.map((column) => (
+                                  <th key={column.id} {...column.getHeaderProps()}>{column.render("Header")}</th>
+                                ))}
+                              </tr>
+                            ))}
+                          </thead>
+                          <tbody {...getTableBodyProps()}>
+                            {rows.map((row) => {
+                              prepareRow(row);
+                              return (
+                                <tr {...row.getRowProps()}>
+                                  {row.cells.map((cell) => (
+                                    <td key={cell.id} {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                                  ))}
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
-                )}
-
-                <div className="card">
-                  <div className="card-body">
-                    <table {...getTableProps()} className="table table-striped">
-                      <thead>
-                        {headerGroups.map((headerGroup) => (
-                          <tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map((column) => (
-                              <th {...column.getHeaderProps()}>{column.render("Header")}</th>
-                            ))}
-                          </tr>
-                        ))}
-                      </thead>
-                      <tbody {...getTableBodyProps()}>
-                        {rows.map((row) => {
-                          prepareRow(row);
-                          return (
-                            <tr {...row.getRowProps()}>
-                              {row.cells.map((cell) => (
-                                <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                              ))}
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
                 </>
               )}
             </div>

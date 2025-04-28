@@ -32,7 +32,7 @@ export default function Aside() {
       { name: 'Dashboard', path: '/dashboard', icon: 'bx bx-home-circle', permissions: [0, 1, 2] },
       { name: 'Access Control', path: '/access-control', icon: 'bx bx-cog', permissions: [0] },
       { name: 'Hazard Report', path: '/hazard-report', icon: 'bx bx-error-circle', permissions: [0, 1, 2] },
-      // { name: 'Notification', path: '/notification', icon: 'bx bx-bell', permissions: [0, 1, 2] },
+      { name: 'Pending Accounts', path: '/pending-accounts', icon: 'bx bx-hourglass', permissions: [0] },
     ];
 
     const handleNavbarToggle = () => { 
@@ -51,15 +51,13 @@ export default function Aside() {
         <div className="app-brand demo">
             <a className="app-brand-link">
               <div className="d-flex justify-content-center align-items-center p-1">
-                <a href="/" className="text-center">
-                  <img
+                <img
                     src="./logo.png"
                     alt="Logo"
                     height={80}
                     width={80}
                     className="rounded-circle mx-auto d-block"
                   />
-                </a>
               </div>
               <span className="app-brand-text demo menu-text ms-2"><strong>Street Safe</strong></span>
             </a>

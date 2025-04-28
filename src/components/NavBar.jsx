@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase/firebase';
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import AccountSetting from '../constants/account-setting.json';
 
 export default function Navbar() {
@@ -14,21 +14,30 @@ export default function Navbar() {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
           setUser(currentUser);
-    
+      
           if (currentUser) {
             const userRef = doc(db, "users", currentUser.uid);
             const userSnap = await getDoc(userRef);
-    
+      
             if (userSnap.exists()) {
               setUserData(userSnap.data());
             } else {
-              console.log("No user document found!");
+              console.log("No user document found. Creating one...");
+              const defaultData = {
+                email: currentUser.email,
+                createdAt: new Date(),
+                role: "0",
+                fullname: currentUser.displayName || "admin account",
+                uid: currentUser.uid,
+              };
+              await setDoc(userRef, defaultData);
+              setUserData(defaultData);
             }
           }
         });
-    
+      
         return () => unsubscribe();
-    }, []);
+      }, []);
 
     const handleNavbarToggle = () => {
         const htmlElement = document.getElementById("main-html");
@@ -77,7 +86,7 @@ export default function Navbar() {
                     <a className="nav-link dropdown-toggle hide-arrow" href="#" data-bs-toggle="dropdown" onClick={handleToggleUserProfile}>
                         <div className="avatar avatar-online bg-primary rounded-circle d-flex justify-content-center align-items-center" style={{ width: "50px", height: "50px" }}>
                             <span className="fw-bold fs-5 text-white">
-                                {user ? user.displayName.charAt(0).toUpperCase() : "A"}
+                                {userData ? userData.fullname.charAt(0).toUpperCase() : "A"}
                             </span>
                         </div>
                     </a>
@@ -86,7 +95,7 @@ export default function Navbar() {
                             <a className="dropdown-item" href="#">
                                 <div className="d-fle</ul>x">
                                 <div className="flex-grow-1">
-                                    <span className="fw-semibold d-block">{user ? user.displayName : "User" }</span>
+                                    <span className="fw-semibold d-block">{userData ? userData.fullname : "User" }</span>
                                     <small className="text-muted">
                                         {userData ? AccountSetting.role[userData.role] : "...fetching"}
                                     </small>
