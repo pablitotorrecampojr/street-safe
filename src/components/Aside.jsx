@@ -33,6 +33,7 @@ export default function Aside() {
       { name: 'Access Control', path: '/access-control', icon: 'bx bx-cog', permissions: [0] },
       { name: 'Hazard Report', path: '/hazard-report', icon: 'bx bx-error-circle', permissions: [0, 1, 2] },
       { name: 'Pending Accounts', path: '/pending-accounts', icon: 'bx bx-hourglass', permissions: [0] },
+      { name: 'User Accounts', path: '/user-accounts', icon: 'bx bx-user', permissions: [0] },
     ];
 
     const handleNavbarToggle = () => { 
