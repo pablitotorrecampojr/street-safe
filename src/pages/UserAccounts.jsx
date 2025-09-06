@@ -42,88 +42,88 @@ export default function UserAccounts() {
                                 <table className="table table-hover text-nowrap" style={{fontSize: '13px'}}>
                                 <thead>
                                     <tr>
-                                    <th>#</th>
-                                    <th>Full name</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th>Barangay</th>
-                                    <th>Municipality</th>
-                                    <th>District</th>
-                                    <th>Registration Date</th>
-                                    <th>Valid ID (Front)</th>
-                                    <th>Valid ID (Back)</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
+                                        <th>#</th>
+                                        <th>Full name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Barangay</th>
+                                        <th>Municipality</th>
+                                        <th>District</th>
+                                        <th>Registration Date</th>
+                                        <th>Valid ID (Front)</th>
+                                        <th>Valid ID (Back)</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody className="table-border-bottom-0">
                                     {users && users.length > 0 ? (
                                     users.map((user, index) => (
                                         <tr key={index}>
-                                        <td>{index + 1}</td>
-                                        <td>{user.fullname}</td>
-                                        <td>{user.email}</td>
-                                        <td>{accountSetting["role"][user.role]}</td>
-                                        <td>{user.barangay || 'N/A'}</td>
-                                        <td>{user.municipality || 'N/A'}</td>
-                                        <td>{ user.role == 1 ? `${districts["districts"]?.[user.district]?.district} / ${districts["districts"]?.[user.district]?.name}` : 'N/A'}</td>
-                                        <td>
-                                            {new Date(user.createdAt).toLocaleDateString("en-US", {
-                                            year: "numeric",
-                                            month: "long",
-                                            day: "2-digit",
-                                            })}
-                                        </td>
-                                        <td className='text-center'>
-                                            <button
-                                            type="button"
-                                            className="btn rounded-pill btn-sm btn-outline-primary"
-                                            onClick={() => handleImageClick(user.validIdFront, "Valid ID Front")}
-                                            >
-                                            View Image
-                                            </button>
-                                        </td>
-                                        <td className='text-center'>
-                                            <button
-                                            type="button"
-                                            className="btn rounded-pill btn-sm btn-outline-primary"
-                                            onClick={() => handleImageClick(user.validIdBack, "Valid ID Back")}
-                                            >
-                                            View Image
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <span className={`badge bg-label-${accountSetting["pending_accounts_color"][user.accountStatus]} me-1`}>
-                                            {accountSetting["pending_accounts"][user.accountStatus]}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="flex gap-2">
-                                            <button
-                                                type="button"
-                                                className="btn btn-icon btn-outline-success"
-                                                data-tooltip-id="pendingAccount-tooltip"
-                                                data-tooltip-content={user.accountStatus == 0 ? "Approve Account" : "Unblock Account"}
-                                                style={{ height: '25px', width: '25px' }}
-                                                onClick={() => approveAccount(user.id)}
-                                            >
-                                                <span className="tf-icons bx bx-check"></span>
-                                            </button>
-                                            {user.accountStatus == 0 && (
+                                            <td>{index + 1}</td>
+                                            <td>{user.fullname}</td>
+                                            <td>{user.email}</td>
+                                            <td>{accountSetting["role"][user.role]}</td>
+                                            <td>{user.barangay || 'N/A'}</td>
+                                            <td>{user.municipality || 'N/A'}</td>
+                                            <td>{ user.role == 1 ? `${districts["districts"]?.[user.district]?.district} / ${districts["districts"]?.[user.district]?.name}` : 'N/A'}</td>
+                                            <td>
+                                                {new Date(user.createdAt).toLocaleDateString("en-US", {
+                                                year: "numeric",
+                                                month: "long",
+                                                day: "2-digit",
+                                                })}
+                                            </td>
+                                            <td className='text-center'>
                                                 <button
                                                 type="button"
-                                                className="btn btn-icon btn-outline-danger"
-                                                data-tooltip-id="pendingAccount-tooltip"
-                                                data-tooltip-content="Block Account"
-                                                style={{ height: '25px', width: '25px' }}
-                                                onClick={() => blockAccount(user.id)}
+                                                className="btn rounded-pill btn-sm btn-outline-primary"
+                                                onClick={() => handleImageClick(user.validIdFront, "Valid ID Front")}
                                                 >
-                                                <span className="tf-icons bx bx-x"></span>
+                                                View Image
                                                 </button>
-                                            )}
-                                            <Tooltip id="pendingAccount-tooltip" />
-                                            </div>
-                                        </td>
+                                            </td>
+                                            <td className='text-center'>
+                                                <button
+                                                type="button"
+                                                className="btn rounded-pill btn-sm btn-outline-primary"
+                                                onClick={() => handleImageClick(user.validIdBack, "Valid ID Back")}
+                                                >
+                                                View Image
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <span className={`badge bg-label-${accountSetting["pending_accounts_color"][user.accountStatus]} me-1`}>
+                                                {accountSetting["pending_accounts"][user.accountStatus]}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div className="flex gap-2">
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-icon btn-outline-success"
+                                                    data-tooltip-id="pendingAccount-tooltip"
+                                                    data-tooltip-content={user.accountStatus == 0 ? "Approve Account" : "Unblock Account"}
+                                                    style={{ height: '25px', width: '25px' }}
+                                                    onClick={() => approveAccount(user.id)}
+                                                >
+                                                    <span className="tf-icons bx bx-check"></span>
+                                                </button>
+                                                {user.accountStatus == 0 && (
+                                                    <button
+                                                    type="button"
+                                                    className="btn btn-icon btn-outline-danger"
+                                                    data-tooltip-id="pendingAccount-tooltip"
+                                                    data-tooltip-content="Block Account"
+                                                    style={{ height: '25px', width: '25px' }}
+                                                    onClick={() => blockAccount(user.id)}
+                                                    >
+                                                    <span className="tf-icons bx bx-x"></span>
+                                                    </button>
+                                                )}
+                                                <Tooltip id="pendingAccount-tooltip" />
+                                                </div>
+                                            </td>
                                         </tr>
                                     ))
                                     ) : (
