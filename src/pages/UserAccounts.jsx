@@ -11,8 +11,10 @@ import LoadingScreen from '../webview/LoadingScreen';
 import { Tooltip } from "react-tooltip";
 import accountSetting from "../constants/account-setting.json";
 import districts from "../constants/districts.json";
+import { UserStatus } from '@enums';
 
-export default function UserAccounts() { 
+export default function UserAccounts() {
+    const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const handleNavbarToggle = () => { 
         const htmlElement = document.getElementById("main-html");
@@ -20,6 +22,28 @@ export default function UserAccounts() {
             htmlElement.classList.remove("light-style", "layout-menu-fixed", "layout-menu-expanded");
         }
     }
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const usersRef = collection(db, "users");
+                const query = query(
+                    usersRef,
+                    where("status", "in", [UserStatus.PENDING, UserStatus.ACTIVE, UserStatus.BLOCKED]),
+                    where("role", "==", "admin") // 👈 add another condition here
+                );
+                const querySnapshot = await getDocs(query);
+                const users = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setUsers(users);
+                setLoading(false);
+            } catch (error) {
+                console.error("Error fetching users:", error);
+            }
+        };
+
+        fetchUsers();
+    }, []);
+
     return (
         <div className="layout-wrapper layout-content-navbar">
             <div className="layout-container">
