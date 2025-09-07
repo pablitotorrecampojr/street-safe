@@ -26,20 +26,41 @@ export default function ReviewPendingAccounts() {
 
   //TODO: handle mui table
   const [rows, setRows] = useState([]);
-  const statusOptions = {
-    [UserStatus.PENDING]: 'info',
-    [UserStatus.ACTIVE]: 'success',
-    [UserStatus.BLOCKED]: 'danger',
-  };
   const columns = [
     { field: 'id', headerName: '#', width: 30 },
     { field: "uid", headerName: "Unique ID", width: 80 },
     { field: "fullname", headerName: "Full name", width: 200 },
     { field: "email", headerName: "Email", width: 220 },
-    { field: "role", headerName: "Role", width: 150 },
-    { field: "barangay", headerName: "Barangay", width: 180 },
-    { field: "municipality", headerName: "Municipality", width: 180 },
-    { field: "district", headerName: "District", width: 200 },
+    { 
+      field: "role", 
+      headerName: "Role", 
+      width: 150,
+      renderCell: (params) => accountSetting.role[params.value] || "N/A",
+    },
+    {
+      field: "barangay",
+      headerName: "Barangay",
+      width: 180,
+      renderCell: (params) => params.value || "N/A",
+    },
+    {
+      field: "municipality",
+      headerName: "Municipality",
+      width: 180,
+      renderCell: (params) =>
+        params.row.barangay ? params.value : "N/A",
+    },
+    { 
+      field: "district", 
+      headerName: "District", 
+      width: 200, 
+      renderCell: (params) => 
+        params.value 
+          ? `${districts.districts[params.value]?.district || "N/A"} ,
+            ${districts.districts[params.value]?.code || "N/A"} , 
+            ${districts.districts[params.value]?.name || "N/A"}` 
+          : "N/A"
+    },
     { field: "createdAt", headerName: "Registration Date", width: 200 },
     { field: "validIdFront", headerName: "Valid ID (Front)", width: 200 },
     { field: "validIdBack", headerName: "Valid ID (Back)", width: 200 },
