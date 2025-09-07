@@ -5,7 +5,7 @@ import Aside from '../components/Aside';
 import Navbar from '../components/NavBar';
 import Profile from '../components/Profile';
 import { useEffect, useState } from "react";
-import { doc, getDocs, collection, where, query, setDoc } from "firebase/firestore";
+import { doc, getDocs, collection, where, query, setDoc, queryEqual } from "firebase/firestore";
 import { auth, db } from '../firebase/firebase';
 import LoadingScreen from '../webview/LoadingScreen';
 import { Tooltip } from "react-tooltip";
@@ -27,12 +27,12 @@ export default function UserAccounts() {
         const fetchUsers = async () => {
             try {
                 const usersRef = collection(db, "users");
-                const query = query(
+                const q = query(
                     usersRef,
                     where("status", "in", [UserStatus.PENDING, UserStatus.ACTIVE, UserStatus.BLOCKED]),
-                    where("role", "==", "admin") // 👈 add another condition here
+                    where("role", "==", "4") // 👈 add another condition here
                 );
-                const querySnapshot = await getDocs(query);
+                const querySnapshot = await getDocs(q);
                 const users = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 setUsers(users);
                 setLoading(false);
@@ -44,14 +44,17 @@ export default function UserAccounts() {
         fetchUsers();
     }, []);
 
+    //TODO: show loading screen while fetching data
+    if (loading) {
+        return <LoadingScreen />;
+    }
+
     return (
         <div className="layout-wrapper layout-content-navbar">
             <div className="layout-container">
                 <Aside />
                 <div className="layout-page">
                     <Navbar />
-
-                    {loading ? ( <LoadingScreen /> ) : (
                     <div className='content-wrapper'>
                         <div className='container-xxl flex-grow-1 container-p-y'>
                             <div className='row'>
@@ -162,8 +165,6 @@ export default function UserAccounts() {
                             </div>
                         </div>
                     </div>
-
-                    )}
                 </div>
             </div>
         <div className="layout-overlay layout-menu-toggle" onClick={handleNavbarToggle}></div>
