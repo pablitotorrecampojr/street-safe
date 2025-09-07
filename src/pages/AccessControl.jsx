@@ -1,71 +1,64 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getDocs, collection } from "firebase/firestore";
 import { db } from "../firebase/firebase";
-import Aside from "../components/Aside";
-import Navbar from "../components/NavBar";
 import accountSetting from "../constants/account-setting.json";
 import districtLists from "../constants/districts.json";
+import { DataGrid } from "@mui/x-data-grid";
+import { Box } from "@mui/material";
+import { Aside, Badge, NavBar } from "@components";
 
 const AccessControl = () => {
-  const [userData, setUserData] = useState([]);
 
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: "#",
-        accessor: "index",
+  const columns = [
+    { field: "id", headerName: "#", width: 90 },
+    { field: "fullname", headerName: "Name", width: 200 },
+    { field: "email", headerName: "Email", width: 250 },
+    {
+      field: "role",
+      headerName: "Role",
+      width: 150,
+      renderCell: (params) => accountSetting.role[params.value] || "N/A",
+    },
+    {
+      field: "municipality",
+      headerName: "Municipality",
+      width: 180,
+      renderCell: (params) =>
+        params.row.barangay ? params.row.municipality : "N/A",
+    },
+    {
+      field: "barangay",
+      headerName: "Barangay",
+      width: 180,
+      renderCell: (params) => params.value || "N/A",
+    },
+    {
+      field: "district",
+      headerName: "District",
+      width: 220,
+      renderCell: (params) =>
+        params.value
+          ? `${districtLists.districts[params.value]?.district || "N/A"} / ${
+              districtLists.districts[params.value]?.code || "N/A"
+            }`
+          : "N/A",
+    },
+    {
+      field: "createdAt",
+      headerName: "Registration Date",
+      width: 200,
+      renderCell: (params) => {
+        if (params.value) {
+          const date = new Date(params.value);
+          const month = date.toLocaleString("en-US", { month: "long" });
+          const day = String(date.getDate()).padStart(2, "0");
+          const year = date.getFullYear();
+          return `${month} ${day}, ${year}`;
+        }
+        return "N/A";
       },
-      {
-        Header: "Name",
-        accessor: "fullname",
-      },
-      {
-        Header: "Email",
-        accessor: "email",
-      },
-      {
-        Header: "Role",
-        accessor: "role",
-        Cell: ({ value }) => accountSetting.role[value] || "N/A",
-      },
-      {
-        Header: "Municipality",
-        accessor: "municipality",
-        Cell: ({ row }) =>
-        row.original.barangay ? row.original.municipality : "N/A",
-      },
-      {
-        Header: "Barangay",
-        accessor: "barangay",
-        Cell: ({ value }) => value || "N/A",
-      },
-      {
-        Header: "District",
-        accessor: "district",
-        Cell: ({ value }) =>
-          value
-            ? `${districtLists.districts[value]?.district || "N/A"} / ${
-                districtLists.districts[value]?.code || "N/A"
-              }`
-            : "N/A",
-      },
-      {
-        Header: "Registration Date",
-        accessor: "createdAt",
-        Cell: ({ value }) => {
-          if (value) {
-            const date = new Date(value);
-            const month = date.toLocaleString("en-US", { month: "long" });
-            const day = String(date.getDate()).padStart(2, "0");
-            const year = date.getFullYear();
-            return `${month} ${day}, ${year}`;
-          }
-          return "N/A";
-        },
-      },
-    ],
-    []
-  );
+    },
+  ];
 
   const fetchUsers = async () => {
     try {
@@ -86,23 +79,12 @@ const AccessControl = () => {
     fetchUsers();
   }, []);
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({
-    columns,
-    data: userData,
-  });
-
   return (
     <div className="layout-wrapper layout-content-navbar">
       <div className="layout-container">
         <Aside />
         <div className="layout-page">
-          <Navbar />
+          <NavBar />
 
           <div className="content-wrapper">
             <div className="container-xxl flex-grow-1 container-p-y">
@@ -115,47 +97,7 @@ const AccessControl = () => {
               </div>
               <div className="card">
                 <div className="card-body">
-                  <div className="table-responsive text-nowrap">
-                    <table {...getTableProps()} className="table table-striped">
-                      <thead>
-                        {headerGroups.map((headerGroup) => (
-                          <tr
-                            key={headerGroup.id || Math.random()}
-                            {...headerGroup.getHeaderGroupProps()}
-                          >
-                            {headerGroup.headers.map((column) => (
-                              <th
-                                key={column.id || column.accessor}
-                                {...column.getHeaderProps()}
-                              >
-                                {column.render("Header")}
-                              </th>
-                            ))}
-                          </tr>
-                        ))}
-                      </thead>
-                      <tbody {...getTableBodyProps()}>
-                        {rows.map((row) => {
-                          prepareRow(row);
-                          return (
-                            <tr
-                              key={row.id || row.original.id}
-                              {...row.getRowProps()}
-                            >
-                              {row.cells.map((cell) => (
-                                <td
-                                  key={cell.column.id || cell.column.accessor}
-                                  {...cell.getCellProps()}
-                                >
-                                  {cell.render("Cell")}
-                                </td>
-                              ))}
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
+                 
                 </div>
               </div>
             </div>
