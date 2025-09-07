@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { doc, getDocs, collection, where, query, setDoc } from "firebase/firestore";
 import { db } from '../firebase/firebase';
 import LoadingScreen from '../webview/LoadingScreen';
-import { UserStatus } from '@enums';
 import accountSetting from "../constants/account-setting.json";
 import districts from "../constants/districts.json"; 
 import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
+import { Tooltip } from "react-tooltip";
 
 export default function ReviewPendingAccounts() {
   const [users, setUsers] = useState([]);
@@ -62,8 +62,34 @@ export default function ReviewPendingAccounts() {
           : "N/A"
     },
     { field: "createdAt", headerName: "Registration Date", width: 200 },
-    { field: "validIdFront", headerName: "Valid ID (Front)", width: 200 },
-    { field: "validIdBack", headerName: "Valid ID (Back)", width: 200 },
+    { 
+      field: "validIdFront", 
+      headerName: "Valid ID (Front)", 
+      width: 200,
+      renderCell: (params) => (
+        <button
+          type="button"
+          className="btn rounded-pill btn-sm btn-outline-primary"
+          onClick={() => handleImageClick(params.value, "Valid ID Front")}
+        >
+          View Image
+        </button>
+      )
+    },
+    { 
+      field: "validIdBack", 
+      headerName: "Valid ID (Back)", 
+      width: 200,
+      renderCell: (params) => (
+        <button
+          type="button"
+          className="btn rounded-pill btn-sm btn-outline-primary"
+          onClick={() => handleImageClick(params.value, "Valid ID Back")}
+        >
+          View Image
+        </button>
+      )
+    },
     { 
       field: "accountStatus", 
       headerName: "Status", 
@@ -76,6 +102,33 @@ export default function ReviewPendingAccounts() {
       field: "action",
       headerName: "Action",
       width: 180,
+      renderCell: (params) => (
+        <div className="inline-flex gap-2 items-center px-3 py-1 rounded-full text-sm font-medium">
+          <button
+            type="button"
+            className="btn btn-icon btn-outline-success"
+            data-tooltip-id="pendingAccount-tooltip"
+            data-tooltip-content={params.row.accountStatus == 0 ? "Approve Account" : "Unblock Account"}
+            style={{ height: '25px', width: '25px' }}
+            onClick={() => approveAccount(params.row.id)}
+          >
+            <span className="tf-icons bx bx-check"></span>
+          </button>
+          {params.row.accountStatus == 0 && (
+            <button
+              type="button"
+              className="btn btn-icon btn-outline-danger"
+              data-tooltip-id="pendingAccount-tooltip"
+              data-tooltip-content="Block Account"
+              style={{ height: '25px', width: '25px' }}
+              onClick={() => blockAccount(params.id)}
+            >
+              <span className="tf-icons bx bx-x"></span>
+            </button>
+          )}
+          <Tooltip id="pendingAccount-tooltip" />
+        </div>
+      )
     },
   ];
 
