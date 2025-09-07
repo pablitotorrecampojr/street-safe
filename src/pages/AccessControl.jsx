@@ -8,9 +8,10 @@ import { Box } from "@mui/material";
 import { Aside, Badge, NavBar } from "@components";
 
 const AccessControl = () => {
-  const [userData, setUserData] = useState([]);
+  const [rows, setRows] = useState([]);
   const columns = [
-    { field: "id", headerName: "#", width: 90 },
+    { field: "index", headerName: "#", width: 30 },
+    { field: "uid", headerName: "Unique ID", width: 90 },
     { field: "fullname", headerName: "Name", width: 200 },
     { field: "email", headerName: "Email", width: 250 },
     {
@@ -70,7 +71,7 @@ const AccessControl = () => {
           id: doc.id,
           ...doc.data(),
         }));
-        setUserData(usersList);
+        setRows(usersList);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -96,7 +97,18 @@ const AccessControl = () => {
               </div>
               <div className="card">
                 <div className="card-body">
-                 
+                 <Box sx={{ height: 400, width: '100%' }}>
+                    <DataGrid
+                      rows={rows}
+                      columns={columns}
+                      pageSizeOptions={[5, 10]}
+                      initialState={{
+                        pagination: { paginationModel: { pageSize: 5 } },
+                      }}
+                      checkboxSelection
+                      disableRowSelectionOnClick
+                    />
+                  </Box>
                 </div>
               </div>
             </div>
