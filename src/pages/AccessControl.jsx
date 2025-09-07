@@ -11,7 +11,7 @@ const AccessControl = () => {
   const [rows, setRows] = useState([]);
   const columns = [
     { field: "index", headerName: "#", width: 30 },
-    { field: "uid", headerName: "Unique ID", width: 90 },
+    { field: "id", headerName: "Unique ID", width: 90 },
     { field: "fullname", headerName: "Name", width: 200 },
     { field: "email", headerName: "Email", width: 250 },
     {
