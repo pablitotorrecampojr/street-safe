@@ -1,20 +1,13 @@
-import { useNavigate } from 'react-router-dom';
-import { toast } from "react-toastify";
-import {signOut} from '../firebase/auth';
 import { useEffect, useState } from "react";
-import { doc, getDocs, collection, where, query, setDoc, queryEqual } from "firebase/firestore";
-import { auth, db } from '../firebase/firebase';
+import { getDocs, collection, where, query } from "firebase/firestore";
+import { db } from '../firebase/firebase';
 import LoadingScreen from '../webview/LoadingScreen';
-import { Tooltip } from "react-tooltip";
-import accountSetting from "../constants/account-setting.json";
-import districts from "../constants/districts.json";
 import { UserStatus } from '@enums';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import { Badge, Aside, NavBar, Profile } from '@components';
 
 export default function UserAccounts() {
-    const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const handleNavbarToggle = () => { 
         const htmlElement = document.getElementById("main-html");
@@ -25,12 +18,22 @@ export default function UserAccounts() {
 
     // TODO: setting  up the users table
     const [rows, setRows] = useState([]);
+    const statusOptions = {
+        [UserStatus.PENDING]: 'info',
+        [UserStatus.ACTIVE]: 'success',
+        [UserStatus.BLOCKED]: 'danger',
+    };
     const columns = [ 
         { field: 'id', headerName: 'Unique ID', width: 250 },
         { field: 'fullname', headerName: 'Full Name', width: 150 },
         { field: 'email', headerName: 'Email', width: 200 },
         { field: 'phone', headerName: 'Phone #', width: 200 },
-        { field: 'status', headerName: 'Status', width: 200 },
+        {
+            field: "status",
+            headerName: "Status",
+            width: 150,
+            renderCell: (params) => <Badge status={statusOptions[params.value]} text={params.value} />,
+        },
     ];
 
     useEffect(() => {
@@ -64,7 +67,7 @@ export default function UserAccounts() {
             <div className="layout-container">
                 <Aside />
                 <div className="layout-page">
-                    <Navbar />
+                    <NavBar />
                     <div className='content-wrapper'>
                         <div className='container-xxl flex-grow-1 container-p-y'>
                             <div className='row'>
@@ -79,7 +82,6 @@ export default function UserAccounts() {
                                         <DataGrid
                                             rows={rows}
                                             columns={columns}
-                                            loading={loading} // 👈 DataGrid shows spinner while loading
                                             pageSizeOptions={[5, 10]}
                                             initialState={{
                                             pagination: { paginationModel: { pageSize: 5 } },
@@ -94,7 +96,7 @@ export default function UserAccounts() {
                     </div>
                 </div>
             </div>
-        <div className="layout-overlay layout-menu-toggle" onClick={handleNavbarToggle}></div>
+            <div className="layout-overlay layout-menu-toggle" onClick={handleNavbarToggle}></div>
         </div>
     )
 }
