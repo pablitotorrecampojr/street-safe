@@ -5,7 +5,6 @@ import Aside from "../components/Aside";
 import Navbar from "../components/NavBar";
 import accountSetting from "../constants/account-setting.json";
 import districtLists from "../constants/districts.json";
-import { useTable } from "react-table";
 
 const AccessControl = () => {
   const [userData, setUserData] = useState([]);

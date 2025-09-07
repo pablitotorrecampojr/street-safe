@@ -3,7 +3,6 @@ import { data, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getDatabase, ref, onValue, get, update, query, orderByChild, equalTo, set } from "firebase/database";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
-import { useTable } from "react-table";
 import { auth, db, realtimeDb } from "../firebase/firebase";
 import Aside from "../components/Aside";
 import Navbar from "../components/NavBar";
