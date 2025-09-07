@@ -1,9 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
 import {signOut} from '../firebase/auth';
-import Aside from '../components/Aside';
-import Navbar from '../components/NavBar';
-import Profile from '../components/Profile';
 import { useEffect, useState } from "react";
 import { doc, getDocs, collection, where, query, setDoc, queryEqual } from "firebase/firestore";
 import { auth, db } from '../firebase/firebase';
@@ -14,6 +11,7 @@ import districts from "../constants/districts.json";
 import { UserStatus } from '@enums';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
+import { Badge, Aside, NavBar, Profile } from '@components';
 
 export default function UserAccounts() {
     const [users, setUsers] = useState([]);
