@@ -110,7 +110,7 @@ export default function ReviewPendingAccounts() {
             data-tooltip-id="pendingAccount-tooltip"
             data-tooltip-content={params.row.accountStatus == 0 ? "Approve Account" : "Unblock Account"}
             style={{ height: '25px', width: '25px' }}
-            onClick={() => approveAccount(params.row.id)}
+            onClick={() => approveAccount(params.row.uid)}
           >
             <span className="tf-icons bx bx-check"></span>
           </button>
@@ -121,7 +121,7 @@ export default function ReviewPendingAccounts() {
               data-tooltip-id="pendingAccount-tooltip"
               data-tooltip-content="Block Account"
               style={{ height: '25px', width: '25px' }}
-              onClick={() => blockAccount(params.id)}
+              onClick={() => blockAccount(params.uid)}
             >
               <span className="tf-icons bx bx-x"></span>
             </button>
