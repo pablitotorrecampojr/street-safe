@@ -8,7 +8,7 @@ import { Box } from "@mui/material";
 import { Aside, Badge, NavBar } from "@components";
 
 const AccessControl = () => {
-
+  const [userData, setUserData] = useState([]);
   const columns = [
     { field: "id", headerName: "#", width: 90 },
     { field: "fullname", headerName: "Name", width: 200 },
@@ -60,22 +60,21 @@ const AccessControl = () => {
     },
   ];
 
-  const fetchUsers = async () => {
-    try {
-      const usersCollection = collection(db, "users");
-      const usersSnapshot = await getDocs(usersCollection);
-      const usersList = usersSnapshot.docs.map((doc, index) => ({
-        index: index + 1,
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setUserData(usersList);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
-
   useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const usersCollection = collection(db, "users");
+        const usersSnapshot = await getDocs(usersCollection);
+        const usersList = usersSnapshot.docs.map((doc, index) => ({
+          index: index + 1,
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setUserData(usersList);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
     fetchUsers();
   }, []);
 
