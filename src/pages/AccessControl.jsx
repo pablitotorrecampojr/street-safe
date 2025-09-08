@@ -6,8 +6,10 @@ import districtLists from "../constants/districts.json";
 import { DataGrid } from "@mui/x-data-grid";
 import { Box } from "@mui/material";
 import { Aside, Badge, NavBar } from "@components";
+import LoadingScreen from "../webview/LoadingScreen";
 
 const AccessControl = () => {
+  const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState([]);
   const columns = [
     { field: "index", headerName: "#", width: 30 },
@@ -72,12 +74,17 @@ const AccessControl = () => {
           ...doc.data(),
         }));
         setRows(usersList);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     };
     fetchUsers();
   }, []);
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className="layout-wrapper layout-content-navbar">

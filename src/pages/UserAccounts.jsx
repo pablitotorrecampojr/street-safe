@@ -5,10 +5,12 @@ import LoadingScreen from '../webview/LoadingScreen';
 import { UserStatus } from '@enums';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
-import { Badge, Aside, NavBar, Profile } from '@components';
+import { Badge, Aside, NavBar } from '@components';
+import { GridActionsCellItem } from '@mui/x-data-grid';
 
 export default function UserAccounts() {
     const [loading, setLoading] = useState(true);
+    const [open, setOpen] = useState(false);
     const handleNavbarToggle = () => { 
         const htmlElement = document.getElementById("main-html");
         if (htmlElement) {
@@ -34,6 +36,29 @@ export default function UserAccounts() {
             width: 150,
             renderCell: (params) => <Badge status={statusOptions[params.value]} text={params.value} />,
         },
+        {
+            field: 'actions',
+            type: 'actions',
+            headerName: 'Actions',
+            width: 100,
+            getActions: (params) => [
+                <GridActionsCellItem
+                    icon={<i className="fa-solid fa-eye"></i>}
+                    label="View"
+                    showInMenu 
+                />,
+                <GridActionsCellItem
+                    icon={<i className="fa-solid fa-check"></i>}
+                    label={params.row.accountStatus == 0 ? "Approve" : "Unblock"}
+                    showInMenu
+                />,
+                <GridActionsCellItem
+                    icon={<i className="fa-solid fa-ban"></i>}
+                    label="Block"
+                    showInMenu
+                />,
+            ],
+        }
     ];
 
     useEffect(() => {
