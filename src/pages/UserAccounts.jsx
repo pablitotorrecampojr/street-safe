@@ -26,6 +26,7 @@ export default function UserAccounts() {
         [UserStatus.BLOCKED]: 'danger',
     };
     const columns = [ 
+        { field: 'index', headerName: '#', width: 30 },
         { field: 'id', headerName: 'Unique ID', width: 250 },
         { field: 'fullname', headerName: 'Full Name', width: 150 },
         { field: 'email', headerName: 'Email', width: 200 },
@@ -43,17 +44,17 @@ export default function UserAccounts() {
             width: 100,
             getActions: (params) => [
                 <GridActionsCellItem
-                    icon={<i className="fa-solid fa-eye"></i>}
+                    icon={<i className="fa-solid fa-eye hover:text-blue-700"></i>}
                     label="View"
                     showInMenu 
                 />,
                 <GridActionsCellItem
-                    icon={<i className="fa-solid fa-check"></i>}
+                    icon={<i className="fa-solid fa-check hover:text-blue-700"></i>}
                     label={params.row.accountStatus == 0 ? "Approve" : "Unblock"}
                     showInMenu
                 />,
                 <GridActionsCellItem
-                    icon={<i className="fa-solid fa-ban"></i>}
+                    icon={<i className="fa-solid fa-ban hover:text-blue-700"></i>}
                     label="Block"
                     showInMenu
                 />,
@@ -71,7 +72,7 @@ export default function UserAccounts() {
                     where("role", "==", "4")
                 );
                 const querySnapshot = await getDocs(q);
-                const users = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                const users = querySnapshot.docs.map((doc, index) => ({ index: index + 1, id: doc.id, ...doc.data() }));
                 setRows(users);
                 setLoading(false);
             } catch (error) {
@@ -111,7 +112,7 @@ export default function UserAccounts() {
                                             initialState={{
                                             pagination: { paginationModel: { pageSize: 5 } },
                                             }}
-                                            checkboxSelection
+                                            checkboxSelection={false}    
                                             disableRowSelectionOnClick
                                         />
                                     </Box>
