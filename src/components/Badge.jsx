@@ -1,5 +1,3 @@
-import React from "react";
-
 const statusStyles = {
   success: "bg-green-100 text-green-800",
   info: "bg-blue-100 text-blue-800",

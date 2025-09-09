@@ -13,7 +13,7 @@ export default function Aside() {
       0: [
         { name: 'Dashboard', path: '/dashboard', icon: 'bx bx-home-circle' },
         { name: 'Hazard Report', path: '/hazard-report', icon: 'bx bx-error-circle' },
-        { name: 'Pending Accounts', path: '/pending-accounts', icon: 'bx bx-hourglass' },
+        { name: 'Access Control', path: '/access-control', icon: 'bx bx-cog' },
         { name: 'User Accounts', path: '/user-accounts', icon: 'bx bx-user' },
       ],
       1: [

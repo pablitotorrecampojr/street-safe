@@ -12,7 +12,6 @@ import { Tooltip } from "react-tooltip";
 import { GridActionsCellItem } from '@mui/x-data-grid';
 
 export default function ReviewPendingAccounts() {
-  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalImageUrl, setModalImageUrl] = useState(null);
@@ -94,9 +93,9 @@ export default function ReviewPendingAccounts() {
     { 
       field: "accountStatus", 
       headerName: "Status", 
-      width: 150, 
+      width: 120, 
       renderCell: (params) => (
-        <Badge status={accountSetting.pending_accounts_color[params.value]} text={accountSetting.pending_accounts[params.value]} />
+        <Badge status={accountSetting.pending_accounts_color[Number(params.value)]} text={accountSetting.pending_accounts[Number(params.value)]} />
       ),
     },
     {
@@ -108,19 +107,11 @@ export default function ReviewPendingAccounts() {
         <GridActionsCellItem
           label= { 
             <div className="hover:text-blue-500 text-sm">
-              <i className="fa-solid fa-eye mr-2"></i> View
-            </div>
-          }
-          showInMenu
-        />,
-        <GridActionsCellItem
-          label= { 
-            <div className="hover:text-blue-500 text-sm">
               <i className="tf-icons bx bx-check mr-2"></i> Approve
             </div>
           }
           showInMenu
-          onClick={() => handleApproveAccount(params.row.id)}
+          onClick={() => handleApproveAccount(params.row.uid)}
         />,
         <GridActionsCellItem
           label={
@@ -129,7 +120,7 @@ export default function ReviewPendingAccounts() {
             </div>
           }
           showInMenu
-          onClick={() => handleBlockAccount(params.row.id)}
+          onClick={() => handleBlockAccount(params.row.uid)}
         />,
       ],
     },
@@ -139,8 +130,8 @@ export default function ReviewPendingAccounts() {
     const fetchUsers = async () => {
       try {
         const usersRef = collection(db, "users");
-        const q = query(usersRef, where("accountStatus", "in", [0, 2]));
-        const querySnapshot = await getDocs(q);
+        const q = query(usersRef, where("role", "not-in", ["3", "0"]));
+        const querySnapshot = await getDocs(q)
         const users = querySnapshot.docs.map((doc, index) => ({ 
           id: index + 1, 
           ...doc.data() 
@@ -166,10 +157,10 @@ export default function ReviewPendingAccounts() {
       const userRef = doc(db, "users", userId);
       await setDoc(userRef, { accountStatus: 1 }, { merge: true });
       toast.success("Account approved successfully");
-      setUsers(prevUsers =>
+      setRows(prevUsers =>
         prevUsers.map(user =>
-          user.id === userId
-            ? { ...user, status: 1 }
+          user.uid === userId
+            ? { ...user, accountStatus: 1 }
             : user
         )
       );
@@ -184,10 +175,10 @@ export default function ReviewPendingAccounts() {
       const userRef = doc(db, "users", userId);
       await setDoc(userRef, { accountStatus: 2 }, { merge: true });
       toast.success("Account blocked successfully");
-      setUsers(prevUsers =>
+      setRows(prevUsers =>
         prevUsers.map(user =>
-          user.id === userId
-            ? { ...user, status: 2 }
+          user.uid === userId
+            ? { ...user, accountStatus: 2 }
             : user
         )
       );
@@ -197,7 +188,12 @@ export default function ReviewPendingAccounts() {
     }
   }
 
+  //TODO: handle filter dropdown
+  const [roleOpen, setRoleOpen] = useState(false);
+  const [statusOpen, setStatusOpen] = useState(false);
+  const handleChangeRole = (role) => { 
 
+  }
   return (
     <div className="layout-wrapper layout-content-navbar">
       {modalVisible && (
@@ -237,6 +233,69 @@ export default function ReviewPendingAccounts() {
                   <div className="col-md-3 mb-4">
                     <h1 style={{ fontSize: '20px' }} className='fw-bold'>Pending Accounts</h1>
                   </div>
+                </div>
+
+                <div className="mb-2 w-full p-2">
+                  <div className="flex space-x-4 justify-end">
+                  <div className="relative">
+                    <button
+                      className="btn btn-primary btn-sm"
+                      onClick={() => {
+                        setRoleOpen(!roleOpen);
+                        setStatusOpen(false);
+                      }}
+                    >
+                      Role
+                    </button>
+                    {roleOpen && (
+                      <div className="absolute right-0  mt-2 w-40 bg-white border rounded shadow-lg z-10">
+                        {accountSetting.role.filter(role => role !== "User").map((role) => (
+                          <button
+                            key={role}
+                            className="w-full text-left px-4 py-2 hover:bg-blue-100"
+                            onClick={() => handleChangeRole(role)}
+                          >
+                            {role}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="relative">
+                    <button
+                      className="btn btn-danger btn-sm"
+                      onClick={() => {
+                        setStatusOpen(!statusOpen);
+                        setRoleOpen(false);
+                      }}
+                    >
+                      Status
+                    </button>
+                    {statusOpen && (
+                      <div className="absolute right-0  mt-2 w-40 bg-white border rounded shadow-lg z-10">
+                        <button
+                          className="w-full text-left px-4 py-2 hover:bg-green-100"
+                          onClick={() => handleChangeStatus("Active")}
+                        >
+                          Active
+                        </button>
+                        <button
+                          className="w-full text-left px-4 py-2 hover:bg-red-100"
+                          onClick={() => handleChangeStatus("Blocked")}
+                        >
+                          Blocked
+                        </button>
+                        <button
+                          className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                          onClick={() => handleChangeStatus("Pending")}
+                        >
+                          Pending
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
                 </div>
 
                 <div className="card">

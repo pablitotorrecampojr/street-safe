@@ -75,7 +75,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             }
           /> 
           <Route
-            path="/pending-accounts"
+            path="/access-control"
             element={
               <ProtectedRoute>
                 <ReviewPendingAccounts />
