@@ -9,6 +9,7 @@ import districts from "../constants/districts.json";
 import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import { Tooltip } from "react-tooltip";
+import { GridActionsCellItem } from '@mui/x-data-grid';
 
 export default function ReviewPendingAccounts() {
   const [users, setUsers] = useState([]);
@@ -65,7 +66,7 @@ export default function ReviewPendingAccounts() {
     { 
       field: "validIdFront", 
       headerName: "Valid ID (Front)", 
-      width: 200,
+      width: 120,
       renderCell: (params) => (
         <button
           type="button"
@@ -79,7 +80,7 @@ export default function ReviewPendingAccounts() {
     { 
       field: "validIdBack", 
       headerName: "Valid ID (Back)", 
-      width: 200,
+      width: 120,
       renderCell: (params) => (
         <button
           type="button"
@@ -99,36 +100,24 @@ export default function ReviewPendingAccounts() {
       ),
     },
     {
-      field: "action",
-      headerName: "Action",
-      width: 180,
-      renderCell: (params) => (
-        <div className="inline-flex gap-2 items-center px-3 py-1 rounded-full text-sm font-medium">
-          <button
-            type="button"
-            className="btn btn-icon btn-outline-success"
-            data-tooltip-id="pendingAccount-tooltip"
-            data-tooltip-content={params.row.accountStatus == 0 ? "Approve Account" : "Unblock Account"}
-            style={{ height: '25px', width: '25px' }}
-            onClick={() => approveAccount(params.row.uid)}
-          >
-            <span className="tf-icons bx bx-check"></span>
-          </button>
-          {params.row.accountStatus == 0 && (
-            <button
-              type="button"
-              className="btn btn-icon btn-outline-danger"
-              data-tooltip-id="pendingAccount-tooltip"
-              data-tooltip-content="Block Account"
-              style={{ height: '25px', width: '25px' }}
-              onClick={() => blockAccount(params.uid)}
-            >
-              <span className="tf-icons bx bx-x"></span>
-            </button>
-          )}
-          <Tooltip id="pendingAccount-tooltip" />
-        </div>
-      )
+      field: "actions",
+      type: "actions",
+      headerName: "Actions",
+      width: 100,
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<span className="tf-icons bx bx-check"></span>}
+          label="Approve Account"
+          showInMenu
+          onClick={() => handleApproveAccount(params.row.id)}
+        />,
+        <GridActionsCellItem
+          icon={<span className="tf-icons bx bx-x"></span>}
+          label="Block Account"
+          showInMenu
+          onClick={() => handleBlockAccount(params.row.id)}
+        />,
+      ],
     },
   ];
 
@@ -235,7 +224,7 @@ export default function ReviewPendingAccounts() {
                           initialState={{
                             pagination: { paginationModel: { pageSize: 5 } },
                           }}
-                          checkboxSelection
+                          checkboxSelection={false}
                           disableRowSelectionOnClick
                         />
                       </Box>
