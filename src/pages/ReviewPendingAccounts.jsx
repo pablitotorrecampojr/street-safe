@@ -10,6 +10,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import { Tooltip } from "react-tooltip";
 import { GridActionsCellItem } from '@mui/x-data-grid';
+import { set } from "firebase/database";
 
 export default function ReviewPendingAccounts() {
   const [loading, setLoading] = useState(true);
@@ -137,6 +138,7 @@ export default function ReviewPendingAccounts() {
           ...doc.data() 
         }));
         setRows(users);
+        setAllUsers(users);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -157,13 +159,13 @@ export default function ReviewPendingAccounts() {
       const userRef = doc(db, "users", userId);
       await setDoc(userRef, { accountStatus: 1 }, { merge: true });
       toast.success("Account approved successfully");
-      setRows(prevUsers =>
-        prevUsers.map(user =>
-          user.uid === userId
-            ? { ...user, accountStatus: 1 }
-            : user
-        )
-      );
+      setRows(prevUsers => {
+        const updated = prevUsers.map(user =>
+          user.uid === userId ? { ...user, accountStatus: 1 } : user
+        );
+        setAllUsers(updated); 
+        return updated;
+      });
     } catch (error) {
       console.error("Error approving account:", error);
       toast.error("Error approving account");
@@ -175,13 +177,13 @@ export default function ReviewPendingAccounts() {
       const userRef = doc(db, "users", userId);
       await setDoc(userRef, { accountStatus: 2 }, { merge: true });
       toast.success("Account blocked successfully");
-      setRows(prevUsers =>
-        prevUsers.map(user =>
-          user.uid === userId
-            ? { ...user, accountStatus: 2 }
-            : user
-        )
-      );
+      setRows(prevUsers => {
+        const updated = prevUsers.map(user =>
+          user.uid === userId ? { ...user, accountStatus: 2 } : user
+        );
+        setAllUsers(updated); 
+        return updated;
+      });
     } catch (error) {
       console.error("Error blocked account:", error);
       toast.error("Error blocking account");
@@ -191,8 +193,17 @@ export default function ReviewPendingAccounts() {
   //TODO: handle filter dropdown
   const [roleOpen, setRoleOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
-  const handleChangeRole = (role) => { 
-
+  const [allUsers, setAllUsers] = useState([]);
+  const [filter, setFilter] = useState({ role: null, status: null });
+  const handleChangeRole = (role) => {
+    setFilter({ ...filter, role });
+    setRows(allUsers.filter(user => user.role == String(accountSetting.role.indexOf(role))));
+    setRoleOpen(false);
+  }
+  const handleChangeStatus = (status) => {
+    setFilter({ ...filter, status });
+    setRows(allUsers.filter(user => user.accountStatus == String(accountSetting.pending_accounts.indexOf(status))));
+    setStatusOpen(false);
   }
   return (
     <div className="layout-wrapper layout-content-navbar">
@@ -231,12 +242,20 @@ export default function ReviewPendingAccounts() {
               <div className='container-xxl flex-grow-1 container-p-y'>
                 <div className='row'>
                   <div className="col-md-3 mb-4">
-                    <h1 style={{ fontSize: '20px' }} className='fw-bold'>Pending Accounts</h1>
+                    <h1 style={{ fontSize: '20px' }} className='fw-bold'>Access Control</h1>
                   </div>
                 </div>
 
                 <div className="mb-2 w-full p-2">
-                  <div className="flex space-x-4 justify-end">
+                  <div className="flex gap-x-4 justify-end">
+                  <div className="relative">
+                    <button className="btn btn-success btn-sm" onClick={() => {
+                      setRows(allUsers);
+                      setFilter({ role: null, status: null });
+                    }}>
+                      <i className="fa-solid fa-rotate-left"></i>
+                    </button>
+                  </div>
                   <div className="relative">
                     <button
                       className="btn btn-primary btn-sm"
@@ -245,11 +264,11 @@ export default function ReviewPendingAccounts() {
                         setStatusOpen(false);
                       }}
                     >
-                      Role
+                      {filter.role ? filter.role : "Filter Role"}
                     </button>
                     {roleOpen && (
                       <div className="absolute right-0  mt-2 w-40 bg-white border rounded shadow-lg z-10">
-                        {accountSetting.role.filter(role => role !== "User").map((role) => (
+                        {accountSetting.role.filter(role => !["User", "Admin"].includes(role)).map((role) => (
                           <button
                             key={role}
                             className="w-full text-left px-4 py-2 hover:bg-blue-100"
@@ -264,34 +283,25 @@ export default function ReviewPendingAccounts() {
 
                   <div className="relative">
                     <button
-                      className="btn btn-danger btn-sm"
+                      className="btn btn-info btn-sm"
                       onClick={() => {
                         setStatusOpen(!statusOpen);
                         setRoleOpen(false);
                       }}
                     >
-                      Status
+                      {filter.status ? filter.status : "Filter Status"}
                     </button>
                     {statusOpen && (
                       <div className="absolute right-0  mt-2 w-40 bg-white border rounded shadow-lg z-10">
-                        <button
-                          className="w-full text-left px-4 py-2 hover:bg-green-100"
-                          onClick={() => handleChangeStatus("Active")}
-                        >
-                          Active
-                        </button>
-                        <button
-                          className="w-full text-left px-4 py-2 hover:bg-red-100"
-                          onClick={() => handleChangeStatus("Blocked")}
-                        >
-                          Blocked
-                        </button>
-                        <button
-                          className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                          onClick={() => handleChangeStatus("Pending")}
-                        >
-                          Pending
-                        </button>
+                        {accountSetting.pending_accounts.map((status) => (
+                          <button
+                            key={status}
+                            className="w-full text-left px-4 py-2 hover:bg-blue-100"
+                            onClick={() => handleChangeStatus(status)}
+                          >
+                            {status}
+                          </button>
+                        ))}
                       </div>
                     )}
                   </div>
