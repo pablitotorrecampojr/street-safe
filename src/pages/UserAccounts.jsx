@@ -7,10 +7,10 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import { Badge, Aside, NavBar } from '@components';
 import { GridActionsCellItem } from '@mui/x-data-grid';
+import { UsersDetails } from "@components";
 
 export default function UserAccounts() {
     const [loading, setLoading] = useState(true);
-    const [open, setOpen] = useState(false);
     const handleNavbarToggle = () => { 
         const htmlElement = document.getElementById("main-html");
         if (htmlElement) {
@@ -46,6 +46,7 @@ export default function UserAccounts() {
                 <GridActionsCellItem
                     icon={<i className="fa-solid fa-eye hover:text-blue-700"></i>}
                     label="View"
+                    onClick={() => handleViewUser(params.row)}
                     showInMenu 
                 />,
                 <GridActionsCellItem
@@ -62,6 +63,14 @@ export default function UserAccounts() {
         }
     ];
 
+    //TODO: handle table controls
+    const [ openUserDetails, setOpenUserDetails ] = useState(false);
+    const [ user, setUser ] = useState(null);
+    const handleViewUser = (user) => {
+        setUser(user);
+        setOpenUserDetails(true);
+    }
+    
     useEffect(() => {
         const fetchUsers = async () => {
             try {
@@ -69,7 +78,7 @@ export default function UserAccounts() {
                 const q = query(
                     usersRef,
                     where("status", "in", [UserStatus.PENDING, UserStatus.ACTIVE, UserStatus.BLOCKED]),
-                    where("role", "==", "4")
+                    where("role", "==", "3")
                 );
                 const querySnapshot = await getDocs(q);
                 const users = querySnapshot.docs.map((doc, index) => ({ index: index + 1, id: doc.id, ...doc.data() }));
@@ -90,6 +99,12 @@ export default function UserAccounts() {
 
     return (
         <div className="layout-wrapper layout-content-navbar">
+            <UsersDetails
+                user={user}
+                isOpen={openUserDetails}
+                onClose={() => setOpenUserDetails(false)}
+            />
+
             <div className="layout-container">
                 <Aside />
                 <div className="layout-page">

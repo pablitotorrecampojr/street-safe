@@ -10,3 +10,9 @@ export const UserRole = {
     MUNICIPALITIES: '2',
     USER: '3',
 };
+
+export const statusOptions = {
+    [UserStatus.PENDING]: 'info',
+    [UserStatus.ACTIVE]: 'success',
+    [UserStatus.BLOCKED]: 'danger',
+};
