@@ -59,8 +59,8 @@ const SignUp = () => {
       return;
     }
 
-    if (file.size > 1 * 1024 * 1024) {
-      toast.error("Each file must be less than 2MB.");
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Each file must be less than 10MB.");
       return;
     }    
   
