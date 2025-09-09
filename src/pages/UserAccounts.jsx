@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { doc, getDocs, collection, where, query, setDoc } from "firebase/firestore";
+import { getDocs, collection, where, query } from "firebase/firestore";
 import { db } from '../firebase/firebase';
 import LoadingScreen from '../webview/LoadingScreen';
 import { UserStatus } from '@enums';
