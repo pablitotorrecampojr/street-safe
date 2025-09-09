@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getDocs, collection, where, query } from "firebase/firestore";
+import { doc, getDocs, collection, where, query, setDoc } from "firebase/firestore";
 import { db } from '../firebase/firebase';
 import LoadingScreen from '../webview/LoadingScreen';
 import { UserStatus } from '@enums';
@@ -8,6 +8,8 @@ import { Box } from '@mui/material';
 import { Badge, Aside, NavBar } from '@components';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import { UsersDetails } from "@components";
+import { toast } from "react-toastify";
+import { UserServices } from "@services";
 
 export default function UserAccounts() {
     const [loading, setLoading] = useState(true);
@@ -50,14 +52,16 @@ export default function UserAccounts() {
                     showInMenu 
                 />,
                 <GridActionsCellItem
-                    icon={<i className="fa-solid fa-check hover:text-blue-700"></i>}
-                    label={params.row.accountStatus == 0 ? "Approve" : "Unblock"}
+                    icon={<i className="fa-solid fa-lock-open hover:text-blue-700"></i>}
+                    label="Unblock"
+                    onClick={() => handleUpdatingUserStatus(params.row.id, UserStatus.ACTIVE)}
                     showInMenu
                 />,
                 <GridActionsCellItem
-                    icon={<i className="fa-solid fa-ban hover:text-blue-700"></i>}
+                    icon={<i className="fa-solid fa-lock hover:text-blue-700"></i>}
                     label="Block"
                     showInMenu
+                    onClick={() => handleUpdatingUserStatus(params.row.id, UserStatus.BLOCKED)}
                 />,
             ],
         }
@@ -70,7 +74,21 @@ export default function UserAccounts() {
         setUser(user);
         setOpenUserDetails(true);
     }
-    
+
+    const handleUpdatingUserStatus = async (userId, newStatus) => {
+        const result = await UserServices.updateUserStatus(userId, newStatus);
+        if (result.success) {
+            setRows((prevRows) =>
+                prevRows.map((row) =>
+                    row.id === userId ? { ...row, status: newStatus } : row
+                )
+            );
+            toast.success(`User has been ${newStatus.toLowerCase()} successfully.`);
+        } else {
+            toast.error("Failed to update user status. Please try again.");
+        }
+    }
+
     useEffect(() => {
         const fetchUsers = async () => {
             try {

@@ -14,6 +14,7 @@ export default defineConfig({
     alias: {
       '@enums': path.resolve(__dirname, 'src/enums'),
       '@components': path.resolve(__dirname, 'src/components'),
+      '@services': path.resolve(__dirname, 'src/Services'),
     },
   },
 });
