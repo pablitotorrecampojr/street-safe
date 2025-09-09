@@ -138,7 +138,7 @@ export default function UserAccounts() {
                         <div className='container-xxl flex-grow-1 container-p-y'>
                             <div className='row'>
                                 <div className="col-md-3 mb-4">
-                                <h1 style={{ fontSize: '20px' }} className='fw-bold'>Pending Accounts</h1>
+                                <h1 style={{ fontSize: '20px' }} className='fw-bold'>User Accounts</h1>
                                 </div>
                             </div>
 
