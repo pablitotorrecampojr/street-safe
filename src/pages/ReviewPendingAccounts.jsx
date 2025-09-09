@@ -106,14 +106,28 @@ export default function ReviewPendingAccounts() {
       width: 100,
       getActions: (params) => [
         <GridActionsCellItem
-          icon={<span className="tf-icons bx bx-check"></span>}
-          label="Approve Account"
+          label= { 
+            <div className="hover:text-blue-500 text-sm">
+              <i className="fa-solid fa-eye mr-2"></i> View
+            </div>
+          }
+          showInMenu
+        />,
+        <GridActionsCellItem
+          label= { 
+            <div className="hover:text-blue-500 text-sm">
+              <i className="tf-icons bx bx-check mr-2"></i> Approve
+            </div>
+          }
           showInMenu
           onClick={() => handleApproveAccount(params.row.id)}
         />,
         <GridActionsCellItem
-          icon={<span className="tf-icons bx bx-x"></span>}
-          label="Block Account"
+          label={
+            <div className="hover:text-blue-500 text-sm">
+              <i className="tf-icons bx bx-x mr-2"></i> Block
+            </div>
+          }
           showInMenu
           onClick={() => handleBlockAccount(params.row.id)}
         />,
@@ -147,24 +161,36 @@ export default function ReviewPendingAccounts() {
     setModalVisible(true);
   }
 
-  const approveAccount = async (userId) => {
+  const handleApproveAccount = async (userId) => {
     try {
       const userRef = doc(db, "users", userId);
       await setDoc(userRef, { accountStatus: 1 }, { merge: true });
       toast.success("Account approved successfully");
-      setUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
+      setUsers(prevUsers =>
+        prevUsers.map(user =>
+          user.id === userId
+            ? { ...user, status: 1 }
+            : user
+        )
+      );
     } catch (error) {
       console.error("Error approving account:", error);
       toast.error("Error approving account");
     }
   };
 
-  const blockAccount = async (userId) => { 
+  const handleBlockAccount = async (userId) => { 
     try {
       const userRef = doc(db, "users", userId);
       await setDoc(userRef, { accountStatus: 2 }, { merge: true });
       toast.success("Account blocked successfully");
-      setUsers(users.filter(user => user.id !== userId));
+      setUsers(prevUsers =>
+        prevUsers.map(user =>
+          user.id === userId
+            ? { ...user, status: 2 }
+            : user
+        )
+      );
     } catch (error) {
       console.error("Error blocked account:", error);
       toast.error("Error blocking account");

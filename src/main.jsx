@@ -75,14 +75,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             }
           /> 
           <Route
-            path="/access-control"
-            element={
-              <ProtectedRoute>
-                <AccessControl />
-              </ProtectedRoute>
-            }
-          /> 
-          <Route
             path="/pending-accounts"
             element={
               <ProtectedRoute>

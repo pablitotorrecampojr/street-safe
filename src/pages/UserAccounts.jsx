@@ -46,20 +46,32 @@ export default function UserAccounts() {
             width: 100,
             getActions: (params) => [
                 <GridActionsCellItem
-                    icon={<i className="fa-solid fa-eye hover:text-blue-700"></i>}
-                    label="View"
+                    label={
+                        <div className="hover:text-blue-500 text-sm">
+                            <i className="fa-solid fa-eye mr-2"></i>
+                            View
+                        </div>
+                    }
                     onClick={() => handleViewUser(params.row)}
                     showInMenu 
                 />,
                 <GridActionsCellItem
-                    icon={<i className="fa-solid fa-lock-open hover:text-blue-700"></i>}
-                    label="Unblock"
+                    label={
+                        <div className="hover:text-blue-500 text-sm">
+                            <i className="fa-solid fa-lock-open mr-2"></i>
+                            Unblock
+                        </div>
+                    }
                     onClick={() => handleUpdatingUserStatus(params.row.id, UserStatus.ACTIVE)}
                     showInMenu
                 />,
                 <GridActionsCellItem
-                    icon={<i className="fa-solid fa-lock hover:text-blue-700"></i>}
-                    label="Block"
+                    label={
+                        <div className="hover:text-blue-500 text-sm">
+                            <i className="fa-solid fa-lock mr-2"></i>
+                            Block
+                        </div>
+                    }
                     showInMenu
                     onClick={() => handleUpdatingUserStatus(params.row.id, UserStatus.BLOCKED)}
                 />,

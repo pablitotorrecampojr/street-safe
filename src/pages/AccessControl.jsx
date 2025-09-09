@@ -109,7 +109,7 @@ const AccessControl = () => {
                         initialState={{
                           pagination: { paginationModel: { pageSize: 5 } },
                         }}
-                        checkboxSelection
+                        checkboxSelection={false}  
                         disableRowSelectionOnClick
                       />
                     </Box>
