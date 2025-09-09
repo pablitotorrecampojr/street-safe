@@ -110,11 +110,6 @@ export default function UserAccounts() {
         fetchUsers();
     }, []);
 
-    //TODO: show loading screen while fetching data
-    if (loading) {
-        return <LoadingScreen />;
-    }
-
     return (
         <div className="layout-wrapper layout-content-navbar">
             <UsersDetails
@@ -137,18 +132,21 @@ export default function UserAccounts() {
 
                             <div className="card">
                                 <div className="card-body">
-                                    <Box sx={{ height: 400, width: '100%' }}>
-                                        <DataGrid
-                                            rows={rows}
-                                            columns={columns}
-                                            pageSizeOptions={[5, 10]}
-                                            initialState={{
-                                                pagination: { paginationModel: { pageSize: 5 } },
-                                            }}
-                                            checkboxSelection={false}    
-                                            disableRowSelectionOnClick
-                                        />
-                                    </Box>
+                                    {loading ? (<LoadingScreen /> ): (
+                                        <Box sx={{ height: 400, width: '100%' }}>
+                                            <DataGrid
+                                                rows={rows}
+                                                columns={columns}
+                                                pageSizeOptions={[5, 10]}
+                                                initialState={{
+                                                    pagination: { paginationModel: { pageSize: 5 } },
+                                                }}
+                                                checkboxSelection={false}    
+                                                disableRowSelectionOnClick
+                                            />
+                                        </Box>
+                                    )}
+
                                 </div>
                             </div>
                         </div>

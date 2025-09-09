@@ -182,9 +182,6 @@ export default function ReviewPendingAccounts() {
     }
   }
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
 
   return (
     <div className="layout-wrapper layout-content-navbar">
@@ -229,18 +226,20 @@ export default function ReviewPendingAccounts() {
 
                 <div className="card">
                   <div className="card-body">
-                    <Box sx={{ height: 400, width: '100%' }}>
-                      <DataGrid
-                        rows={rows}
-                        columns={columns}
-                        pageSizeOptions={[5, 10]}
-                        initialState={{
-                          pagination: { paginationModel: { pageSize: 5 } },
-                        }}
-                        checkboxSelection
-                        disableRowSelectionOnClick
-                      />
-                    </Box>
+                    {loading ? ( <LoadingScreen /> ) : (
+                      <Box sx={{ height: 400, width: '100%' }}>
+                        <DataGrid
+                          rows={rows}
+                          columns={columns}
+                          pageSizeOptions={[5, 10]}
+                          initialState={{
+                            pagination: { paginationModel: { pageSize: 5 } },
+                          }}
+                          checkboxSelection
+                          disableRowSelectionOnClick
+                        />
+                      </Box>
+                    )}
                   </div>
                 </div>
               </div>

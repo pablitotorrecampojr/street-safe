@@ -6,30 +6,15 @@ export default function LoadingScreen() {
   const loadingText = params.get("loadingText") || "Loading...";
 
   return (
-    <div className="layout-wrapper layout-content-navbar">
-      <div className="layout-container">
-        <div className="layout-page">
-          <div>
-            <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh", flexDirection: "column" }}>
-              <div className="demo-inline-spacing">
-                <div
-                  className="spinner-border text-primary"
-                  role="status"
-                  style={{
-                    width: "8rem",
-                    height: "8rem",
-                    borderWidth: "5px"
-                  }}
-                >
-                  <span className="visually-hidden">{loadingText}</span>
-                </div>
-                <div style={{ marginTop: "1rem", fontSize: "1.2rem", fontWeight: "500", textAlign: "center" }}>
-                  {loadingText}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div className="flex flex-col items-center justify-center w-full h-full">
+      <div
+        className="w-20 h-20 border-8 border-blue-500 border-t-transparent rounded-full animate-spin"
+        role="status"
+      >
+        <span className="sr-only">{loadingText}</span>
+      </div>
+      <div className="mt-4 text-lg font-medium text-center">
+        {loadingText}
       </div>
     </div>
   );
