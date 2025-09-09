@@ -1,5 +1,6 @@
-import { auth, db } from '../firebase/firebase';
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from '../firebase/firebase';
+import { signOut } from "firebase/auth";
+import { toast } from "react-toastify";
 
 export default function PendingAccount () {
     const handleLogout = async () => {

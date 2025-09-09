@@ -74,6 +74,7 @@ const SignUp = () => {
     reader.readAsDataURL(file);
   };
 
+  const [processing, setProcessing] = useState(false); //* variable for disabling the submit button when processing
   const handleSubmit = async (e) => {
     e.preventDefault();
     let newErrors = {};
@@ -110,6 +111,7 @@ const SignUp = () => {
     }
 
     try {
+      setProcessing(true);
       const response = await signUp(formData);
       if (response.status === 200) {
         toast.success(response.message);
@@ -121,6 +123,8 @@ const SignUp = () => {
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
       throw error;
+    } finally {
+      setProcessing(false);
     }
   }
   
@@ -286,7 +290,13 @@ const SignUp = () => {
                           </div>
                           {errors.confirmPassword && <p className="error">{errors.confirmPassword}</p>}
                       </div>
-                      <button className="btn btn-primary d-grid w-100" type="submit">Sign up</button>
+                      <button 
+                        className="btn btn-primary d-grid w-100" 
+                        type="submit"
+                        disabled={processing}
+                      >
+                        {processing ? "Signing up..." : "Sign up"}
+                      </button>
                     </form>
 
                     <p className="text-center">
