@@ -17,8 +17,6 @@ import districts from '../constants/districts.json'
 const sendResponseTeam = async (hazard) => {
   //TODO: this function will set the hazard status to 1 (in progress)
   const hazardId = hazard?.id;
-  console.log("Hazard object:", hazard);
-  console.log("Hazard ID:", hazardId);
 
   if (!hazardId) {
     console.error("Invalid hazard data");
@@ -159,7 +157,7 @@ const isWithinDistrict = (hazardData, barangays) => {
   const listOfBarangays = barangays;
   const hazardBarangay = hazardData?.barangay;
   const hazardMunicipality = hazardData?.municipality;
-  console.log("Districts Data:", {
+  console.log("[isWithinDistrict] Districts Data:", {
     hazardBarangay: hazardBarangay,
     hazardMunicipality: hazardMunicipality,
     barangays: listOfBarangays,

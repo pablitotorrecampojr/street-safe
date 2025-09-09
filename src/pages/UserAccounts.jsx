@@ -143,7 +143,7 @@ export default function UserAccounts() {
                                             columns={columns}
                                             pageSizeOptions={[5, 10]}
                                             initialState={{
-                                            pagination: { paginationModel: { pageSize: 5 } },
+                                                pagination: { paginationModel: { pageSize: 5 } },
                                             }}
                                             checkboxSelection={false}    
                                             disableRowSelectionOnClick
