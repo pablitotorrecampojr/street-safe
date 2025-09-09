@@ -1,10 +1,23 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { LoadingScreen } from '@webview';
 import { Aside, NavBar } from '@components';
+import { RoadHazardServices } from '../Services';
  
 export default function HazardReport() {
-  const [loading, setLoading] = React.useState(true);
-  return( 
+  const [loading, setLoading] = useState(true);
+
+  //TODO: fetching roadzards
+  const [hazards, setHazards] = useState([]);
+  useEffect(() => {
+    const unsubscribe = RoadHazardServices.subscribeToRoadHazards(setHazards);
+    return () => unsubscribe(); 
+  }, []);
+
+  useEffect(() => {
+    console.log("Fetched hazards:", hazards);
+  });
+
+  return (
     <div className='layout-wrapper layout-content-navbar'>
       <div className='layout-container'>
         <Aside />
