@@ -7,7 +7,6 @@ import { doc, getDoc } from 'firebase/firestore';
 export default function Aside() {
     const navigate = useNavigate();
     const location = useLocation();
-    const [user, setUser] = useState(null);
     const [userData, setUserData] = useState(null);
     
     const navigationItems = {
