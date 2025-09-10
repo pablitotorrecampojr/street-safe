@@ -4,3 +4,10 @@ export const Status = {
     RESOLVED: 'resolved',
     REJECTED: 'rejected',
 };
+
+export const Style = {
+    [Status.PENDING]: 'warning',
+    [Status.IN_PROGRESS]: 'info',
+    [Status.RESOLVED]: 'success',
+    [Status.REJECTED]: 'danger',
+}

@@ -5,6 +5,7 @@ import { RoadHazardServices } from '@services';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import { GridActionsCellItem } from '@mui/x-data-grid';
+import { RoadHazards} from '@enums';
  
 export default function HazardReport() {
   const [loading, setLoading] = useState(true);
@@ -24,8 +25,22 @@ export default function HazardReport() {
     { field: 'id', headerName: 'ID', width: 100 },
     { field: 'location', headerName: 'Location', width: 200 },
     { field: 'description', headerName: 'Description', width: 300 },
-    { field: 'status', headerName: 'Status', width: 120 },
-    { field: 'resolvedAt', headerName: 'Resolved At', width: 200 },
+    { field: 'status', headerName: 'Status', width: 120,
+      renderCell: (params) => { 
+        console.log(params.value);
+        console.log(RoadHazards.Style[params.value]);
+        return <Badge 
+          status={RoadHazards.Style[params.value]} 
+          text={params.value} 
+        />
+      }
+     },
+    { field: 'resolvedAt', headerName: 'Resolved At', width: 200,
+      renderCell: (params) => {
+        if (!params.value) return <i>To be determined</i>;
+        return new Date(params.value).toLocaleString();
+      }
+     },
     { field: 'reportedBy', headerName: 'Reported By', width: 200 },
     { field: 'actions', type: 'actions', headerName: 'Actions', width: 200,
       getActions: (params) => [
@@ -71,8 +86,6 @@ export default function HazardReport() {
         ...hazard,
       }))
     );
-
-    console.log("Formatted hazards:", hazards);
   }, [hazards]);  
 
   return (
