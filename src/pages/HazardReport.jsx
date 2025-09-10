@@ -13,8 +13,25 @@ export default function HazardReport() {
     return () => unsubscribe(); 
   }, []);
 
+
+  //TODO: handling displaying road hazards
+  const [rows, setRows] = useState([]);
+  const columns = [
+    { field: 'index', headerName: '#', width: 30 },
+    { field: 'id', headerName: 'ID', width: 250 },
+    { field: 'location', headerName: 'Location', width: 200 },
+    { field: 'description', headerName: 'Description', width: 300 },
+    { field: 'status', headerName: 'Status', width: 150 },
+    { field: 'resolvedAt', headerName: 'Resolved At', width: 200 },
+    { field: 'reportedBy', headerName: 'Reported By', width: 200 },
+    { field: 'actions', type: 'actions', headerName: 'Actions', width: 200 },
+  ];
+
   useEffect(() => {
-    console.log("Fetched hazards:", hazards);
+    if (hazards.length > 0) {
+      setLoading(false);
+    }
+    setRows(hazards);
   });
 
   return (

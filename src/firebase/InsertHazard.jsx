@@ -18,16 +18,15 @@ export default function ProtectedRoute({ children }) {
             try {
                 const hazardRef = ref(realtimeDb, "roadhazards");
                 const newHazard = {
-                    imageUrl: "base64Image",
-                    dateSubmitted: "2025-04-11 00:00:00",
-                    fullAddress: "NEW Somewhere in Apas, Cebu City, Cebu",
-                    roadHazard: "Dummy Data",
-                    status: 0,
-                    latitude: 10.339278,
-                    longitude: 123.904334,
-                    userid: "opbG2JQJBpZj4sjZ9i0PsqynbkQ2",
                     id: generateRandomId(),
-                };
+                    location: "123 Test St, Test City, Test Country",
+                    description: "This is a test hazard report.",
+                    reportedBy: "testUserId",
+                    status: "pending",
+                    resolvedAt: null,
+                    latitude: 10.123456,
+                    longitude: 123.123456,
+                }
 
                 const newRef = push(hazardRef);
                 await set(newRef, newHazard);
