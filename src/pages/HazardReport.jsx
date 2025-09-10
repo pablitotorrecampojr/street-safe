@@ -5,7 +5,8 @@ import { RoadHazardServices } from '@services';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import { GridActionsCellItem } from '@mui/x-data-grid';
-import { RoadHazards} from '@enums';
+import { RoadHazards, UserRole  } from '@enums';
+
  
 export default function HazardReport() {
   const [loading, setLoading] = useState(true);
@@ -17,6 +18,19 @@ export default function HazardReport() {
     return () => unsubscribe(); 
   }, []);
 
+  const [currentUser, setCurrentUser] = useState(null);
+  useEffect(() => {
+    if (hazards.length > 0) {
+      setLoading(false);
+    }
+    setCurrentUser(JSON.parse(localStorage.getItem("userData")) || null);
+    setRows(
+      hazards.map((hazard, index) => ({
+        index: index + 1,
+        ...hazard,
+      }))
+    );
+  }, [hazards]);  
 
   //TODO: handling displaying road hazards
   const [rows, setRows] = useState([]);
@@ -27,8 +41,6 @@ export default function HazardReport() {
     { field: 'description', headerName: 'Description', width: 300 },
     { field: 'status', headerName: 'Status', width: 120,
       renderCell: (params) => { 
-        console.log(params.value);
-        console.log(RoadHazards.Style[params.value]);
         return <Badge 
           status={RoadHazards.Style[params.value]} 
           text={params.value} 
@@ -42,51 +54,27 @@ export default function HazardReport() {
       }
      },
     { field: 'reportedBy', headerName: 'Reported By', width: 200 },
-    { field: 'actions', type: 'actions', headerName: 'Actions', width: 200,
-      getActions: (params) => [
-        <GridActionsCellItem
-          label={
-            <div className="hover:text-blue-500 text-sm">
-              <i className="fa-solid fa-eye mr-2"></i>
-              View
-            </div>
-          }
-          showInMenu 
-        />,
-        <GridActionsCellItem
-          label={
-            <div className="hover:text-blue-500 text-sm">
-              <i className="fa-solid fa-lock-open mr-2"></i>
-              Unblock
-            </div>
-          }
-          showInMenu
-        />,
-        <GridActionsCellItem
-          label={
-            <div className="hover:text-blue-500 text-sm">
-              <i className="fa-solid fa-lock mr-2"></i>
-              Block
-            </div>
-          }
-          showInMenu
-        />,
-      ]
+    { field: 'actions', type: 'actions', headerName: 'Actions', width: 100,
+      getActions: (params) => {
+        if (currentUser?.role === UserRole.ADMIN) {
+          const actions = [
+            <GridActionsCellItem
+              icon={<i className="fa-solid fa-eye" />}
+              label="View"
+              showInMenu
+            />
+          ];
+          return actions;
+        }
+        return [
+          <div>
+            <i className="fa-solid fa-ban text-red-500"></i>
+          </div>
+        ];
+      }
+
     },
   ];
-
-  useEffect(() => {
-    if (hazards.length > 0) {
-      setLoading(false);
-    }
-
-    setRows(
-      hazards.map((hazard, index) => ({
-        index: index + 1,
-        ...hazard,
-      }))
-    );
-  }, [hazards]);  
 
   return (
     <div className='layout-wrapper layout-content-navbar'>

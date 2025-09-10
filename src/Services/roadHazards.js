@@ -28,8 +28,6 @@ export function subscribeToRoadHazards(callback) {
   const roadHazardsRef = ref(realtimeDb, "roadhazards");
   const unsubscribe = onValue(roadHazardsRef, (snapshot) => {
     const data = snapshot.val();
-    console.log("[roadHazards] Live update:", data);
-
     if (data) {
       const formatted = Object.entries(data).map(([id, value]) => ({
         id,
