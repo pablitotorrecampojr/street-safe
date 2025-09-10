@@ -6,8 +6,8 @@ export const Status = {
 };
 
 export const Style = {
-    [Status.PENDING]: 'warning',
-    [Status.IN_PROGRESS]: 'info',
+    [Status.PENDING]: 'info',
+    [Status.IN_PROGRESS]: 'warning',
     [Status.RESOLVED]: 'success',
     [Status.REJECTED]: 'danger',
 }
