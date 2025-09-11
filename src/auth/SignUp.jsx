@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { UserRole } from "@enums";
 import { Letters } from "@utils";
 import { LoadingScreen } from "@webview";
+import districtSortedJson from "../constants/districts-sorted.json"
 export default function SignUp() {
 
   const [selectedRole, setSelectedRole] = useState(UserRole.AUTHORITIES);
@@ -14,6 +15,10 @@ export default function SignUp() {
     }, 400);
     setSelectedRole(role);
   }
+
+  useEffect(() => {
+    setLoading(false);
+  }, []);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -142,6 +147,18 @@ export default function SignUp() {
                         >
                           <i className="fa-regular fa-eye"></i>
                         </button>
+                      </div>
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="mb-1 text-sm font-medium">District</label>
+                      <div className="flex items-center border rounded-lg overflow-hidden">
+                        <select className="form-control">
+                          {Object.keys(districtSortedJson).map((district) => (
+                            <option key={district} value={district}>
+                              {district}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                   </div>
