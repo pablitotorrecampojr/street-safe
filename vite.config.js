@@ -16,6 +16,7 @@ export default defineConfig({
       '@components': path.resolve(__dirname, 'src/components'),
       '@services': path.resolve(__dirname, 'src/Services'),
       '@webview': path.resolve(__dirname, 'src/webview'),
+      '@utils': path.resolve(__dirname, 'src/utils'),
     },
   },
 });
