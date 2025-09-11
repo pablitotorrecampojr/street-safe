@@ -10,9 +10,28 @@ export default function SignUp() {
     setSelectedRole(role);
   }
 
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form Data:", formData);
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-2xl bg-white rounded-lg shadow-xl p-8">
+      <div className="w-full max-w-4xl bg-white rounded-lg shadow-xl p-8">
         <h3 className="font-bold text-gray-800 mb-6">
           Create Account
         </h3>
@@ -27,8 +46,90 @@ export default function SignUp() {
               {Letters.CapitalizeFirstLetter(UserRole.MUNICIPALITIES)}
             </button>
           </div>
-          <div className="w-full">
-            
+          <form
+            onSubmit={handleSubmit}
+            className="w-full p-2 space-y-4"
+          >
+            <div className="w-full grid grid-cols-2 gap-6">
+                <div className="flex flex-col space-y-4">
+                  <div className="flex flex-col">
+                    <label className="mb-1 text-sm font-medium">Full Name</label>
+                    <input
+                      type="text"
+                      name="fullName"
+                      placeholder="Full Name"
+                      value={formData.fullName}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="mb-1 text-sm font-medium">Email Address</label>
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="Email Address"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="mb-1 text-sm font-medium">Password</label>
+                    <input
+                      type="password"
+                      name="password"
+                      placeholder="Password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="mb-1 text-sm font-medium">Confirm Password</label>
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      placeholder="Confirm Password"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col space-y-4">
+                  <div className="flex flex-col">
+                    <label className="mb-1 text-sm font-medium">Valid ID (Front)</label>
+                    <input
+                      className="form-control"
+                      type="file"
+                      id="validIdFront"
+                      name="validIdFront"
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="mb-1 text-sm font-medium">Valid ID (Back)</label>
+                    <input
+                      className="form-control"
+                      type="file"
+                      id="validIdBack"
+                      name="validIdBack"
+                    />
+                  </div>
+                </div>
+              </div>
+          </form>
+          <div className="w-full flex justify-center mt-4">
+            <p className="text-gray-600">
+              Already have an account?{" "}
+              <a href="/" className="text-blue-600 hover:underline">
+                Sign In
+              </a>
+            </p>
           </div>
         </div>
 
