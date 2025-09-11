@@ -51,77 +51,96 @@ export default function SignUp() {
             className="w-full p-2 space-y-4"
           >
             <div className="w-full grid grid-cols-2 gap-6">
-                <div className="flex flex-col space-y-4">
-                  <div className="flex flex-col">
-                    <label className="mb-1 text-sm font-medium">Full Name</label>
-                    <input
-                      type="text"
-                      name="fullName"
-                      placeholder="Full Name"
-                      value={formData.fullName}
-                      onChange={handleChange}
-                      className="form-control"
-                    />
-                  </div>
-
-                  <div className="flex flex-col">
-                    <label className="mb-1 text-sm font-medium">Email Address</label>
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Email Address"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="form-control"
-                    />
-                  </div>
-
-                  <div className="flex flex-col">
-                    <label className="mb-1 text-sm font-medium">Password</label>
-                    <input
-                      type="password"
-                      name="password"
-                      placeholder="Password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      className="form-control"
-                    />
-                  </div>
-
-                  <div className="flex flex-col">
-                    <label className="mb-1 text-sm font-medium">Confirm Password</label>
-                    <input
-                      type="password"
-                      name="confirmPassword"
-                      placeholder="Confirm Password"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      className="form-control"
-                    />
-                  </div>
+              <div className="flex flex-col space-y-4">
+                <div className="flex flex-col">
+                  <label className="mb-1 text-sm font-medium">Full Name</label>
+                  <input
+                    type="text"
+                    name="fullName"
+                    placeholder="Full Name"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
                 </div>
 
-                <div className="flex flex-col space-y-4">
-                  <div className="flex flex-col">
-                    <label className="mb-1 text-sm font-medium">Valid ID (Front)</label>
+                <div className="flex flex-col">
+                  <label className="mb-1 text-sm font-medium">Email Address</label>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Email Address"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="mb-1 text-sm font-medium">Password</label>
+                  <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="mb-1 text-sm font-medium">Confirm Password</label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="Confirm Password"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col space-y-4">
+                <div className="flex flex-col">
+                  <label className="mb-1 text-sm font-medium">Valid ID (Front)</label>
+
+                  <div className="flex items-center border rounded-lg overflow-hidden">
                     <input
-                      className="form-control"
+                      className="form-control flex-grow border-0"
                       type="file"
                       id="validIdFront"
                       name="validIdFront"
                     />
+                    <button
+                      type="button"
+                      className="px-3 text-gray-600 hover:text-blue-600"
+                    >
+                      <i className="fa-regular fa-eye"></i>
+                    </button>
                   </div>
-                  <div className="flex flex-col">
-                    <label className="mb-1 text-sm font-medium">Valid ID (Back)</label>
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="mb-1 text-sm font-medium">Valid ID (Front)</label>
+
+                  <div className="flex items-center border rounded-lg overflow-hidden">
                     <input
-                      className="form-control"
+                      className="form-control flex-grow border-0"
                       type="file"
-                      id="validIdBack"
-                      name="validIdBack"
+                      id="validIdFront"
+                      name="validIdFront"
                     />
+                    <button
+                      type="button"
+                      className="px-3 text-gray-600 hover:text-blue-600"
+                    >
+                      <i className="fa-regular fa-eye"></i>
+                    </button>
                   </div>
                 </div>
               </div>
+            </div>
           </form>
           <div className="w-full flex justify-center mt-4">
             <p className="text-gray-600">
