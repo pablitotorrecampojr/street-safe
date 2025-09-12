@@ -5,6 +5,7 @@ import { Letters } from "@utils";
 import { LoadingScreen } from "@webview";
 import districtSortedJson from "../constants/districts-sorted.json"
 import districtJson from "../constants/districts.json"
+import municipalitiesJson from "../constants/municipalities.json"
 export default function SignUp() {
 
   const [selectedRole, setSelectedRole] = useState(UserRole.AUTHORITIES);
@@ -26,6 +27,11 @@ export default function SignUp() {
     email: "",
     password: "",
     confirmPassword: "",
+    role: selectedRole,
+    district: "",
+    validIdFront: null,
+    validIdBack: null,
+    municipality: "",
   });
 
   const handleChange = (e) => {
@@ -153,13 +159,30 @@ export default function SignUp() {
                     <div className="flex flex-col">
                       <label className="mb-1 text-sm font-medium">District</label>
                       <div className="flex items-center border rounded-lg overflow-hidden">
-                        <select className="form-control" name="district" id="district">
+                        <select 
+                          className="form-control" 
+                          name="district" 
+                          id="district"
+                          value={formData.district}
+                          onChange={handleChange}
+                        >
+                          <option value="">Select a district</option>
                           {Object.keys(districtSortedJson).map((district) => (
                             <option key={district} value={district}>
                               {district}
                             </option>
                           ))}
                         </select>
+                      </div>
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="mb-1 text-sm font-medium">Selected District</label>
+                      <div className="form-control bg-gray-100 border-0">
+                        {formData.district && (
+                          <>
+                            {districtJson.find(d => d.district === formData.district)?.name}, {districtJson.find(d => d.district === formData.district)?.code}
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -255,6 +278,26 @@ export default function SignUp() {
                         >
                           <i className="fa-regular fa-eye"></i>
                         </button>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col">
+                      <label className="mb-1 text-sm font-medium">Municipality</label>
+                      <div className="flex items-center border rounded-lg overflow-hidden">
+                        <select 
+                          className="form-control" 
+                          name="municipality" 
+                          id="municipality"
+                          value={formData.municipality}
+                          onChange={handleChange}
+                        >
+                          <option value="">Select a municipality</option>
+                          {Object.keys(municipalitiesJson).map((municipality) => (
+                            <option key={municipality} value={municipality}>
+                              {municipality}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                   </div>
