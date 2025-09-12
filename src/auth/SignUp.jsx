@@ -190,10 +190,12 @@ export default function SignUp() {
                       <div className="flex flex-col">
                         <label className="mb-1 text-sm font-medium">Selected District</label>
                         <div className="form-control bg-gray-100 border-0">
-                          {formData.district && (
+                          {formData.district ? (
                             <>
                               {districtJson.find(d => d.district === formData.district)?.name}, {districtJson.find(d => d.district === formData.district)?.code}
                             </>
+                          ) : (
+                            "No district selected."
                           )}
                         </div>
                       </div>
@@ -317,7 +319,13 @@ export default function SignUp() {
                         <label className="mb-1 text-sm font-medium">Barangays within the selected municipality</label>
                         <div className="flex items-center border rounded-lg overflow-hidden">
                           <div className="form-control">
-                            <a href="#" className="px-4 py-2 text-blue-600 hover:underline" onClick={() => setOpenBarangays(true)}>View Barangays</a>
+                            <a
+                              href="#"
+                              className={'text-blue-600 hover:underline ' + (formData.municipality ? '' : 'pointer-events-none text-gray-400')}
+                              onClick={() => setOpenBarangays(true)}
+                            >
+                              View Barangays
+                            </a>
                           </div>
                         </div>
                       </div>
