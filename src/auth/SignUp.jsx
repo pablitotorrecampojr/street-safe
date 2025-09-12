@@ -4,6 +4,7 @@ import { UserRole } from "@enums";
 import { Letters } from "@utils";
 import { LoadingScreen } from "@webview";
 import districtSortedJson from "../constants/districts-sorted.json"
+import districtJson from "../constants/districts.json"
 export default function SignUp() {
 
   const [selectedRole, setSelectedRole] = useState(UserRole.AUTHORITIES);
@@ -152,7 +153,7 @@ export default function SignUp() {
                     <div className="flex flex-col">
                       <label className="mb-1 text-sm font-medium">District</label>
                       <div className="flex items-center border rounded-lg overflow-hidden">
-                        <select className="form-control">
+                        <select className="form-control" name="district" id="district">
                           {Object.keys(districtSortedJson).map((district) => (
                             <option key={district} value={district}>
                               {district}
