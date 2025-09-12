@@ -7,3 +7,4 @@ export { default as Badge } from "./Badge";
 
 export { default as UsersDetails } from "./Modals/UsersDetails";
 export { default as ViewLists } from "./Modals/ViewLists";
+export { default as Divider } from "./Divider";

@@ -6,7 +6,7 @@ import { LoadingScreen } from "@webview";
 import districtSortedJson from "../constants/districts-sorted.json"
 import districtJson from "../constants/districts.json"
 import municipalitiesJson from "../constants/municipalities.json"
-import { ViewLists } from "@components";
+import { ViewLists, Divider } from "@components";
 export default function SignUp() {
 
   const [selectedRole, setSelectedRole] = useState(UserRole.AUTHORITIES);
@@ -29,10 +29,10 @@ export default function SignUp() {
     password: "",
     confirmPassword: "",
     role: selectedRole,
-    district: "",
     validIdFront: null,
     validIdBack: null,
     municipality: "",
+    district: "",
   });
 
   const handleChange = (e) => {
@@ -79,260 +79,172 @@ export default function SignUp() {
               onSubmit={handleSubmit}
               className="w-full p-2 space-y-4"
             >
-              {selectedRole === UserRole.AUTHORITIES && (
-                loading ? <LoadingScreen /> : (
-                  <div className="w-full grid grid-cols-2 gap-6">
-                    <div className="flex flex-col space-y-4">
-                      <div className="flex flex-col">
-                        <label className="mb-1 text-sm font-medium">Full Name</label>
-                        <input
-                          type="text"
-                          name="fullName"
-                          placeholder="Full Name"
-                          value={formData.fullName}
-                          onChange={handleChange}
-                          className="form-control"
-                        />
-                      </div>
+              <div className="w-full grid grid-cols-2 gap-6">
+                <div className="flex flex-col space-y-4">
+                  <div className="flex flex-col">
+                    <label className="mb-1 text-sm font-medium">Full Name</label>
+                    <input
+                      type="text"
+                      name="fullName"
+                      placeholder="Full Name"
+                      value={formData.fullName}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
 
-                      <div className="flex flex-col">
-                        <label className="mb-1 text-sm font-medium">Email Address</label>
-                        <input
-                          type="email"
-                          name="email"
-                          placeholder="Email Address"
-                          value={formData.email}
-                          onChange={handleChange}
-                          className="form-control"
-                        />
-                      </div>
+                  <div className="flex flex-col">
+                    <label className="mb-1 text-sm font-medium">Email Address</label>
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="Email Address"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
 
-                      <div className="flex flex-col">
-                        <label className="mb-1 text-sm font-medium">Password</label>
-                        <input
-                          type="password"
-                          name="password"
-                          placeholder="Password"
-                          value={formData.password}
-                          onChange={handleChange}
-                          className="form-control"
-                        />
-                      </div>
+                  <div className="flex flex-col">
+                    <label className="mb-1 text-sm font-medium">Password</label>
+                    <input
+                      type="password"
+                      name="password"
+                      placeholder="Password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
 
-                      <div className="flex flex-col">
-                        <label className="mb-1 text-sm font-medium">Confirm Password</label>
-                        <input
-                          type="password"
-                          name="confirmPassword"
-                          placeholder="Confirm Password"
-                          value={formData.confirmPassword}
-                          onChange={handleChange}
-                          className="form-control"
-                        />
-                      </div>
-                    </div>
+                  <div className="flex flex-col">
+                    <label className="mb-1 text-sm font-medium">Confirm Password</label>
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      placeholder="Confirm Password"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
+                </div>
 
-                    <div className="flex flex-col space-y-4">
-                      <div className="flex flex-col">
-                        <label className="mb-1 text-sm font-medium">Valid ID (Front)</label>
-                        <div className="flex items-center border rounded-lg overflow-hidden">
-                          <input
-                            className="form-control flex-grow border-0"
-                            type="file"
-                            id="validIdFront"
-                            name="validIdFront"
-                          />
-                          <button
-                            type="button"
-                            className="px-3 text-gray-600 hover:text-blue-600"
-                          >
-                            <i className="fa-regular fa-eye"></i>
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col">
-                        <label className="mb-1 text-sm font-medium">Valid ID (Back)</label>
-                        <div className="flex items-center border rounded-lg overflow-hidden">
-                          <input
-                            className="form-control flex-grow border-0"
-                            type="file"
-                            id="validIdBack"
-                            name="validIdBack"
-                          />
-                          <button
-                            type="button"
-                            className="px-3 text-gray-600 hover:text-blue-600"
-                          >
-                            <i className="fa-regular fa-eye"></i>
-                          </button>
-                        </div>
-                      </div>
-                      <div className="flex flex-col">
-                        <label className="mb-1 text-sm font-medium">District</label>
-                        <div className="flex items-center border rounded-lg overflow-hidden">
-                          <select 
-                            className="form-control" 
-                            name="district" 
-                            id="district"
-                            value={formData.district}
-                            onChange={handleChange}
-                          >
-                            <option value="">Select a district</option>
-                            {Object.keys(districtSortedJson).map((district) => (
-                              <option key={district} value={district}>
-                                {district}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="flex flex-col">
-                        <label className="mb-1 text-sm font-medium">Selected District</label>
-                        <div className="form-control bg-gray-100 border-0">
-                          {formData.district ? (
-                            <>
-                              {districtJson.find(d => d.district === formData.district)?.name}, {districtJson.find(d => d.district === formData.district)?.code}
-                            </>
-                          ) : (
-                            "No district selected."
-                          )}
-                        </div>
-                      </div>
+                <div className="flex flex-col space-y-4">
+                  <div className="flex flex-col">
+                    <label className="mb-1 text-sm font-medium">Valid ID (Front)</label>
+                    <div className="flex items-center border rounded-lg overflow-hidden">
+                      <input
+                        className="form-control flex-grow border-0"
+                        type="file"
+                        id="validIdFront"
+                        name="validIdFront"
+                      />
+                      <button
+                        type="button"
+                        className="px-3 text-gray-600 hover:text-blue-600"
+                      >
+                        <i className="fa-regular fa-eye"></i>
+                      </button>
                     </div>
                   </div>
-                )
-              )}
-              {selectedRole === UserRole.MUNICIPALITIES && (
-                loading ? <LoadingScreen /> : (
-                  <div className="w-full grid grid-cols-2 gap-6">
-                    <div className="flex flex-col space-y-4">
-                      <div className="flex flex-col">
-                        <label className="mb-1 text-sm font-medium">Full Name</label>
-                        <input
-                          type="text"
-                          name="fullName"
-                          placeholder="Full Name"
-                          value={formData.fullName}
-                          onChange={handleChange}
-                          className="form-control"
-                        />
-                      </div>
 
-                      <div className="flex flex-col">
-                        <label className="mb-1 text-sm font-medium">Email Address</label>
-                        <input
-                          type="email"
-                          name="email"
-                          placeholder="Email Address"
-                          value={formData.email}
-                          onChange={handleChange}
-                          className="form-control"
-                        />
-                      </div>
-
-                      <div className="flex flex-col">
-                        <label className="mb-1 text-sm font-medium">Password</label>
-                        <input
-                          type="password"
-                          name="password"
-                          placeholder="Password"
-                          value={formData.password}
-                          onChange={handleChange}
-                          className="form-control"
-                        />
-                      </div>
-
-                      <div className="flex flex-col">
-                        <label className="mb-1 text-sm font-medium">Confirm Password</label>
-                        <input
-                          type="password"
-                          name="confirmPassword"
-                          placeholder="Confirm Password"
-                          value={formData.confirmPassword}
-                          onChange={handleChange}
-                          className="form-control"
-                        />
-                      </div>
+                  <div className="flex flex-col">
+                    <label className="mb-1 text-sm font-medium">Valid ID (Back)</label>
+                    <div className="flex items-center border rounded-lg overflow-hidden">
+                      <input
+                        className="form-control flex-grow border-0"
+                        type="file"
+                        id="validIdBack"
+                        name="validIdBack"
+                      />
+                      <button
+                        type="button"
+                        className="px-3 text-gray-600 hover:text-blue-600"
+                      >
+                        <i className="fa-regular fa-eye"></i>
+                      </button>
                     </div>
-
-                    <div className="flex flex-col space-y-4">
-                      <div className="flex flex-col">
-                        <label className="mb-1 text-sm font-medium">Valid ID (Front)</label>
-
-                        <div className="flex items-center border rounded-lg overflow-hidden">
-                          <input
-                            className="form-control flex-grow border-0"
-                            type="file"
-                            id="validIdFront"
-                            name="validIdFront"
-                          />
-                          <button
-                            type="button"
-                            className="px-3 text-gray-600 hover:text-blue-600"
-                          >
-                            <i className="fa-regular fa-eye"></i>
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col">
-                        <label className="mb-1 text-sm font-medium">Valid ID (Front)</label>
-
-                        <div className="flex items-center border rounded-lg overflow-hidden">
-                          <input
-                            className="form-control flex-grow border-0"
-                            type="file"
-                            id="validIdFront"
-                            name="validIdFront"
-                          />
-                          <button
-                            type="button"
-                            className="px-3 text-gray-600 hover:text-blue-600"
-                          >
-                            <i className="fa-regular fa-eye"></i>
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col">
-                        <label className="mb-1 text-sm font-medium">Municipality</label>
-                        <div className="flex items-center border rounded-lg overflow-hidden">
-                          <select 
-                            className="form-control" 
-                            name="municipality" 
-                            id="municipality"
-                            value={formData.municipality}
-                            onChange={handleChange}
-                          >
-                            <option value="">Select a municipality</option>
-                            {Object.keys(municipalitiesJson).map((municipality) => (
-                              <option key={municipality} value={municipality}>
-                                {municipality}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col">
-                        <label className="mb-1 text-sm font-medium">Barangays within the selected municipality</label>
-                        <div className="flex items-center border rounded-lg overflow-hidden">
-                          <div className="form-control">
-                            <a
-                              href="#"
-                              className={'text-blue-600 hover:underline ' + (formData.municipality ? '' : 'pointer-events-none text-gray-400')}
-                              onClick={() => setOpenBarangays(true)}
+                  </div>
+                  {selectedRole === UserRole.AUTHORITIES && (
+                    loading ? <LoadingScreen /> : (
+                      <>
+                        <div className="flex flex-col">
+                          <label className="mb-1 text-sm font-medium">District</label>
+                          <div className="flex items-center border rounded-lg overflow-hidden">
+                            <select 
+                              className="form-control" 
+                              name="district" 
+                              id="district"
+                              value={formData.district}
+                              onChange={handleChange}
                             >
-                              View Barangays
-                            </a>
+                              <option value="">Select a district</option>
+                              {Object.keys(districtSortedJson).map((district) => (
+                                <option key={district} value={district}>
+                                  {district}
+                                </option>
+                              ))}
+                            </select>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                )
-              )}
+                        <div className="flex flex-col">
+                          <label className="mb-1 text-sm font-medium">Selected District</label>
+                          <div className="form-control bg-gray-100 border-0">
+                            {formData.district ? (
+                              <>
+                                {districtJson.find(d => d.district === formData.district)?.name}, {districtJson.find(d => d.district === formData.district)?.code}
+                              </>
+                            ) : (
+                              "No district selected."
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    )
+                  )}
+                  {selectedRole === UserRole.MUNICIPALITIES && (
+                    loading ? <LoadingScreen /> : (
+                      <>
+                        <div className="flex flex-col">
+                          <label className="mb-1 text-sm font-medium">Municipality</label>
+                          <div className="flex items-center border rounded-lg overflow-hidden">
+                            <select 
+                              className="form-control" 
+                              name="municipality" 
+                              id="municipality"
+                              value={formData.municipality}
+                              onChange={handleChange}
+                            >
+                              <option value="">Select a municipality</option>
+                              {Object.keys(municipalitiesJson).map((municipality) => (
+                                <option key={municipality} value={municipality}>
+                                  {municipality}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col">
+                          <label className="mb-1 text-sm font-medium">Barangays within the selected municipality</label>
+                          <div className="flex items-center border rounded-lg overflow-hidden">
+                            <div className="form-control">
+                              <a
+                                href="#"
+                                className={'text-blue-600 hover:underline ' + (formData.municipality ? '' : 'pointer-events-none text-gray-400')}
+                                onClick={() => setOpenBarangays(true)}
+                              >
+                                View Barangays
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )
+                  )}
+                </div>
+              </div>
             </form>
             <div className="w-full flex justify-center mt-4">
               <p className="text-gray-600">
