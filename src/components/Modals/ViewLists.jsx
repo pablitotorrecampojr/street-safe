@@ -1,11 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
-import accountSetting from "../../constants/account-setting.json"
-import { Badge } from '@components';
-import { statusOptions } from '@enums';
+export default function ViewLists({ isOpen, onClose, list = [], header = "List of Items" }) {
+  if (!isOpen) return null; // Only render when open
 
-export default function UsersDetails({ user, onClose, isOpen }) {
   return (
-    <AnimatePresence>
+     <AnimatePresence>
       {isOpen && (
         <motion.div
           className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
@@ -27,20 +25,18 @@ export default function UsersDetails({ user, onClose, isOpen }) {
               <i className="fa-solid fa-xmark"></i>
             </button>
 
-            <h2 className="text-xl font-semibold mb-4">User Details</h2>
+            <h2 className="text-xl font-semibold mb-4">{header}</h2>
 
             <div className="space-y-2">
-              <p><span className="font-medium">Unique ID:</span> {user?.id}</p>
-              <p><span className="font-medium">Full Name:</span> {user?.fullname}</p>
-              <p><span className="font-medium">Email:</span> {user?.email}</p>
-              <p><span className="font-medium">Phone:</span> {user?.phone}</p>
-              <p><span className="font-medium">Role:</span> { accountSetting.role[user?.role] }</p>
-              <p><span className="font-medium">Status:</span> 
-                <Badge 
-                    status={statusOptions[user?.status]} 
-                    text={user?.status} 
-                />
-              </p>
+              <ul className="list-disc list-inside max-h-60 overflow-y-auto">
+                {list.length > 0 ? (
+                  list.map((item, index) => (
+                    <li key={index} className="py-1">{item}</li>
+                  ))
+                ) : (
+                  <li className="py-1">No items found.</li>
+                )}
+              </ul>
             </div>
 
             <div className="flex justify-end mt-6">
