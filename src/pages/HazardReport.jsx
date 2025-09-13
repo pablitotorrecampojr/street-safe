@@ -58,6 +58,7 @@ export default function HazardReport() {
   const columns = [
     { field: 'index', headerName: '#', width: 30 },
     { field: 'id', headerName: 'UID', width: 30 },
+    { field: 'type', headerName: 'Type', width: 150 },
     { field: 'location', headerName: 'Location', width: 200 },
     { field: 'description', headerName: 'Description', width: 300 },
     { field: 'status', headerName: 'Status', width: 120,
@@ -81,7 +82,7 @@ export default function HazardReport() {
      },
     { field: 'actions', type: 'actions', headerName: 'Actions', width: 100,
       getActions: (params) => {
-        if (currentUser?.role === UserRole.ADMIN) {
+        if (currentUser?.role === UserRole.ADMIN) { //TODO: admin can only view
           const actions = [
             <GridActionsCellItem
               label={
@@ -96,7 +97,7 @@ export default function HazardReport() {
           ];
           return actions;
         }
-        if (currentUser?.role === UserRole.MUNICIPALITIES) {
+        if (currentUser?.role === UserRole.MUNICIPALITIES) { //TODO: municipalities can view and update status
           const actions = [
             <GridActionsCellItem
               label={
@@ -173,6 +174,63 @@ export default function HazardReport() {
               />
             )
           }
+          return actions;
+        }
+        if (currentUser?.role === UserRole.AUTHORITIES) { //TODO: authorities can only view national hazards
+          const actions = [
+            <GridActionsCellItem
+              label={
+                <div className="hover:text-blue-500 text-sm"
+                  onClick={() => {setSelectedHazard(params.row); setIsViewHazardOpen(true);} }
+                >
+                  <i className="fa-solid fa-eye mr-2"></i> View
+                </div>
+              }
+              showInMenu
+            />,
+            <GridActionsCellItem
+              label={
+                <div className="hover:text-blue-500 text-sm"
+                  onClick={() => {
+                    Hazards.updateStatus(params.row.pushId, RoadHazards.Status.PENDING, null, true);
+                  }}
+                >
+                  <i className="fa-solid fa-hourglass-half mr-2"></i> PENDING
+                </div>
+              }
+              showInMenu
+            />,
+            <GridActionsCellItem
+              label={
+                <div className="hover:text-blue-500 text-sm"
+                  onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.INVESTIGATING);} }
+                >
+                  <i className="fa-solid fa-magnifying-glass mr-2"></i> Investigate
+                </div>
+              }
+              showInMenu
+            />,
+            <GridActionsCellItem
+              label={
+                <div className="hover:text-blue-500 text-sm"
+                  onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.REJECTED);} }
+                >
+                  <i className="fa-solid fa-thumbs-down mr-2"></i> Reject
+                </div>
+              }
+              showInMenu
+            />,
+            <GridActionsCellItem
+              label={
+                <div className="hover:text-blue-500 text-sm"
+                  onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.RESOLVED, new Date().toISOString());} }
+                >
+                  <i className="fa-solid fa-thumbs-up mr-2"></i> Resolve
+                </div>
+              }
+              showInMenu
+            />
+          ];
           return actions;
         }
         return [

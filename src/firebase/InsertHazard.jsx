@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { db, realtimeDb } from './firebase';
+import { realtimeDb } from './firebase';
 import { ref, push, set } from "firebase/database";
 import { RoadHazards } from "@enums";
 
@@ -23,7 +23,7 @@ export default function ProtectedRoute({ children }) {
                     description: "This is a dummy hazard report for testing purposes.",
                     reportedAt: "2025-04-11 00:00:00",
                     location: "Dummy Location, City, Country",
-                    type: "Dummy Data",
+                    type: "Test Data",
                     status: RoadHazards.Status.PENDING,
                     isNationalFlag: false,
                     latitude: 10.339278,
