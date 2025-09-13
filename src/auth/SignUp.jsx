@@ -89,11 +89,21 @@ export default function SignUp() {
           </h3>
           <div className="space-y-4">
             <div className="w-full flex justify-start space-x-2">
-              <button className={`px-3 py-1 ${selectedRole === UserRole.AUTHORITIES ? "bg-indigo-600" : "bg-gray-200"} text-white rounded-lg hover:bg-indigo-700 transition`} 
+              <button 
+                className={`px-3 py-1 rounded-lg transition ${
+                  selectedRole === UserRole.AUTHORITIES
+                    ? "bg-indigo-600 text-white hover:bg-indigo-700"
+                    : "bg-gray-200 text-black hover:bg-gray-300 hover:text-black"
+                }`}
                 onClick={() => handleRoleChange(UserRole.AUTHORITIES)}>
                 {Letters.CapitalizeFirstLetter(UserRole.AUTHORITIES)}
               </button>
-              <button className={`px-3 py-1 ${selectedRole === UserRole.MUNICIPALITIES ? "bg-indigo-600" : "bg-gray-200"} text-white rounded-lg hover:bg-indigo-700 transition`} 
+              <button 
+                className={`px-3 py-1 rounded-lg transition ${
+                  selectedRole === UserRole.MUNICIPALITIES
+                    ? "bg-indigo-600 text-white hover:bg-indigo-700"
+                    : "bg-gray-200 text-black hover:bg-gray-300 hover:text-black"
+                }`}
                 onClick={() => handleRoleChange(UserRole.MUNICIPALITIES)}>
                 {Letters.CapitalizeFirstLetter(UserRole.MUNICIPALITIES)}
               </button>
@@ -314,6 +324,11 @@ export default function SignUp() {
                               ))}
                             </select>
                           </div>
+                          {errors.municipality && (
+                            <span className="text-xs text-red-500 mt-1">
+                              {errors.municipality}
+                            </span>
+                          )}
                         </div>
 
                         <div className="flex flex-col">
