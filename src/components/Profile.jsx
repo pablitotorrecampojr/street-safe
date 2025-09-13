@@ -11,7 +11,6 @@ export default function Profile() {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            console.log("Current User:", currentUser);
             setUser(currentUser);
         });
 

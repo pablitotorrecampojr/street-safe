@@ -41,7 +41,6 @@ export default function HomeFragment() {
                 const sortedDescending = filteredHazards.sort(
                     (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
                 );
-                console.log("hazard status: " + pendingHazard);
                 setRoadHazards(sortedDescending);
                 setPendingHazard(_pendingHazard);
                 setInProgressHazard(_inProgressHazard);

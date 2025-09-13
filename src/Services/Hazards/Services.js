@@ -8,7 +8,6 @@ export async function all() {
 
     if (snapshot.exists()) {
       const data = snapshot.val();
-      console.log("[roadHazards] Fetched road hazards:", data);
 
       return Object.entries(data).map(([id, value]) => ({
         id,
@@ -31,8 +30,6 @@ export async function getById(hazardId) {
 
     if (snapshot.exists()) {
       const data = snapshot.val();
-      console.log(`[roadHazard] Fetched hazard ${hazardId}:`, data);
-
       return {
         id: hazardId,
         ...data,
@@ -72,11 +69,6 @@ export function subscribe(callback) {
  */
 export async function updateStatus(hazardId, newStatus, resolvedAt = null) {
   try {
-    console.log(
-      `[roadHazard] Updating hazard ${hazardId} status to ${newStatus} with resolvedAt:`,
-      resolvedAt
-    );
-
     const hazardRef = ref(realtimeDb, `roadhazards/${hazardId}`);
     await update(hazardRef, {
       status: newStatus,

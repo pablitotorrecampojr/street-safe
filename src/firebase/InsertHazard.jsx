@@ -25,6 +25,7 @@ export default function ProtectedRoute({ children }) {
                     location: "Dummy Location, City, Country",
                     type: "Dummy Data",
                     status: RoadHazards.Status.PENDING,
+                    isNationalFlag: false,
                     latitude: 10.339278,
                     longitude: 123.904334,
                     userid: "opbG2JQJBpZj4sjZ9i0PsqynbkQ2",

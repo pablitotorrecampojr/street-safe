@@ -22,7 +22,6 @@ export default function Navbar() {
             if (userSnap.exists()) {
               setUserData(userSnap.data());
             } else {
-              console.log("No user document found. Creating one...");
               const defaultData = {
                 email: currentUser.email,
                 createdAt: new Date(),

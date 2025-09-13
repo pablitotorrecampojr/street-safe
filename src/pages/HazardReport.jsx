@@ -28,7 +28,6 @@ export default function HazardReport() {
       }))
     );
 
-    console.log("[HazardReport] hazards:", hazards);
     setLoading(false);
   }, [hazards]);  
 
@@ -84,8 +83,7 @@ export default function HazardReport() {
             <GridActionsCellItem
              label={
                 <div className="hover:text-blue-500 text-sm"
-                  onClick={() => {
-                    Hazards.updateStatus(params.row.pushId, RoadHazards.Status.INVESTIGATING);} }
+                  onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.INVESTIGATING);} }
                 >
                   <i className="fa-solid fa-magnifying-glass mr-2"></i> Investigate
                 </div>
@@ -94,7 +92,9 @@ export default function HazardReport() {
             />,
             <GridActionsCellItem
               label={
-                <div className="hover:text-blue-500 text-sm">
+                <div className="hover:text-blue-500 text-sm"
+                  onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.REJECTED);} }
+                >
                   <i className="fa-solid fa-thumbs-down mr-2"></i> Reject
                 </div>
               }
@@ -102,7 +102,9 @@ export default function HazardReport() {
             />,
             <GridActionsCellItem
               label={
-                <div className="hover:text-blue-500 text-sm">
+                <div className="hover:text-blue-500 text-sm"
+                  onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.RESOLVED, new Date().toISOString());} }
+                >
                   <i className="fa-solid fa-thumbs-up mr-2"></i> Resolve
                 </div>
               }
@@ -110,7 +112,9 @@ export default function HazardReport() {
             />,
             <GridActionsCellItem
               label={
-                <div className="hover:text-blue-500 text-sm">
+                <div className="hover:text-blue-500 text-sm"
+                  onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.NATIONAL_HIGHWAY);} }
+                >
                   <i className="fa-solid fa-share-from-square mr-2"></i> National Highway
                 </div>
               }

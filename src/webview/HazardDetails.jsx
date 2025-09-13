@@ -32,7 +32,6 @@ export default function HazardDetails() {
         if (snapshot.exists()) {
           const data = snapshot.val();
           setRoadHazards(data);
-          console.log("Hazard Data:", data);
         } else {
           console.log("No hazard found with the given ID.");
         }
