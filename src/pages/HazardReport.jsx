@@ -109,7 +109,7 @@ export default function HazardReport() {
               showInMenu
             />
           ];
-          if (params.row.status !== RoadHazards.Status.PENDING || params.row.isNationalFlag == true) {
+          if (params.row.isNationalFlag == true && params.row.status === RoadHazards.Status.PENDING) {
             actions.push(
               <GridActionsCellItem
                 label={
