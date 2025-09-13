@@ -27,7 +27,7 @@ export default function HazardReport() {
         ...hazard,
       }))
     );
-
+    console.log(hazards);
     setLoading(false);
   }, [hazards]);  
 
@@ -84,48 +84,52 @@ export default function HazardReport() {
                 </div>
               }
               showInMenu
-            />,
-            <GridActionsCellItem
-             label={
-                <div className="hover:text-blue-500 text-sm"
-                  onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.INVESTIGATING);} }
-                >
-                  <i className="fa-solid fa-magnifying-glass mr-2"></i> Investigate
-                </div>
-              }
-              showInMenu
-            />,
-            <GridActionsCellItem
-              label={
-                <div className="hover:text-blue-500 text-sm"
-                  onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.REJECTED);} }
-                >
-                  <i className="fa-solid fa-thumbs-down mr-2"></i> Reject
-                </div>
-              }
-              showInMenu
-            />,
-            <GridActionsCellItem
-              label={
-                <div className="hover:text-blue-500 text-sm"
-                  onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.RESOLVED, new Date().toISOString());} }
-                >
-                  <i className="fa-solid fa-thumbs-up mr-2"></i> Resolve
-                </div>
-              }
-              showInMenu
-            />,
-            <GridActionsCellItem
-              label={
-                <div className="hover:text-blue-500 text-sm"
-                  onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.NATIONAL);} }
-                >
-                  <i className="fa-solid fa-share-from-square mr-2"></i> National Highway
-                </div>
-              }
-              showInMenu
-            />,
+            />
           ];
+          if (!params.row.isNationalFlag) {
+            actions.push(
+              <GridActionsCellItem
+                label={
+                  <div className="hover:text-blue-500 text-sm"
+                    onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.INVESTIGATING);} }
+                  >
+                    <i className="fa-solid fa-magnifying-glass mr-2"></i> Investigate
+                  </div>
+                }
+                showInMenu
+              />,
+              <GridActionsCellItem
+                label={
+                  <div className="hover:text-blue-500 text-sm"
+                    onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.REJECTED);} }
+                  >
+                    <i className="fa-solid fa-thumbs-down mr-2"></i> Reject
+                  </div>
+                }
+                showInMenu
+              />,
+              <GridActionsCellItem
+                label={
+                  <div className="hover:text-blue-500 text-sm"
+                    onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.RESOLVED, new Date().toISOString());} }
+                  >
+                    <i className="fa-solid fa-thumbs-up mr-2"></i> Resolve
+                  </div>
+                }
+                showInMenu
+              />,
+              <GridActionsCellItem
+                label={
+                  <div className="hover:text-blue-500 text-sm"
+                    onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.NATIONAL);} }
+                  >
+                    <i className="fa-solid fa-share-from-square mr-2"></i> National Highway
+                  </div>
+                }
+                showInMenu
+              />
+            );
+          }
           return actions;
         }
         return [
