@@ -129,6 +129,10 @@ export default function HazardReport() {
                 }
                 showInMenu
               />,
+            );
+          }
+          if (params.row.status === RoadHazards.Status.PENDING || params.row.status === RoadHazards.Status.INVESTIGATING) {
+            actions.push(
               <GridActionsCellItem
                 label={
                   <div className="hover:text-blue-500 text-sm"
@@ -139,7 +143,7 @@ export default function HazardReport() {
                 }
                 showInMenu
               />
-            );
+            )
           }
           return actions;
         }
