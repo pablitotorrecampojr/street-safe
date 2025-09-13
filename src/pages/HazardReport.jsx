@@ -239,14 +239,10 @@ export default function HazardReport() {
                       <>
                          <div className="relative">
                           <button
-                            className="btn btn-primary btn-sm"
+                            className="btn btn-warning btn-sm"
                             onClick={() => setIsOpen(!isOpen)}
                           >
-                            {isNational === null
-                              ? "Is National?"
-                              : isNational
-                              ? "Yes"
-                              : "No"}
+                            {isNational === null ? "Is National?" : isNational ? "Yes" : "No"}
                           </button>
 
                           {isOpen && (
