@@ -30,8 +30,8 @@ export default function SignUp() {
     password: "",
     confirmPassword: "",
     role: selectedRole,
-    validIdFront: "",
-    validIdBack: "",
+    validIDFront: "",
+    validIDBack: "",
     municipality: "",
     district: "",
   });
@@ -190,52 +190,58 @@ export default function SignUp() {
                     <label className="mb-1 text-sm font-medium">Valid ID (Front)</label>
                     <div
                       className={`flex items-center border rounded-lg overflow-hidden ${
-                        errors.validIdFront ? "input-error" : ""
+                        errors.validIDFront ? "input-error" : ""
                       }`}
                     >
                       <input
                         className="form-control flex-grow border-0"
                         type="file"
-                        id="validIdFront"
-                        name="validIdFront"
+                        id="validIDFront"
+                        name="validIDFront"
                         onChange={handleFileChange}
                       />
                       <button
                         type="button"
                         className="px-3 text-gray-600 hover:text-blue-600"
                         onClick={() =>
-                          setViewImage({ isOpen: true, imageUrl: formData.validIdFront })
+                          setViewImage({ isOpen: true, imageUrl: formData.validIDFront })
                         }
                       >
                         <i className="fa-regular fa-eye"></i>
                       </button>
                     </div>
+                    {errors.validIDFront && (
+                      <span className="text-xs text-red-500 mt-1">{errors.validIDFront}</span>
+                    )}
                   </div>
 
                   <div className="flex flex-col">
                     <label className="mb-1 text-sm font-medium">Valid ID (Back)</label>
                     <div
                       className={`flex items-center border rounded-lg overflow-hidden ${
-                        errors.validIdBack ? "input-error" : ""
+                        errors.validIDBack ? "input-error" : ""
                       }`}
                     >
                       <input
                         className="form-control flex-grow border-0"
                         type="file"
-                        id="validIdBack"
-                        name="validIdBack"
+                        id="validIDBack"
+                        name="validIDBack"
                         onChange={handleFileChange}
                       />
                       <button
                         type="button"
                         className="px-3 text-gray-600 hover:text-blue-600"
                         onClick={() =>
-                          setViewImage({ isOpen: true, imageUrl: formData.validIdBack })
+                          setViewImage({ isOpen: true, imageUrl: formData.validIDBack })
                         }
                       >
                         <i className="fa-regular fa-eye"></i>
                       </button>
                     </div>
+                    {errors.validIDBack && (
+                      <span className="text-xs text-red-500 mt-1">{errors.validIDBack}</span>
+                    )}
                   </div>
 
                   {selectedRole === UserRole.AUTHORITIES &&
