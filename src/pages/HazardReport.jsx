@@ -157,11 +157,18 @@ export default function HazardReport() {
   //TODO: handling filtering road hazards
   const [statusOpen, setStatusOpen] = useState(false);
   const [filter, setFilter] = useState({ status: null });
+  const [isOpen, setIsOpen] = useState(false);
+  const [isNational, setIsNational] = useState(null);
   const handleFilter = (status) => {
     setStatusOpen(false);
     setFilter({ status: status });
     setHazards(allHazards.filter((hazard) => hazard.status === status));
   };
+  const handleIsNational = (isNational) => {
+    setIsOpen(false);
+    setHazards(allHazards.filter((hazard) => hazard.isNationalFlag === isNational));
+    setFilter({ status: null })
+  }
   return (
     <>
       <ViewHazards 
@@ -183,8 +190,10 @@ export default function HazardReport() {
 
                 <div className='w-full flex flex-col justify-end p-2'>
                   <div className='flex justify-end gap-2'>
-                     <div className="relative">
-                      <button className="btn btn-success btn-sm" >
+                    <div className="relative">
+                      <button className="btn btn-info btn-sm"
+                       onClick={() => {setRows(allHazards); setFilter({status: null});} }
+                      >
                         <i className="fa-solid fa-rotate-left"></i>
                       </button>
                     </div>
@@ -226,6 +235,39 @@ export default function HazardReport() {
                         </div>
                       )}
                     </div>
+                    {currentUser?.role === UserRole.MUNICIPALITIES && (
+                      <>
+                         <div className="relative">
+                          <button
+                            className="btn btn-primary btn-sm"
+                            onClick={() => setIsOpen(!isOpen)}
+                          >
+                            {isNational === null
+                              ? "Is National?"
+                              : isNational
+                              ? "Yes"
+                              : "No"}
+                          </button>
+
+                          {isOpen && (
+                            <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow-lg z-10">
+                              <button
+                                className="w-full text-left px-4 py-2 hover:bg-blue-100"
+                                onClick={() => handleIsNational(true)}
+                              >
+                                Yes
+                              </button>
+                              <button
+                                className="w-full text-left px-4 py-2 hover:bg-blue-100"
+                                onClick={() => handleIsNational(false)}
+                              >
+                                No
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
 

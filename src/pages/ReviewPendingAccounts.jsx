@@ -249,7 +249,7 @@ export default function ReviewPendingAccounts() {
                 <div className="mb-2 w-full p-2">
                   <div className="flex gap-x-4 justify-end">
                   <div className="relative">
-                    <button className="btn btn-success btn-sm" onClick={() => {
+                    <button className="btn btn-info btn-sm" onClick={() => {
                       setRows(allUsers);
                       setFilter({ role: null, status: null });
                     }}>
@@ -283,7 +283,7 @@ export default function ReviewPendingAccounts() {
 
                   <div className="relative">
                     <button
-                      className="btn btn-info btn-sm"
+                      className="btn btn-warning btn-sm"
                       onClick={() => {
                         setStatusOpen(!statusOpen);
                         setRoleOpen(false);
