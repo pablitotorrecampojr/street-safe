@@ -13,8 +13,11 @@ export default function HazardReport() {
   //TODO: fetching roadzards
   const [hazards, setHazards] = useState([]);
   useEffect(() => {
-    const unsubscribe = Hazards.subscribe(setHazards);
-    return () => unsubscribe(); 
+    const unsubscribe = Hazards.subscribe((data) => {
+      setHazards(data);
+      setLoading(false); 
+    });
+    return () => unsubscribe();
   }, []);
 
   const [currentUser, setCurrentUser] = useState(null);
@@ -28,11 +31,10 @@ export default function HazardReport() {
       }))
     );
     console.log(hazards);
-    setLoading(false);
   }, [hazards]);  
 
   //TODO: handleing viewing road hazards
-  const [selectedHazard, setSelectedHazard] = useState({});
+  const [selectedHazard, setSelectedHazard] = useState({}); 
   const [isViewHazardOpen, setIsViewHazardOpen] = useState(false);
 
   //TODO: handling displaying road hazards
