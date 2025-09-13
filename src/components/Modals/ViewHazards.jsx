@@ -47,27 +47,49 @@ export default function ViewHazards({ isOpen, data, onClose }) {
 
                         <h1>Hazard Details</h1>
 
-                        <div className="w-full border-t border-gray-200 mt-4">
+                        <div className="w-full border-t  mt-4">
                             {!loading ? (
-                                <div className="px-4 py-2">
-                                    <h2 className="text-lg font-semibold">Location:</h2>
-                                    <p>{hazardData.location ? hazardData.location : "Unknown Location"}</p>
-
-                                    <h2 className="text-lg font-semibold">Description:</h2>
-                                    <p>{hazardData.description ? hazardData.description : "No Description Available"}</p>
-
-                                    <h2 className="text-lg font-semibold">Status:</h2>
-                                    {hazardData.status ? (
-                                        <Badge 
-                                            status={RoadHazards.Style[hazardData.status]}
-                                            text={hazardData.status}
+                                <div className="bg-white rounded-xl p-6 space-y-4 max-w-md mx-auto">
+                                    {hazardData.image && (
+                                        <div className="w-full h-60 overflow-hidden rounded-lg">
+                                        <img
+                                            src={`data:image/png;base64,${hazardData.image}`}
+                                            alt="Hazard"
+                                            className="w-full h-full object-cover"
                                         />
-                                    ) : (
-                                        <i>Unknown Status</i>
+                                        </div>
                                     )}
 
-                                    <h2 className="text-lg font-semibold">Resolved At:</h2>
-                                    <p>{hazardData.resolvedAt ? new Date(hazardData.resolvedAt).toLocaleString() : "To be determined"}</p>
+                                    <div>
+                                        <h2 className="text-sm font-semibold text-gray-700 uppercase">Location</h2>
+                                        <p className= "mt-1">{hazardData.location ?? "Unknown Location"}</p>
+                                    </div>
+
+                                    <div>
+                                        <h2 className="text-sm font-semibold text-gray-700 uppercase">Description</h2>
+                                        <p className="mt-1">{hazardData.description ?? "No Description Available"}</p>
+                                    </div>
+
+                                    <div>
+                                        <h2 className="text-sm font-semibold text-gray-700 uppercase">Status</h2>
+                                        {hazardData.status ? (
+                                            <div className="p-2">
+                                                <Badge
+                                                    status={RoadHazards.Style[hazardData.status]}
+                                                    text={hazardData.status}
+                                                />
+                                            </div>
+                                        ) : (
+                                        <span className="italic text-gray-500">Unknown Status</span>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <h2 className="text-sm font-semibold text-gray-700 uppercase">Resolved At</h2>
+                                        <p className= "mt-1">
+                                        {hazardData.resolvedAt ? new Date(hazardData.resolvedAt).toLocaleString() : "To be determined"}
+                                        </p>
+                                    </div>
                                 </div>
                             ) : (
                                 <div className="flex justify-center items-center h-40">

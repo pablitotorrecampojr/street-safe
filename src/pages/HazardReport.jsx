@@ -130,7 +130,7 @@ export default function HazardReport() {
     <>
       <ViewHazards 
         isOpen={isViewHazardOpen} 
-        hazardId={selectedHazard} 
+        data={selectedHazard} 
         onClose={() => setIsViewHazardOpen(false)} 
         
       />
