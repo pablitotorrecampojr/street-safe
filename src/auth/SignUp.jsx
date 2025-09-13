@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { UserRole } from "@enums";
 import { Letters } from "@utils";
 import { LoadingScreen } from "@webview";
 import districtSortedJson from "../constants/districts-sorted.json"
 import districtJson from "../constants/districts.json"
 import municipalitiesJson from "../constants/municipalities.json"
-import { ViewLists, Divider } from "@components";
+import { ViewLists } from "@components";
 import { UserValidations } from "@services";
 export default function SignUp() {
 
   const [selectedRole, setSelectedRole] = useState(UserRole.AUTHORITIES);
   const [loading, setLoading] = useState(true);
   const handleRoleChange = (role) => {
+    formData.role = role;
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
@@ -45,6 +45,7 @@ export default function SignUp() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("Form Data Submitted:", formData);
     const validationErrors = UserValidations.validate(formData);
     if (Object.keys(validationErrors).length > 0) {
       console.log("Validation Errors:", validationErrors);
