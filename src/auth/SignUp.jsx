@@ -50,12 +50,14 @@ export default function SignUp() {
     });
   };
 
+  const [errors, setErrors] = useState({});
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form Data Submitted:", formData);
     const validationErrors = UserValidations.validate(formData);
     if (Object.keys(validationErrors).length > 0) {
       console.log("Validation Errors:", validationErrors);
+      setErrors(validationErrors);
     } else {
       console.log("Form Data is valid:", formData);
     }
@@ -106,12 +108,17 @@ export default function SignUp() {
                     <label className="mb-1 text-sm font-medium">Full Name</label>
                     <input
                       type="text"
-                      name="fullName"
+                      name="fullname"
                       placeholder="Full Name"
-                      value={formData.fullName}
+                      value={formData.fullname}
                       onChange={handleChange}
-                      className="form-control"
+                      className={`form-control border rounded px-3 py-2 ${
+                        errors.fullname ? "input-error" : "border-gray-300"
+                      }`}
                     />
+                    {errors.fullname && (
+                      <span className="text-xs text-red-500 mt-1">{errors.fullname}</span>
+                    )}
                   </div>
 
                   <div className="flex flex-col">
@@ -122,8 +129,13 @@ export default function SignUp() {
                       placeholder="Email Address"
                       value={formData.email}
                       onChange={handleChange}
-                      className="form-control"
+                      className={`form-control border rounded px-3 py-2 ${
+                        errors.email ? "input-error" : "border-gray-300"
+                      }`}
                     />
+                    {errors.email && (
+                      <span className="text-xs text-red-500 mt-1">{errors.email}</span>
+                    )}
                   </div>
 
                   <div className="flex flex-col">
@@ -134,8 +146,13 @@ export default function SignUp() {
                       placeholder="Password"
                       value={formData.password}
                       onChange={handleChange}
-                      className="form-control"
+                      className={`form-control border rounded px-3 py-2 ${
+                        errors.password ? "input-error" : "border-gray-300"
+                      }`}
                     />
+                    {errors.password && (
+                      <span className="text-xs text-red-500 mt-1">{errors.password}</span>
+                    )}
                   </div>
 
                   <div className="flex flex-col">
@@ -146,15 +163,26 @@ export default function SignUp() {
                       placeholder="Confirm Password"
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      className="form-control"
+                      className={`form-control border rounded px-3 py-2 ${
+                        errors.confirmPassword ? "input-error" : "border-gray-300"
+                      }`}
                     />
+                    {errors.confirmPassword && (
+                      <span className="text-xs text-red-500 mt-1">
+                        {errors.confirmPassword}
+                      </span>
+                    )}
                   </div>
                 </div>
 
                 <div className="flex flex-col space-y-4">
                   <div className="flex flex-col">
                     <label className="mb-1 text-sm font-medium">Valid ID (Front)</label>
-                    <div className="flex items-center border rounded-lg overflow-hidden">
+                    <div
+                      className={`flex items-center border rounded-lg overflow-hidden ${
+                        errors.validIdFront ? "input-error" : ""
+                      }`}
+                    >
                       <input
                         className="form-control flex-grow border-0"
                         type="file"
@@ -165,7 +193,9 @@ export default function SignUp() {
                       <button
                         type="button"
                         className="px-3 text-gray-600 hover:text-blue-600"
-                        onClick={() => setViewImage({ isOpen: true, imageUrl: formData.validIdFront })}
+                        onClick={() =>
+                          setViewImage({ isOpen: true, imageUrl: formData.validIdFront })
+                        }
                       >
                         <i className="fa-regular fa-eye"></i>
                       </button>
@@ -174,7 +204,11 @@ export default function SignUp() {
 
                   <div className="flex flex-col">
                     <label className="mb-1 text-sm font-medium">Valid ID (Back)</label>
-                    <div className="flex items-center border rounded-lg overflow-hidden">
+                    <div
+                      className={`flex items-center border rounded-lg overflow-hidden ${
+                        errors.validIdBack ? "input-error" : ""
+                      }`}
+                    >
                       <input
                         className="form-control flex-grow border-0"
                         type="file"
@@ -185,21 +219,30 @@ export default function SignUp() {
                       <button
                         type="button"
                         className="px-3 text-gray-600 hover:text-blue-600"
-                        onClick={() => setViewImage({ isOpen: true, imageUrl: formData.validIdBack })}
+                        onClick={() =>
+                          setViewImage({ isOpen: true, imageUrl: formData.validIdBack })
+                        }
                       >
                         <i className="fa-regular fa-eye"></i>
                       </button>
                     </div>
                   </div>
-                  {selectedRole === UserRole.AUTHORITIES && (
-                    loading ? <LoadingScreen /> : (
+
+                  {selectedRole === UserRole.AUTHORITIES &&
+                    (loading ? (
+                      <LoadingScreen />
+                    ) : (
                       <>
                         <div className="flex flex-col">
                           <label className="mb-1 text-sm font-medium">District</label>
-                          <div className="flex items-center border rounded-lg overflow-hidden">
-                            <select 
-                              className="form-control" 
-                              name="district" 
+                          <div
+                            className={`flex items-center border rounded-lg overflow-hidden ${
+                              errors.district ? "input-error" : ""
+                            }`}
+                          >
+                            <select
+                              className="form-control"
+                              name="district"
                               id="district"
                               value={formData.district}
                               onChange={handleChange}
@@ -212,13 +255,29 @@ export default function SignUp() {
                               ))}
                             </select>
                           </div>
+                          {errors.district && (
+                            <span className="text-xs text-red-500 mt-1">
+                              {errors.district}
+                            </span>
+                          )}
                         </div>
+
                         <div className="flex flex-col">
                           <label className="mb-1 text-sm font-medium">Selected District</label>
                           <div className="form-control bg-gray-100 border-0">
                             {formData.district ? (
                               <>
-                                {districtJson.find(d => d.district === formData.district)?.name}, {districtJson.find(d => d.district === formData.district)?.code}
+                                {
+                                  districtJson.find(
+                                    (d) => d.district === formData.district
+                                  )?.name
+                                }
+                                ,{" "}
+                                {
+                                  districtJson.find(
+                                    (d) => d.district === formData.district
+                                  )?.code
+                                }
                               </>
                             ) : (
                               "No district selected."
@@ -226,17 +285,23 @@ export default function SignUp() {
                           </div>
                         </div>
                       </>
-                    )
-                  )}
-                  {selectedRole === UserRole.MUNICIPALITIES && (
-                    loading ? <LoadingScreen /> : (
+                    ))}
+
+                  {selectedRole === UserRole.MUNICIPALITIES &&
+                    (loading ? (
+                      <LoadingScreen />
+                    ) : (
                       <>
                         <div className="flex flex-col">
                           <label className="mb-1 text-sm font-medium">Municipality</label>
-                          <div className="flex items-center border rounded-lg overflow-hidden">
-                            <select 
-                              className="form-control" 
-                              name="municipality" 
+                          <div
+                            className={`flex items-center border rounded-lg overflow-hidden ${
+                              errors.municipality ? "input-error" : ""
+                            }`}
+                          >
+                            <select
+                              className="form-control"
+                              name="municipality"
                               id="municipality"
                               value={formData.municipality}
                               onChange={handleChange}
@@ -252,12 +317,19 @@ export default function SignUp() {
                         </div>
 
                         <div className="flex flex-col">
-                          <label className="mb-1 text-sm font-medium">Barangays within the selected municipality</label>
+                          <label className="mb-1 text-sm font-medium">
+                            Barangays within the selected municipality
+                          </label>
                           <div className="flex items-center border rounded-lg overflow-hidden">
                             <div className="form-control">
                               <a
                                 href="#"
-                                className={'text-blue-600 hover:underline ' + (formData.municipality ? '' : 'pointer-events-none text-gray-400')}
+                                className={
+                                  "text-blue-600 hover:underline " +
+                                  (formData.municipality
+                                    ? ""
+                                    : "pointer-events-none text-gray-400")
+                                }
                                 onClick={() => setOpenBarangays(true)}
                               >
                                 View Barangays
@@ -266,8 +338,7 @@ export default function SignUp() {
                           </div>
                         </div>
                       </>
-                    )
-                  )}
+                    ))}
                 </div>
               </div>
 

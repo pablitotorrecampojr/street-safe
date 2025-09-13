@@ -8,6 +8,12 @@
     font-size: 14px;
     margin-top: 5px;
   }
+
+  .input-error {
+    border: 2px solid red !important;
+    border-radius: 0.375rem;
+  }
+
   
   .circle-bg {
     width: 80px;
