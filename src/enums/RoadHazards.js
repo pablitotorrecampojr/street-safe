@@ -1,13 +1,14 @@
 export const Status = {
     PENDING: 'pending',
-    IN_PROGRESS: 'in progress',
+    INVESTIGATING: 'investigating',
+    NATIONAL: 'national',
     RESOLVED: 'resolved',
     REJECTED: 'rejected',
 };
 
 export const Style = {
     [Status.PENDING]: 'info',
-    [Status.IN_PROGRESS]: 'warning',
+    [Status.INVESTIGATING]: 'warning',
     [Status.RESOLVED]: 'success',
     [Status.REJECTED]: 'danger',
 }

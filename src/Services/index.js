@@ -1,2 +1,2 @@
 export * as UserServices from "./userServices";
-export * as RoadHazardServices from "./roadHazards";
+export * as Hazards from "./Hazards/Services";

@@ -19,9 +19,9 @@ export default function ProtectedRoute({ children }) {
                 const hazardRef = ref(realtimeDb, "roadhazards");
                 const newHazard = {
                     id: generateRandomId(),
+                    image: "iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABk0lEQVR4nO3c0WqDMABA0Wbs/3/ZPQxC0JYx9HY4znko1tQgeElKHzq2bXvA1T7++gb4n4RFQlgkhEVCWCSERUJYJIRFQlgkhEVCWCSERUJYJIRFQlgkhEVCWCSERUJYJIRFQlgkhEVCWCSERUJYJIRF",
                     location: "123 Test St, Test City, Test Country",
                     description: "This is a test hazard report.",
-                    reportedBy: "testUserId",
                     status: "pending",
                     resolvedAt: null,
                     latitude: 10.123456,

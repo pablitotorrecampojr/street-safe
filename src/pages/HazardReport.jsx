@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import { LoadingScreen } from '@webview';
 import { Aside, NavBar, Badge } from '@components';
-import { RoadHazardServices } from '@services';
+import { Hazards } from '@services';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import { RoadHazards, UserRole  } from '@enums';
-
  
 export default function HazardReport() {
   const [loading, setLoading] = useState(true);
@@ -14,7 +13,7 @@ export default function HazardReport() {
   //TODO: fetching roadzards
   const [hazards, setHazards] = useState([]);
   useEffect(() => {
-    const unsubscribe = RoadHazardServices.subscribeToRoadHazards(setHazards);
+    const unsubscribe = Hazards.subscribeToRoadHazards(setHazards);
     return () => unsubscribe(); 
   }, []);
 
@@ -53,7 +52,6 @@ export default function HazardReport() {
         return new Date(params.value).toLocaleString();
       }
      },
-    { field: 'reportedBy', headerName: 'Reported By', width: 200 },
     { field: 'actions', type: 'actions', headerName: 'Actions', width: 100,
       getActions: (params) => {
         if (currentUser?.role === UserRole.ADMIN) {
@@ -63,6 +61,51 @@ export default function HazardReport() {
               label="View"
               showInMenu
             />
+          ];
+          return actions;
+        }
+        if (currentUser?.role === UserRole.MUNICIPALITIES) {
+          const actions = [
+            <GridActionsCellItem
+              label={
+                <div className="hover:text-blue-500 text-sm">
+                  <i className="tf-icons bx bx-check mr-2"></i> View
+                </div>
+              }
+              showInMenu
+            />,
+            <GridActionsCellItem
+             label={
+                <div className="hover:text-blue-500 text-sm">
+                  <i className="fa-solid fa-magnifying-glass mr-2"></i> Investigate
+                </div>
+              }
+              showInMenu
+            />,
+            <GridActionsCellItem
+              label={
+                <div className="hover:text-blue-500 text-sm">
+                  <i className="fa-solid fa-thumbs-down mr-2"></i> Reject
+                </div>
+              }
+              showInMenu
+            />,
+            <GridActionsCellItem
+              label={
+                <div className="hover:text-blue-500 text-sm">
+                  <i className="fa-solid fa-thumbs-up mr-2"></i> Resolve
+                </div>
+              }
+              showInMenu
+            />,
+            <GridActionsCellItem
+              label={
+                <div className="hover:text-blue-500 text-sm">
+                  <i class="fa-solid fa-share-from-square mr-2"></i> National Highway
+                </div>
+              }
+              showInMenu
+            />,
           ];
           return actions;
         }

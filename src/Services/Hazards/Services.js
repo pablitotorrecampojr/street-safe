@@ -1,5 +1,5 @@
 import { ref, get, onValue  } from "firebase/database";
-import { realtimeDb } from "../firebase/firebase";
+import { realtimeDb } from "../../firebase/firebase";
 
 export async function getRoadHazards() {
   try {
@@ -40,4 +40,12 @@ export function subscribeToRoadHazards(callback) {
   });
 
   return unsubscribe; // call this in cleanup
+}
+
+/**
+ * TODO: update road hazard status
+ * ? the following functions are used to update the status of a road hazard
+ */
+export async function updateStatus(hazardId, newStatus, resolvedAt = null) {
+  
 }
