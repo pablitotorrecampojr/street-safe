@@ -1,4 +1,4 @@
-import { ref, get, onValue  } from "firebase/database";
+import { ref, get, onValue, update } from "firebase/database";
 import { realtimeDb } from "../../firebase/firebase";
 
 export async function all() {
@@ -54,6 +54,7 @@ export function subscribe(callback) {
     const data = snapshot.val();
     if (data) {
       const formatted = Object.entries(data).map(([id, value]) => ({
+        pushId: id,
         ...value,
       }));
       callback(formatted);
@@ -62,7 +63,7 @@ export function subscribe(callback) {
     }
   });
 
-  return unsubscribe; // call this in cleanup
+  return unsubscribe;
 }
 
 /**
@@ -70,5 +71,21 @@ export function subscribe(callback) {
  * ? the following functions are used to update the status of a road hazard
  */
 export async function updateStatus(hazardId, newStatus, resolvedAt = null) {
+  try {
+    console.log(
+      `[roadHazard] Updating hazard ${hazardId} status to ${newStatus} with resolvedAt:`,
+      resolvedAt
+    );
 
+    const hazardRef = ref(realtimeDb, `roadhazards/${hazardId}`);
+    await update(hazardRef, {
+      status: newStatus,
+      resolvedAt: resolvedAt
+    });
+
+    return true;
+  } catch (error) {
+    console.error(`[roadHazard] Error updating hazard ${hazardId} status:`, error);
+    throw error;
+  }
 }

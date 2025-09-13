@@ -16,10 +16,6 @@ export default function ViewHazards({ isOpen, data, onClose }) {
         }
     }, [isOpen, data]);
 
-    useEffect(() => {
-      console.log("Selected Hazard Data:", hazardData);
-    });
-
   if (!isOpen) return null;
 
     return (

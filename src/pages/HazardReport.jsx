@@ -19,9 +19,6 @@ export default function HazardReport() {
 
   const [currentUser, setCurrentUser] = useState(null);
   useEffect(() => {
-    if (hazards.length > 0) {
-      setLoading(false);
-    }
     setCurrentUser(JSON.parse(localStorage.getItem("userData")) || null);
     setRows(
       hazards.map((hazard, index) => ({
@@ -30,6 +27,9 @@ export default function HazardReport() {
         ...hazard,
       }))
     );
+
+    console.log("[HazardReport] hazards:", hazards);
+    setLoading(false);
   }, [hazards]);  
 
   //TODO: handleing viewing road hazards
@@ -83,7 +83,10 @@ export default function HazardReport() {
             />,
             <GridActionsCellItem
              label={
-                <div className="hover:text-blue-500 text-sm">
+                <div className="hover:text-blue-500 text-sm"
+                  onClick={() => {
+                    Hazards.updateStatus(params.row.pushId, RoadHazards.Status.INVESTIGATING);} }
+                >
                   <i className="fa-solid fa-magnifying-glass mr-2"></i> Investigate
                 </div>
               }
