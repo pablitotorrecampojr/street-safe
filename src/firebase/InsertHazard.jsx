@@ -19,7 +19,7 @@ export default function ProtectedRoute({ children }) {
             try {
                 const hazardRef = ref(realtimeDb, "roadhazards");
                 const newHazard = {
-                    imageUrl: "base64Image",
+                    image: "base64Image",
                     description: "This is a dummy hazard report for testing purposes.",
                     reportedAt: "2025-04-11 00:00:00",
                     location: "Dummy Location, City, Country",

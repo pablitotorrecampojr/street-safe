@@ -1,5 +1,6 @@
 import { ref, get, onValue, update } from "firebase/database";
 import { realtimeDb } from "../../firebase/firebase";
+import { RoadHazards } from "@enums";
 
 export async function all() {
   try {
@@ -69,11 +70,19 @@ export function subscribe(callback) {
  */
 export async function updateStatus(hazardId, newStatus, resolvedAt = null) {
   try {
+   
     const hazardRef = ref(realtimeDb, `roadhazards/${hazardId}`);
-    await update(hazardRef, {
-      status: newStatus,
-      resolvedAt: resolvedAt
-    });
+    if (newStatus === RoadHazards.Status.NATIONAL) {
+      await update(hazardRef, {
+        isNationalFlag: true,
+        resolvedAt: resolvedAt
+      });
+    } else {
+      await update(hazardRef, {
+        status: newStatus,
+        resolvedAt: resolvedAt
+      });
+    }
 
     return true;
   } catch (error) {

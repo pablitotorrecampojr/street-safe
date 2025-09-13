@@ -50,6 +50,11 @@ export default function HazardReport() {
         />
       }
      },
+    { field: 'isNationalFlag', headerName: 'National Flag', width: 150,
+      renderCell: (params) => {
+        return params.value ? <Badge status="success" text="Yes" /> : <Badge status="danger" text="No" />;
+      }
+    },
     { field: 'resolvedAt', headerName: 'Resolved At', width: 200,
       renderCell: (params) => {
         if (!params.value) return <i>To be determined</i>;
@@ -113,7 +118,7 @@ export default function HazardReport() {
             <GridActionsCellItem
               label={
                 <div className="hover:text-blue-500 text-sm"
-                  onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.NATIONAL_HIGHWAY);} }
+                  onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.NATIONAL);} }
                 >
                   <i className="fa-solid fa-share-from-square mr-2"></i> National Highway
                 </div>
