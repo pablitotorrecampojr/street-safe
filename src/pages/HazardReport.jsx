@@ -66,8 +66,13 @@ export default function HazardReport() {
         if (currentUser?.role === UserRole.ADMIN) {
           const actions = [
             <GridActionsCellItem
-              icon={<i className="fa-solid fa-eye" />}
-              label="View"
+              label={
+                <div className="hover:text-blue-500 text-sm"
+                  onClick={() => {setSelectedHazard(params.row); setIsViewHazardOpen(true);} }
+                >
+                  <i className="fa-solid fa-eye mr-2"></i> View
+                </div>
+              }
               showInMenu
             />
           ];
