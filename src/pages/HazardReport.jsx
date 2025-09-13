@@ -6,16 +6,20 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import { RoadHazards, UserRole  } from '@enums';
+import { Letters } from '@utils';
+import { set } from 'firebase/database';
  
 export default function HazardReport() {
   const [loading, setLoading] = useState(true);
 
   //TODO: fetching roadzards
   const [hazards, setHazards] = useState([]);
+  const [allHazards, setAllHazards] = useState([]);
   useEffect(() => {
     const unsubscribe = Hazards.subscribe((data) => {
       setHazards(data);
-      setLoading(false); 
+      setAllHazards(data);
+      setLoading(false);
     });
     return () => unsubscribe();
   }, []);
@@ -149,6 +153,15 @@ export default function HazardReport() {
     },
   ];
 
+
+  //TODO: handling filtering road hazards
+  const [statusOpen, setStatusOpen] = useState(false);
+  const [filter, setFilter] = useState({ status: null });
+  const handleFilter = (status) => {
+    setStatusOpen(false);
+    setFilter({ status: status });
+    setHazards(allHazards.filter((hazard) => hazard.status === status));
+  };
   return (
     <>
       <ViewHazards 
@@ -166,6 +179,54 @@ export default function HazardReport() {
               <div className='container-xxl flex-grow-1 container-p-y'>
                 <div className='row mb-4 p-1'>
                   <h1 style={{ fontSize: '20px' }} className='fw-bold'>Hazard Report</h1>
+                </div>
+
+                <div className='w-full flex flex-col justify-end p-2'>
+                  <div className='flex justify-end gap-2'>
+                     <div className="relative">
+                      <button className="btn btn-success btn-sm" >
+                        <i className="fa-solid fa-rotate-left"></i>
+                      </button>
+                    </div>
+                    <div className="relative">
+                      <button
+                        className="btn btn-primary btn-sm"
+                        onClick={() => {
+                          setStatusOpen(!statusOpen);
+                        }}
+                      >
+                        {filter.status ? Letters.CapitalizeFirstLetter(filter.status) : "Filter Status"}
+                      </button>
+                      {statusOpen && (
+                        <div className="absolute right-0  mt-2 w-40 bg-white border rounded shadow-lg z-10">
+                          <button className="w-full text-left px-4 py-2 hover:bg-blue-100"
+                            onClick={() => {
+                              handleFilter(RoadHazards.Status.PENDING);
+                            }}
+                          >{Letters.CapitalizeFirstLetter(RoadHazards.Status.PENDING)}
+                          </button>
+                          <button className="w-full text-left px-4 py-2 hover:bg-blue-100"
+                            onClick={() => {
+                              handleFilter(RoadHazards.Status.INVESTIGATING);
+                            }}
+                          >{Letters.CapitalizeFirstLetter(RoadHazards.Status.INVESTIGATING)}
+                          </button>
+                          <button className="w-full text-left px-4 py-2 hover:bg-blue-100"
+                            onClick={() => {
+                              handleFilter(RoadHazards.Status.RESOLVED);
+                            }}
+                          >{Letters.CapitalizeFirstLetter(RoadHazards.Status.RESOLVED)}
+                          </button>
+                          <button className="w-full text-left px-4 py-2 hover:bg-blue-100"
+                            onClick={() => {
+                              handleFilter(RoadHazards.Status.REJECTED);
+                            }}
+                          >{Letters.CapitalizeFirstLetter(RoadHazards.Status.REJECTED)}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 <div className='card'>
