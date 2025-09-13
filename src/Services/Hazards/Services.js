@@ -68,7 +68,7 @@ export function subscribe(callback) {
  * TODO: update road hazard status
  * ? the following functions are used to update the status of a road hazard
  */
-export async function updateStatus(hazardId, newStatus, resolvedAt = null) {
+export async function updateStatus(hazardId, newStatus, resolvedAt = null, backtoPending = false) {
   try {
    
     const hazardRef = ref(realtimeDb, `roadhazards/${hazardId}`);
@@ -76,6 +76,12 @@ export async function updateStatus(hazardId, newStatus, resolvedAt = null) {
       await update(hazardRef, {
         isNationalFlag: true,
         resolvedAt: resolvedAt
+      });
+    } else if (backtoPending) {
+      await update(hazardRef, {
+        status: RoadHazards.Status.PENDING,
+        isNationalFlag: false,
+        resolvedAt: null
       });
     } else {
       await update(hazardRef, {

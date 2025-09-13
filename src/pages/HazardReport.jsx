@@ -27,13 +27,25 @@ export default function HazardReport() {
   const [currentUser, setCurrentUser] = useState(null);
   useEffect(() => {
     setCurrentUser(JSON.parse(localStorage.getItem("userData")) || null);
-    setRows(
-      hazards.map((hazard, index) => ({
-        index: index + 1,
-        id: hazard.id,
-        ...hazard,
-      }))
-    );
+    if (currentUser?.role === UserRole.AUTHORITIES) {
+      setRows(
+        hazards
+          .filter((hazard) => hazard.isNationalFlag === true)
+          .map((hazard, index) => ({
+            index: index + 1,
+            id: hazard.id,
+            ...hazard,
+          }))
+      );
+    } else {
+      setRows(
+        hazards.map((hazard, index) => ({
+          index: index + 1,
+          id: hazard.id,
+          ...hazard,
+        }))
+      );
+    }
     console.log(hazards);
   }, [hazards]);  
 
@@ -97,6 +109,22 @@ export default function HazardReport() {
               showInMenu
             />
           ];
+          if (params.row.status !== RoadHazards.Status.PENDING || params.row.isNationalFlag == true) {
+            actions.push(
+              <GridActionsCellItem
+                label={
+                  <div className="hover:text-blue-500 text-sm"
+                    onClick={() => {
+                      Hazards.updateStatus(params.row.pushId, RoadHazards.Status.PENDING, null, true);
+                    }}
+                  >
+                    <i className="fa-solid fa-hourglass-half mr-2"></i> PENDING
+                  </div>
+                }
+                showInMenu
+              />,
+            );
+          }
           if (!params.row.isNationalFlag) {
             actions.push(
               <GridActionsCellItem
