@@ -62,21 +62,7 @@ export default function SignUp() {
       toast.error("Please provide all required fields.");
       setErrors(validationErrors);
     } else {
-      setIsProcessing(true);
-      setFormData({
-        ...formData,
-        validIDFront: formData.validIDFront ? Images.fileToDataUrl(formData.validIDFront) : "",
-        validIDBack: formData.validIDBack ? Images.fileToDataUrl(formData.validIDBack) : "",
-      })
-      console.log("Form Data Submitted:", Images.fileToDataUrl(formData.validIDFront), Images.fileToDataUrl(formData.validIDFront));
-      const response = signUp(formData);
-      console.log("Sign up response:", response);
-      if (response.status === 200) {
-        toast.success("Sign up successful!");
-      } else {
-        toast.error("Sign up failed.");
-      }
-      setIsProcessing(false);
+     
     }
   };
 
