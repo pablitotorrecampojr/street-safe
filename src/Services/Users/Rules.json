@@ -39,21 +39,21 @@
     },
     "validIDFront": {
       "required": true,
-      "fileTypes": ["image/jpeg", "image/png", "application/pdf"],
+      "fileTypes": ["image/jpeg", "image/png"],
       "maxSizeMB": 5,
       "message": {
         "required": "Valid ID front image is required.",
-        "fileTypes": "Only JPG, PNG, and PDF files are allowed.",
+        "fileTypes": "Only JPG and PNG files are allowed.",
         "maxSizeMB": "File size must not exceed 5 MB."
       }
     },
     "validIDBack": {
       "required": true,
-      "fileTypes": ["image/jpeg", "image/png", "application/pdf"],
+      "fileTypes": ["image/jpeg", "image/png"],
       "maxSizeMB": 5,
       "message": {
         "required": "Valid ID back image is required.",
-        "fileTypes": "Only JPG, PNG, and PDF files are allowed.",
+        "fileTypes": "Only JPG and PNG files are allowed.",
         "maxSizeMB": "File size must not exceed 5 MB."
       }
     },

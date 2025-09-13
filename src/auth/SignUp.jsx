@@ -5,7 +5,7 @@ import { LoadingScreen } from "@webview";
 import districtSortedJson from "../constants/districts-sorted.json"
 import districtJson from "../constants/districts.json"
 import municipalitiesJson from "../constants/municipalities.json"
-import { ViewLists } from "@components";
+import { ViewLists, ViewImage } from "@components";
 import { UserValidations } from "@services";
 export default function SignUp() {
 
@@ -30,8 +30,8 @@ export default function SignUp() {
     password: "",
     confirmPassword: "",
     role: selectedRole,
-    validIdFront: null,
-    validIdBack: null,
+    validIdFront: "",
+    validIdBack: "",
     municipality: "",
     district: "",
   });
@@ -40,6 +40,13 @@ export default function SignUp() {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleFileChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.files[0],
     });
   };
 
@@ -55,7 +62,7 @@ export default function SignUp() {
   };
 
   const [openBarangays, setOpenBarangays] = useState(false);
-
+  const [viewImage, setViewImage] = useState({ isOpen: false, imageUrl: "" });
   return (
     <>
       {openBarangays && (
@@ -66,6 +73,13 @@ export default function SignUp() {
           header="List of Barangays"
         />
       )}
+
+      <ViewImage
+        isOpen={viewImage.isOpen}
+        imageSource={viewImage.imageUrl}
+        onClose={() => setViewImage({ isOpen: false, imageUrl: "" })}
+      />
+
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <div className="w-full max-w-4xl bg-white rounded-lg shadow-xl p-8">
           <h3 className="font-bold text-gray-800 mb-6">
@@ -146,10 +160,12 @@ export default function SignUp() {
                         type="file"
                         id="validIdFront"
                         name="validIdFront"
+                        onChange={handleFileChange}
                       />
                       <button
                         type="button"
                         className="px-3 text-gray-600 hover:text-blue-600"
+                        onClick={() => setViewImage({ isOpen: true, imageUrl: formData.validIdFront })}
                       >
                         <i className="fa-regular fa-eye"></i>
                       </button>
@@ -164,10 +180,12 @@ export default function SignUp() {
                         type="file"
                         id="validIdBack"
                         name="validIdBack"
+                        onChange={handleFileChange}
                       />
                       <button
                         type="button"
                         className="px-3 text-gray-600 hover:text-blue-600"
+                        onClick={() => setViewImage({ isOpen: true, imageUrl: formData.validIdBack })}
                       >
                         <i className="fa-regular fa-eye"></i>
                       </button>
