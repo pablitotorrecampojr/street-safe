@@ -6,3 +6,4 @@ export { default as PendingAccounts } from "./PendingAccount";
 export { default as Badge } from "./Badge";
 
 export { default as UsersDetails } from "./Modals/UsersDetails";
+export { default as ViewHazards } from "./Modals/ViewHazards";

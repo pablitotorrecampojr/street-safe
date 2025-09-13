@@ -1,24 +1,17 @@
 import { useEffect, useState } from "react";
 import { db, realtimeDb } from './firebase';
 import { ref, push, set } from "firebase/database";
+import { Letters } from "@utils";
 
 export default function ProtectedRoute({ children }) {
     const [response, setResponse] = useState(null);
 
     useEffect(() => {
-        const generateRandomId = () => {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let id = '';
-            for (let i = 0; i < 28; i++) {
-                id += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return id;
-        };
         const insertData = async () => {
             try {
                 const hazardRef = ref(realtimeDb, "roadhazards");
                 const newHazard = {
-                    id: generateRandomId(),
+                    id: Letters.generateRandomString(),
                     image: "iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABk0lEQVR4nO3c0WqDMABA0Wbs/3/ZPQxC0JYx9HY4znko1tQgeElKHzq2bXvA1T7++gb4n4RFQlgkhEVCWCSERUJYJIRFQlgkhEVCWCSERUJYJIRFQlgkhEVCWCSERUJYJIRFQlgkhEVCWCSERUJYJIRF",
                     location: "123 Test St, Test City, Test Country",
                     description: "This is a test hazard report.",
