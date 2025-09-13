@@ -62,7 +62,7 @@ const Dashboard = () => {
 
                 <div className='mb-4'><Divider text="Hazards Overview" /></div>
                 <div className="row">
-                  <div className="col-md-3">
+                  <div className="col-md-3 mb-4">
                     <HazardsView 
                       icon="fa-solid fa-hourglass-half" 
                       color="info" 
@@ -70,26 +70,26 @@ const Dashboard = () => {
                       total={hazards.filter(hazard => hazard.status === RoadHazards.Status.PENDING).length} 
                     />
                   </div>
-                  <div className="col-md-3">
+                  <div className="col-md-3 mb-4">
                     <HazardsView 
                       icon="fa-solid fa-magnifying-glass" 
-                      color="success" 
+                      color="warning" 
                       status={Letters.CapitalizeFirstLetter(RoadHazards.Status.INVESTIGATING)} 
                       total={hazards.filter(hazard => hazard.status === RoadHazards.Status.INVESTIGATING).length} 
                     />
                   </div>
-                  <div className="col-md-3">
+                  <div className="col-md-3 mb-4">
                     <HazardsView 
                       icon="fa-solid fa-thumbs-up" 
-                      color="danger" 
+                      color="success" 
                       status={Letters.CapitalizeFirstLetter(RoadHazards.Status.RESOLVED)} 
                       total={hazards.filter(hazard => hazard.status === RoadHazards.Status.RESOLVED).length} 
                     />
                   </div>
-                  <div className="col-md-3">
+                  <div className="col-md-3 mb-4">
                     <HazardsView 
-                      icon="fa-solid fa-thumbs-up" 
-                      color="warning" 
+                      icon="fa-solid fa-thumbs-down" 
+                      color="danger" 
                       status={Letters.CapitalizeFirstLetter(RoadHazards.Status.REJECTED)} 
                       total={hazards.filter(hazard => hazard.status === RoadHazards.Status.REJECTED).length} 
                     />
