@@ -9,6 +9,8 @@ import { ViewLists, ViewImage } from "@components";
 import { UserValidations } from "@services";
 import { toast } from "react-toastify";
 import { signUp } from '../firebase/auth';
+import { Images } from "@utils";
+
 export default function SignUp() {
 
   const [selectedRole, setSelectedRole] = useState(UserRole.AUTHORITIES);
@@ -51,7 +53,6 @@ export default function SignUp() {
       [e.target.name]: e.target.files[0],
     });
   };
-
   const [errors, setErrors] = useState({});
   const [isProcessing, setIsProcessing] = useState(false);
   const handleSubmit = (e) => {
@@ -62,6 +63,12 @@ export default function SignUp() {
       setErrors(validationErrors);
     } else {
       setIsProcessing(true);
+      setFormData({
+        ...formData,
+        validIDFront: formData.validIDFront ? Images.fileToDataUrl(formData.validIDFront) : "",
+        validIDBack: formData.validIDBack ? Images.fileToDataUrl(formData.validIDBack) : "",
+      })
+      console.log("Form Data Submitted:", Images.fileToDataUrl(formData.validIDFront), Images.fileToDataUrl(formData.validIDFront));
       const response = signUp(formData);
       console.log("Sign up response:", response);
       if (response.status === 200) {

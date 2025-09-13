@@ -1,6 +1,7 @@
 import { auth, db } from './firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, updateProfile } from 'firebase/auth';
 import { doc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
+import { UserStatus } from '@enums';
 
 export const signUp = async (formData) => {
   try {
@@ -14,24 +15,13 @@ export const signUp = async (formData) => {
       role,
       district,
       municipality,
-      barangay,
       password,
-      validIdFront,
-      validIdBack
+      validIDFront,
+      validIDBack
     } = formData;
 
-    // TODO: Check if Firestore allows writing
-    const testId = "test-write-" + Date.now(); // unique dummy ID
-    try {
-      await setDoc(doc(db, "users", testId), { test: true });
-      await deleteDoc(doc(db, "users", testId)); // Clean up
-    } catch (writeTestError) {
-      return {
-        status: 400,
-        message: "Registration is temporarily unavailable. Please try again later.",
-        error: writeTestError
-      };
-    }
+    console.log(`validIDFront type: ${typeof validIDFront}, validIDBack type: ${typeof validIDBack}`);
+    return false;
 
     // TODO: Proceed with user creation
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -48,9 +38,9 @@ export const signUp = async (formData) => {
       role,
       district,
       municipality,
-      validIdFront,
-      validIdBack,
-      accountStatus: 0,
+      validIDFront,
+      validIDBack,
+      status: UserStatus.PENDING,
       uid: user.uid,
       createdAt: new Date().toISOString().slice(0, 10),
     });
