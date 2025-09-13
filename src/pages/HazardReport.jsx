@@ -361,7 +361,7 @@ export default function HazardReport() {
                   <div className='card-body'>
                     {loading ? <LoadingScreen /> : 
                       <div>
-                        <Box sx={{ height: 400, width: '100%' }}>
+                        <Box sx={{  height: '80vh', width: '100%' }}>
                           <DataGrid
                             rows={rows}
                             columns={columns}
