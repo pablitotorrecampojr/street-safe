@@ -63,16 +63,36 @@ const Dashboard = () => {
                 <div className='mb-4'><Divider text="Hazards Overview" /></div>
                 <div className="row">
                   <div className="col-md-3">
-                    <HazardsView icon="fa-solid fa-hourglass-half" color="info" status={Letters.CapitalizeFirstLetter(RoadHazards.Status.PENDING)} total={hazards.length} />
+                    <HazardsView 
+                      icon="fa-solid fa-hourglass-half" 
+                      color="info" 
+                      status={Letters.CapitalizeFirstLetter(RoadHazards.Status.PENDING)} 
+                      total={hazards.filter(hazard => hazard.status === RoadHazards.Status.PENDING).length} 
+                    />
                   </div>
                   <div className="col-md-3">
-                    <HazardsView icon="fa-solid fa-magnifying-glass" color="success" status={Letters.CapitalizeFirstLetter(RoadHazards.Status.INVESTIGATING)} total={hazards.length} />
+                    <HazardsView 
+                      icon="fa-solid fa-magnifying-glass" 
+                      color="success" 
+                      status={Letters.CapitalizeFirstLetter(RoadHazards.Status.INVESTIGATING)} 
+                      total={hazards.filter(hazard => hazard.status === RoadHazards.Status.INVESTIGATING).length} 
+                    />
                   </div>
                   <div className="col-md-3">
-                    <HazardsView icon="fa-solid fa-thumbs-up" color="danger" status={Letters.CapitalizeFirstLetter(RoadHazards.Status.RESOLVED)} total={hazards.length} />
+                    <HazardsView 
+                      icon="fa-solid fa-thumbs-up" 
+                      color="danger" 
+                      status={Letters.CapitalizeFirstLetter(RoadHazards.Status.RESOLVED)} 
+                      total={hazards.filter(hazard => hazard.status === RoadHazards.Status.RESOLVED).length} 
+                    />
                   </div>
                   <div className="col-md-3">
-                    <HazardsView icon="fa-solid fa-thumbs-up" color="warning" status={Letters.CapitalizeFirstLetter(RoadHazards.Status.REJECTED)} total={hazards.length} />
+                    <HazardsView 
+                      icon="fa-solid fa-thumbs-up" 
+                      color="warning" 
+                      status={Letters.CapitalizeFirstLetter(RoadHazards.Status.REJECTED)} 
+                      total={hazards.filter(hazard => hazard.status === RoadHazards.Status.REJECTED).length} 
+                    />
                   </div>
                 </div>
               </div>
