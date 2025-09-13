@@ -48,7 +48,6 @@ export const signUp = async (formData) => {
       role,
       district,
       municipality,
-      barangay,
       validIdFront,
       validIdBack,
       accountStatus: 0,
@@ -66,6 +65,7 @@ export const signUp = async (formData) => {
     if (error.code === "auth/email-already-in-use") {
       return { status: 400, message: "This email is already registered. Please use a different one." };
     }
+    console.error("Error during sign up:", error);
     return { status: 400, message: error.message };
   }
 };

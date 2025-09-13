@@ -7,6 +7,8 @@ import districtJson from "../constants/districts.json"
 import municipalitiesJson from "../constants/municipalities.json"
 import { ViewLists, ViewImage } from "@components";
 import { UserValidations } from "@services";
+import { toast } from "react-toastify";
+import { signUp } from '../firebase/auth';
 export default function SignUp() {
 
   const [selectedRole, setSelectedRole] = useState(UserRole.AUTHORITIES);
@@ -25,7 +27,7 @@ export default function SignUp() {
   }, []);
 
   const [formData, setFormData] = useState({
-    fullName: "",
+    fullname: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -51,15 +53,23 @@ export default function SignUp() {
   };
 
   const [errors, setErrors] = useState({});
+  const [isProcessing, setIsProcessing] = useState(false);
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form Data Submitted:", formData);
     const validationErrors = UserValidations.validate(formData);
     if (Object.keys(validationErrors).length > 0) {
-      console.log("Validation Errors:", validationErrors);
+      toast.error("Please provide all required fields.");
       setErrors(validationErrors);
     } else {
-      console.log("Form Data is valid:", formData);
+      setIsProcessing(true);
+      const response = signUp(formData);
+      console.log("Sign up response:", response);
+      if (response.status === 200) {
+        toast.success("Sign up successful!");
+      } else {
+        toast.error("Sign up failed.");
+      }
+      setIsProcessing(false);
     }
   };
 
