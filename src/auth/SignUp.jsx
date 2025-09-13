@@ -7,6 +7,7 @@ import districtSortedJson from "../constants/districts-sorted.json"
 import districtJson from "../constants/districts.json"
 import municipalitiesJson from "../constants/municipalities.json"
 import { ViewLists, Divider } from "@components";
+import { UserValidations } from "@services";
 export default function SignUp() {
 
   const [selectedRole, setSelectedRole] = useState(UserRole.AUTHORITIES);
@@ -44,7 +45,12 @@ export default function SignUp() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form Data:", formData);
+    const validationErrors = UserValidations.validate(formData);
+    if (Object.keys(validationErrors).length > 0) {
+      console.log("Validation Errors:", validationErrors);
+    } else {
+      console.log("Form Data is valid:", formData);
+    }
   };
 
   const [openBarangays, setOpenBarangays] = useState(false);
@@ -244,6 +250,12 @@ export default function SignUp() {
                     )
                   )}
                 </div>
+              </div>
+
+              <div className="w-full flex justify-end">
+                <button type="submit" className="btn btn-primary">
+                  Sign Up
+                </button>
               </div>
             </form>
             <div className="w-full flex justify-center mt-4">
