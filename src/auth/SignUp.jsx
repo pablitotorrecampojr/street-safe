@@ -55,14 +55,40 @@ export default function SignUp() {
   };
   const [errors, setErrors] = useState({});
   const [isProcessing, setIsProcessing] = useState(false);
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = UserValidations.validate(formData);
     if (Object.keys(validationErrors).length > 0) {
       toast.error("Please provide all required fields.");
       setErrors(validationErrors);
-    } else {
-     
+      return;
+    }
+
+    try {
+      setIsProcessing(true);
+      const [front, back] = await Promise.all([
+        Images.toBase64String(formData.validIDFront),
+        Images.toBase64String(formData.validIDBack)
+      ]);
+      const finalData = {
+        ...formData,
+        validIDFront: front,
+        validIDBack: back
+      };
+
+      const result = await signUp(finalData);
+      console.log(result);
+      return false;
+      if (result.status === 200) {
+        toast.success(result.message);
+        setIsProcessing(false);
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error("Error converting files:", error);
+      toast.error("Failed to process ID images.");
     }
   };
 

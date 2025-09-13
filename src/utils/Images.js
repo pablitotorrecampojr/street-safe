@@ -1,4 +1,4 @@
-export const fileToDataUrl = (file) => {
+export const toBase64String = (file) => {
   return new Promise((resolve, reject) => {
     if (!file) {
       reject("No file provided");

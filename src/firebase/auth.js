@@ -20,9 +20,6 @@ export const signUp = async (formData) => {
       validIDBack
     } = formData;
 
-    console.log(`validIDFront type: ${typeof validIDFront}, validIDBack type: ${typeof validIDBack}`);
-    return false;
-
     // TODO: Proceed with user creation
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     await signOut(auth);
