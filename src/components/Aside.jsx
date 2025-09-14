@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { auth, db } from '../firebase/firebase';
 import { onAuthStateChanged, signOut } from "firebase/auth";
@@ -7,33 +7,25 @@ import { doc, getDoc } from 'firebase/firestore';
 export default function Aside() {
     const navigate = useNavigate();
     const location = useLocation();
-    const [user, setUser] = useState(null);
     const [userData, setUserData] = useState(null);
-    useEffect(() => {
-      const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-        setUser(currentUser);
-  
-        if (currentUser) {
-          const userRef = doc(db, "users", currentUser.uid);
-          const userSnap = await getDoc(userRef);
-  
-          if (userSnap.exists()) {
-            setUserData(userSnap.data());
-          } else {
-            console.log("No user document found!");
-          }
-        }
-      });
-  
-      return () => unsubscribe();
-    }, []);
+    
+    const navigationItems = {
+      0: [
+        { name: 'Dashboard', path: '/dashboard', icon: 'bx bx-home-circle' },
+        { name: 'Hazard Report', path: '/hazard-report', icon: 'bx bx-error-circle' },
+        { name: 'Access Control', path: '/access-control', icon: 'bx bx-cog' },
+        { name: 'User Accounts', path: '/user-accounts', icon: 'bx bx-user' },
+      ],
+      1: [
+        { name: 'Dashboard', path: '/dashboard', icon: 'bx bx-home-circle' },
+        { name: 'Hazard Report', path: '/hazard-report', icon: 'bx bx-error-circle' },
+      ],
+      2: [
+        { name: 'Dashboard', path: '/dashboard', icon: 'bx bx-home-circle' },
+        { name: 'Hazard Report', path: '/hazard-report', icon: 'bx bx-error-circle' },
+      ],
+    };
 
-    const navItems = [
-      { name: 'Dashboard', path: '/dashboard', icon: 'bx bx-home-circle', permissions: [0, 1, 2] },
-      { name: 'Access Control', path: '/access-control', icon: 'bx bx-cog', permissions: [0] },
-      { name: 'Hazard Report', path: '/hazard-report', icon: 'bx bx-error-circle', permissions: [0, 1, 2] },
-      { name: 'Pending Accounts', path: '/pending-accounts', icon: 'bx bx-hourglass', permissions: [0] },
-    ];
 
     const handleNavbarToggle = () => { 
       const htmlElement = document.getElementById("main-html");
@@ -44,6 +36,12 @@ export default function Aside() {
 
     useEffect(() => {
       handleNavbarToggle();
+      //TODO: handle user data
+      const loggedInUser = localStorage.getItem("userData");
+      if (loggedInUser) {
+        setUserData(JSON.parse(loggedInUser));
+      }
+      
     }, [location])
 
     return (
@@ -68,21 +66,18 @@ export default function Aside() {
         </div>
         <div className="menu-inner-shadow"></div>
         <ul className="menu-inner py-1">
-          {navItems.map((item, index) => {
-            if (item.permissions.includes(Number(userData?.role))) {
-              return (
-                <li
-                  key={index}
-                  className={`menu-item ${location.pathname === item.path ? "active" : ""}`}
-                >
-                  <a className="menu-link" onClick={() => navigate(item.path)}>
-                    <i className={`menu-icon tf-icons ${item.icon}`}></i>
-                    <div data-i18n="Analytics">{item.name}</div>
-                  </a>
-                </li>
-              )
-              
-            }
+          {navigationItems[userData?.role]?.map((item, index) => {
+            return (
+              <li
+                key={index}
+                className={`menu-item ${location.pathname === item.path ? "active" : ""}`}
+              >
+                <a className="menu-link" onClick={() => navigate(item.path)}>
+                  <i className={`menu-icon tf-icons ${item.icon}`}></i>
+                  <div data-i18n="Analytics">{item.name}</div>
+                </a>
+              </li>
+            )
           })}
         </ul>
       </aside>

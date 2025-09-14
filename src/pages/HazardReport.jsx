@@ -1,495 +1,384 @@
-import React, { useState, useEffect } from "react";
-import { data, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { getDatabase, ref, onValue, get, update, query, orderByChild, equalTo, set } from "firebase/database";
-import { getDoc, doc, updateDoc } from "firebase/firestore";
-import { useTable } from "react-table";
-import { auth, db, realtimeDb } from "../firebase/firebase";
-import Aside from "../components/Aside";
-import Navbar from "../components/NavBar";
-import LoadingScreen from '../webview/LoadingScreen';
-import { hazard_status } from "../constants/hazard-report";
-import { Tooltip } from "react-tooltip";
-import "react-tooltip/dist/react-tooltip.css";
-import { hazard_icons, hazard_color } from "../constants/hazard-report";
-import districtSorted from "../constants/districts-sorted.json";
-import districts from '../constants/districts.json'
+import { useEffect, useState } from 'react';
+import { LoadingScreen } from '@webview';
+import { Aside, NavBar, Badge, ViewHazards } from '@components';
+import { Hazards } from '@services';
+import { DataGrid } from '@mui/x-data-grid';
+import { Box } from '@mui/material';
+import { GridActionsCellItem } from '@mui/x-data-grid';
+import { RoadHazards, UserRole  } from '@enums';
+import { Letters } from '@utils';
+import { set } from 'firebase/database';
+ 
+export default function HazardReport() {
+  const [loading, setLoading] = useState(true);
 
-const sendResponseTeam = async (hazard) => {
-  //TODO: this function will set the hazard status to 1 (in progress)
-  const hazardId = hazard?.id;
-  console.log("Hazard object:", hazard);
-  console.log("Hazard ID:", hazardId);
-
-  if (!hazardId) {
-    console.error("Invalid hazard data");
-    toast.error("Hazard ID is missing");
-    return;
-  }
-
-  try {
-    const hazardQuery = query(
-      ref(realtimeDb, "roadhazards"),
-      orderByChild("id"),
-      equalTo(hazardId)
-    );
-
-    const snapshot = await get(hazardQuery);
-    if (!snapshot.exists()) {
-      toast.error("Hazard not found in Realtime Database");
-      return;
-    }
-
-    const hazardKey = Object.keys(snapshot.val())[0];
-    const hazardRef = ref(realtimeDb, `roadhazards/${hazardKey}`);
-
-    await update(hazardRef, { status: 1 });
-    toast.success("Hazard status updated to In Progress");
-  } catch (error) {
-    console.error("Error updating hazard status:", error);
-    toast.error("Failed to update hazard status");
-  }
-};
-
-const setHazardToResolved = async (hazard) => {
-  //TODO: this function will set the hazard status to 2 (resolved)
-  const hazardId = hazard?.id;
-
-  if (!hazardId) {
-    console.error("Invalid hazard data");
-    toast.error("Hazard ID is missing");
-    return;
-  }
-
-  try {
-    const hazardQuery = query(
-      ref(realtimeDb, "roadhazards"),
-      orderByChild("id"),
-      equalTo(hazardId)
-    );
-
-    const snapshot = await get(hazardQuery);
-    if (!snapshot.exists()) {
-      toast.error("Hazard not found in Realtime Database");
-      return;
-    }
-
-    const hazardKey = Object.keys(snapshot.val())[0];
-    const hazardRef = ref(realtimeDb, `roadhazards/${hazardKey}`);
-
-    await update(hazardRef, { status: 2 });
-    toast.success("Hazard status updated to Resolved");
-  } catch (error) {
-    console.error("Error updating hazard status:", error);
-    toast.error("Failed to update hazard status");
-  }
-};
-
-const flagHazardAsNationalRoad = async (hazard, userData) => {
-  const hazardId = hazard?.id;
-  const municipality = userData?.municipality;
-  const barangay = userData?.barangay;
-  if (!hazardId) {
-    console.error("Invalid hazard data");
-    toast.error("Hazard ID is missing");
-    return;
-  }
-
-  try {
-    const hazardQuery = query(
-      ref(realtimeDb, "roadhazards"),
-      orderByChild("id"),
-      equalTo(hazardId)
-    );
-
-    const snapshot = await get(hazardQuery);
-    if (!snapshot.exists()) {
-      toast.error("Hazard not found in Realtime Database");
-      return;
-    }
-
-    const hazardKey = Object.keys(snapshot.val())[0];
-    const hazardRef = ref(realtimeDb, `roadhazards/${hazardKey}`);
-
-    await update(hazardRef, { nationalRoadFlg: true, municipality: municipality, barangay: barangay });
-    toast.success("Set as National Road Hazard");
-  } catch (error) {
-    console.error("Error updating hazard status:", error);
-    toast.error("Failed to update hazard status");
-  }
-}
-
-const useCurrentUserData = () => {
-  //TODO: this function will get the current user data from firestore
-  const [userData, setUserData] = useState(null);
-
+  //TODO: fetching roadzards
+  const [hazards, setHazards] = useState([]);
+  const [allHazards, setAllHazards] = useState([]);
   useEffect(() => {
-    const fetchUserData = async () => {
-      const currentUser = auth.currentUser;
-      if (currentUser) {
-        const userRef = doc(db, "users", currentUser.uid);
-        const docSnap = await getDoc(userRef);
-        if (docSnap.exists()) {
-          setUserData(docSnap.data());
-        } else {
-          console.error("No user document found");
-        }
-      }
-    };
-
-    fetchUserData();
+    const unsubscribe = Hazards.subscribe((data) => {
+      setHazards(data);
+      setAllHazards(data);
+      setLoading(false);
+    });
+    return () => unsubscribe();
   }, []);
 
-  return userData;
-};
-
-const getHazardArea = async (lat, lng) => {
-  const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
-
-  try {
-    const response = await fetch(url);
-    const json = await response.json();
-    return json;
-  } catch (error) {
-    console.error("Failed to get hazard area", error);
-    return null;
-  }
-};
-
-const isWithinDistrict = (hazardData, barangays) => {
-  const listOfBarangays = barangays;
-  const hazardBarangay = hazardData?.barangay;
-  const hazardMunicipality = hazardData?.municipality;
-  console.log("Districts Data:", {
-    hazardBarangay: hazardBarangay,
-    hazardMunicipality: hazardMunicipality,
-    barangays: listOfBarangays,
-  });
-  if (!listOfBarangays) return false;
-  
-  return true;
-};
-
-const HazardReport = () => {
-  const navigate = useNavigate();
-  const [roadHazards, setRoadHazards] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [modalImageUrl, setModalImageUrl] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalTitle, setModalTitle] = useState(null);
-  const userData = useCurrentUserData();
-
+  const [currentUser, setCurrentUser] = useState(null);
   useEffect(() => {
-    const db = getDatabase();
-    const roadhazardsRef = ref(db, "roadhazards");
-  
-    const unsubscribe = onValue(
-      roadhazardsRef,
-      (snapshot) => {
-        const processHazards = async () => {
-          if (snapshot.exists()) {
-            let data = Object.values(snapshot.val());
-  
-            if (userData?.role === "2") {
-              data = data.filter((hazard) => !hazard.nationalRoadFlg);
-            }
-  
-            if (userData?.role === "1") {
-              data = data.filter((hazard) => hazard.nationalRoadFlg);
-            }
-  
-            const sorted = data.sort(
-              (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
-            );
-  
-            let finalData = sorted;
-            console.log(finalData)
-            if (userData?.role === "2") {
-              const filtered = await Promise.all(
-                sorted.map(async (hazard) => {
-                  const displayName = hazard?.fullAddress || "";
-                  const isWithinArea = displayName.includes(userData?.barangay) && displayName.includes(userData?.municipality);
-                  return isWithinArea ? hazard : null;
-                })
-              );
-  
-              finalData = filtered.filter((h) => h !== null);
-            }
-  
-            if (userData?.role === "1") {
-              finalData = sorted.filter((hazard) => {
-                return (
-                  hazard.nationalRoadFlg &&
-                  isWithinDistrict(hazard, districtSorted[districts.districts[userData?.district].district])
-                );
-              });
-            }
-  
-            setRoadHazards(finalData);
-          } else {
-            setRoadHazards([]);
-          }
-          setLoading(false);
-        };
-  
-        processHazards();
-      },
-      (error) => {
-        toast.error("Error fetching roadhazards");
-        setLoading(false);
-      }
-    );
-  
-    return () => unsubscribe();
-  }, [userData]);
-
-  const columns = React.useMemo(() => [
-    {
-      Header: "#",
-      accessor: "index",
-    },
-    {
-      Header: "Image",
-      accessor: "roadHazard",
-      Cell: ({ value, row }) => (
-        <button
-          className={`btn btn-link text-left ${value ? "text-primary" : "text-danger fw-bold"}`}
-          onClick={() => {
-            setModalImageUrl(`data:image/jpeg;base64,${row.original.imageUrl}`);
-            setModalVisible(true);
-            setModalTitle(row.original.roadHazard);
-          }}
-        >
-          {value ? value : 'No identified'}
-        </button>
-      ),
-    },
-    {
-      Header: "Full Address",
-      accessor: "fullAddress",
-      Cell: ({ value }) => value.replace("Address:", ""),
-    },
-    {
-      Header: "Status",
-      accessor: "status",
-      Cell: ({ value }) => {
-        return (
-          <span className={`badge rounded-pill bg-label-${hazard_color[value]}`}>
-            {hazard_status[value]}
-          </span>
-        )
-      },
-    },
-    {
-      Header: "Action",
-      accessor: "action",
-      Cell: ({ row }) => {
-        const hazard = row.original;
-        if (userData?.role === "1" || userData?.role === "2") {
-          return (
-            <div className="flex gap-2">
-              
-              {hazard.status === 0 && (
-                /**
-                 * TODO: show button when hazard is pending
-                 * ? this will be used to send the hazard to the response team
-                 */
-                <button
-                type="button"
-                  className={`btn btn-icon btn-outline-${hazard_color[hazard.status+ 1]}`}
-                  onClick={() => sendResponseTeam(hazard)}
-                  data-tooltip-id="hazard-tooltip"
-                  data-tooltip-content="Send Response Team"
-                >
-                  <span className={`tf-icons bx ${hazard_icons[hazard.status + 1]}`}></span>
-                </button>
-              )}
-
-              {hazard.status === 1 && (
-                /**
-                 * TODO: show button when hazard is in progress
-                 * ? this will used to update hazard to completed
-                 */
-                 <button
-                 type="button"
-                   className={`btn btn-icon btn-outline-${hazard_color[hazard.status + 1]}`}
-                   onClick={() => setHazardToResolved(hazard)}
-                   data-tooltip-id="hazard-tooltip"
-                   data-tooltip-content="Set Hazard to Resolved"
-                 >
-                   <span className={`tf-icons bx ${hazard_icons[hazard.status + 1]}`}></span>
-                 </button>
-              )}
-              {hazard.status === 2 && (
-                /**
-                 * TODO: this button will be used to show that the hazard is already resolved
-                 */
-                <button 
-                  type="button"
-                  className={`btn btn-icon btn-outline-${hazard_color[hazard.status]}`}
-                  onClick={() => {
-                    toast.info('Hazard is already resolved');
-                  }}
-                  data-tooltip-id="hazard-tooltip"
-                  data-tooltip-content="Set Hazard to Resolved"
-                >
-                  <span className={`tf-icons bx ${hazard_icons[hazard.status]}`}></span>
-                </button>
-              )}
-    
-              <button
-                type="button"
-                className="btn btn-icon btn-outline-primary"
-                onClick={() =>
-                  window.open(
-                    `/maps-fragment?selectedLat=${hazard.latitude}&selectedLng=${hazard.longitude}&fromAdmin=true`
-                  )
-                }
-                data-tooltip-id="hazard-tooltip"
-                data-tooltip-content="View location on map"
-              >
-                <span className="tf-icons bx bx-navigation"></span>
-              </button>
-    
-              {(userData?.role === "2" && !hazard.nationalRoadFlg == true) && (
-                /**
-                 * TODO: this button will be used to flag the hazard as national road hazard
-                 * ? this will be used to send the hazard to the national road hazard team 
-                 * ? This button will only be shown to the municipality role
-                 */
-                <button
-                  type="button"
-                  className="btn btn-icon btn-outline-danger"
-                  onClick={() => flagHazardAsNationalRoad(hazard, userData)}
-                  data-tooltip-id="hazard-tooltip"
-                  data-tooltip-content="Flag as National Road Hazard"
-                >
-                  <span className="tf-icons bx bx-traffic-cone"></span>
-                </button>
-              )}
-    
-              <Tooltip id="hazard-tooltip" />
-            </div>
-          );
-        }
-    
-        return <i>Admins can only view Hazard Reports</i>;
-      },
+    setCurrentUser(JSON.parse(localStorage.getItem("userData")) || null);
+    if (currentUser?.role === UserRole.AUTHORITIES) {
+      setRows(
+        hazards
+          .filter((hazard) => hazard.isNationalFlag === true)
+          .map((hazard, index) => ({
+            index: index + 1,
+            id: hazard.id,
+            ...hazard,
+          }))
+      );
+    } else {
+      setRows(
+        hazards.map((hazard, index) => ({
+          index: index + 1,
+          id: hazard.id,
+          ...hazard,
+        }))
+      );
     }
-  ], [roadHazards, userData, navigate]);
+    console.log(hazards);
+  }, [hazards]);  
 
-  const data = React.useMemo(() =>
-    roadHazards.map((hazard, index) => ({
-      index: index + 1,
-      id: hazard.id,
-      roadHazard: hazard.roadHazard,
-      imageUrl: hazard.imageUrl,
-      fullAddress: hazard.fullAddress,
-      status: hazard.status,
-      action: "---",
-      latitude: hazard.latitude,
-      longitude: hazard.longitude,
-    }))
-  , [roadHazards]);
+  //TODO: handleing viewing road hazards
+  const [selectedHazard, setSelectedHazard] = useState({}); 
+  const [isViewHazardOpen, setIsViewHazardOpen] = useState(false);
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
-    columns,
-    data,
-  });
-
-  useEffect(() => {
-    document.body.style.overflow = modalVisible ? "hidden" : "auto";
-  }, [modalVisible]);
-
-  return (
-    <div className="layout-wrapper layout-content-navbar">
-      {modalVisible && (
-        <div className="modal fade show d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">{modalTitle}</h5>
-                <button
-                  type="button"
-                  className="close"
-                  onClick={() => setModalVisible(false)}
-                  aria-label="Close"
+  //TODO: handling displaying road hazards
+  const [rows, setRows] = useState([]);
+  const columns = [
+    { field: 'index', headerName: '#', width: 30 },
+    { field: 'id', headerName: 'UID', width: 30 },
+    { field: 'type', headerName: 'Type', width: 150 },
+    { field: 'location', headerName: 'Location', width: 200 },
+    { field: 'description', headerName: 'Description', width: 300 },
+    { field: 'status', headerName: 'Status', width: 120,
+      renderCell: (params) => { 
+        return <Badge 
+          status={RoadHazards.Style[params.value]} 
+          text={params.value} 
+        />
+      }
+     },
+    { field: 'isNationalFlag', headerName: 'National Flag', width: 150,
+      renderCell: (params) => {
+        return params.value ? <Badge status="success" text="Yes" /> : <Badge status="danger" text="No" />;
+      }
+    },
+    { field: 'resolvedAt', headerName: 'Resolved At', width: 200,
+      renderCell: (params) => {
+        if (!params.value) return <i>To be determined</i>;
+        return new Date(params.value).toLocaleString();
+      }
+     },
+    { field: 'actions', type: 'actions', headerName: 'Actions', width: 100,
+      getActions: (params) => {
+        if (currentUser?.role === UserRole.ADMIN) { //TODO: admin can only view
+          const actions = [
+            <GridActionsCellItem
+              label={
+                <div className="hover:text-blue-500 text-sm"
+                  onClick={() => {setSelectedHazard(params.row); setIsViewHazardOpen(true);} }
                 >
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div className="modal-body d-flex justify-content-center align-items-center">
-                <img src={modalImageUrl} alt="Hazard Preview" style={{ maxWidth: "100%", maxHeight: "100%" }} />
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setModalVisible(false)}>
-                  Close
-                </button>
-              </div>
-            </div>
+                  <i className="fa-solid fa-eye mr-2"></i> View
+                </div>
+              }
+              showInMenu
+            />
+          ];
+          return actions;
+        }
+        if (currentUser?.role === UserRole.MUNICIPALITIES) { //TODO: municipalities can view and update status
+          const actions = [
+            <GridActionsCellItem
+              label={
+                <div className="hover:text-blue-500 text-sm"
+                  onClick={() => {setSelectedHazard(params.row); setIsViewHazardOpen(true);} }
+                >
+                  <i className="fa-solid fa-eye mr-2"></i> View
+                </div>
+              }
+              showInMenu
+            />
+          ];
+          if (params.row.isNationalFlag == true && params.row.status === RoadHazards.Status.PENDING) {
+            actions.push(
+              <GridActionsCellItem
+                label={
+                  <div className="hover:text-blue-500 text-sm"
+                    onClick={() => {
+                      Hazards.updateStatus(params.row.pushId, RoadHazards.Status.PENDING, null, true);
+                    }}
+                  >
+                    <i className="fa-solid fa-hourglass-half mr-2"></i> PENDING
+                  </div>
+                }
+                showInMenu
+              />,
+            );
+          }
+          if (!params.row.isNationalFlag) {
+            actions.push(
+              <GridActionsCellItem
+                label={
+                  <div className="hover:text-blue-500 text-sm"
+                    onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.INVESTIGATING);} }
+                  >
+                    <i className="fa-solid fa-magnifying-glass mr-2"></i> Investigate
+                  </div>
+                }
+                showInMenu
+              />,
+              <GridActionsCellItem
+                label={
+                  <div className="hover:text-blue-500 text-sm"
+                    onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.REJECTED);} }
+                  >
+                    <i className="fa-solid fa-thumbs-down mr-2"></i> Reject
+                  </div>
+                }
+                showInMenu
+              />,
+              <GridActionsCellItem
+                label={
+                  <div className="hover:text-blue-500 text-sm"
+                    onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.RESOLVED, new Date().toISOString());} }
+                  >
+                    <i className="fa-solid fa-thumbs-up mr-2"></i> Resolve
+                  </div>
+                }
+                showInMenu
+              />,
+            );
+          }
+          if (params.row.status === RoadHazards.Status.PENDING || params.row.status === RoadHazards.Status.INVESTIGATING) {
+            actions.push(
+              <GridActionsCellItem
+                label={
+                  <div className="hover:text-blue-500 text-sm"
+                    onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.NATIONAL);} }
+                  >
+                    <i className="fa-solid fa-share-from-square mr-2"></i> National Highway
+                  </div>
+                }
+                showInMenu
+              />
+            )
+          }
+          return actions;
+        }
+        if (currentUser?.role === UserRole.AUTHORITIES) { //TODO: authorities can only view national hazards
+          const actions = [
+            <GridActionsCellItem
+              label={
+                <div className="hover:text-blue-500 text-sm"
+                  onClick={() => {setSelectedHazard(params.row); setIsViewHazardOpen(true);} }
+                >
+                  <i className="fa-solid fa-eye mr-2"></i> View
+                </div>
+              }
+              showInMenu
+            />,
+            <GridActionsCellItem
+              label={
+                <div className="hover:text-blue-500 text-sm"
+                  onClick={() => {
+                    Hazards.updateStatus(params.row.pushId, RoadHazards.Status.PENDING, null, true);
+                  }}
+                >
+                  <i className="fa-solid fa-hourglass-half mr-2"></i> PENDING
+                </div>
+              }
+              showInMenu
+            />,
+            <GridActionsCellItem
+              label={
+                <div className="hover:text-blue-500 text-sm"
+                  onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.INVESTIGATING);} }
+                >
+                  <i className="fa-solid fa-magnifying-glass mr-2"></i> Investigate
+                </div>
+              }
+              showInMenu
+            />,
+            <GridActionsCellItem
+              label={
+                <div className="hover:text-blue-500 text-sm"
+                  onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.REJECTED);} }
+                >
+                  <i className="fa-solid fa-thumbs-down mr-2"></i> Reject
+                </div>
+              }
+              showInMenu
+            />,
+            <GridActionsCellItem
+              label={
+                <div className="hover:text-blue-500 text-sm"
+                  onClick={() => {Hazards.updateStatus(params.row.pushId, RoadHazards.Status.RESOLVED, new Date().toISOString());} }
+                >
+                  <i className="fa-solid fa-thumbs-up mr-2"></i> Resolve
+                </div>
+              }
+              showInMenu
+            />
+          ];
+          return actions;
+        }
+        return [
+          <div>
+            <i className="fa-solid fa-ban text-red-500"></i>
           </div>
-        </div>
-      )}
+        ];
+      }
 
-      <div className="layout-container">
-        <Aside />
-        <div className="layout-page">
-          <Navbar />
+    },
+  ];
 
-          <div className="content-wrapper">
-            <div className="container-xxl flex-grow-1 container-p-y">
-              {loading ? (
-                <LoadingScreen loadingText="Fetching Hazard Report..." />
-              ) : (
-                <>
-                  <div className="row mb-4 p-1">
-                    <h1 style={{ fontSize: '20px' }} className='fw-bold'>Hazard Report</h1>
-                  </div>
-                  {userData?.role == '2' && (
-                    <div className="card mb-4">
-                      <div className="card-header">
-                        <h5 className="card-title mb-0"><strong>Hazard Report Within: </strong> 📌 {userData?.barangay}, {userData?.municipality}, Cebu </h5>
-                      </div>
+
+  //TODO: handling filtering road hazards
+  const [statusOpen, setStatusOpen] = useState(false);
+  const [filter, setFilter] = useState({ status: null });
+  const [isOpen, setIsOpen] = useState(false);
+  const [isNational, setIsNational] = useState(null);
+  const handleFilter = (status) => {
+    setStatusOpen(false);
+    setFilter({ status: status });
+    setHazards(allHazards.filter((hazard) => hazard.status === status));
+  };
+  const handleIsNational = (isNational) => {
+    setIsOpen(false);
+    setHazards(allHazards.filter((hazard) => hazard.isNationalFlag === isNational));
+    setFilter({ status: null })
+  }
+  return (
+    <>
+      <ViewHazards 
+        isOpen={isViewHazardOpen} 
+        data={selectedHazard} 
+        onClose={() => setIsViewHazardOpen(false)} 
+        
+      />
+      <div className='layout-wrapper layout-content-navbar'>
+        <div className='layout-container'>
+          <Aside />
+          <div className='layout-page'>
+            <NavBar />
+            <div className='content-wrapper'>
+              <div className='container-xxl flex-grow-1 container-p-y'>
+                <div className='row mb-4 p-1'>
+                  <h1 style={{ fontSize: '20px' }} className='fw-bold'>Hazard Report</h1>
+                </div>
+
+                <div className='w-full flex flex-col justify-end p-2'>
+                  <div className='flex justify-end gap-2'>
+                    <div className="relative">
+                      <button className="btn btn-info btn-sm"
+                       onClick={() => {setRows(allHazards); setFilter({status: null});} }
+                      >
+                        <i className="fa-solid fa-rotate-left"></i>
+                      </button>
                     </div>
-                  )}
-                  <div className="card">
-                    <div className="card-body">
-                      <div className="table-responsive text-nowrap">
-                        <table {...getTableProps()} className="table table-striped">
-                          <thead>
-                            {headerGroups.map((headerGroup) => (
-                              <tr {...headerGroup.getHeaderGroupProps()}>
-                                {headerGroup.headers.map((column) => (
-                                  <th key={column.id} {...column.getHeaderProps()}>{column.render("Header")}</th>
-                                ))}
-                              </tr>
-                            ))}
-                          </thead>
-                          <tbody {...getTableBodyProps()}>
-                            {rows.map((row) => {
-                              prepareRow(row);
-                              return (
-                                <tr {...row.getRowProps()}>
-                                  {row.cells.map((cell) => (
-                                    <td key={cell.id} {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                                  ))}
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
+                    <div className="relative">
+                      <button
+                        className="btn btn-primary btn-sm"
+                        onClick={() => {
+                          setStatusOpen(!statusOpen);
+                        }}
+                      >
+                        {filter.status ? Letters.CapitalizeFirstLetter(filter.status) : "Filter Status"}
+                      </button>
+                      {statusOpen && (
+                        <div className="absolute right-0  mt-2 w-40 bg-white border rounded shadow-lg z-10">
+                          <button className="w-full text-left px-4 py-2 hover:bg-blue-100"
+                            onClick={() => {
+                              handleFilter(RoadHazards.Status.PENDING);
+                            }}
+                          >{Letters.CapitalizeFirstLetter(RoadHazards.Status.PENDING)}
+                          </button>
+                          <button className="w-full text-left px-4 py-2 hover:bg-blue-100"
+                            onClick={() => {
+                              handleFilter(RoadHazards.Status.INVESTIGATING);
+                            }}
+                          >{Letters.CapitalizeFirstLetter(RoadHazards.Status.INVESTIGATING)}
+                          </button>
+                          <button className="w-full text-left px-4 py-2 hover:bg-blue-100"
+                            onClick={() => {
+                              handleFilter(RoadHazards.Status.RESOLVED);
+                            }}
+                          >{Letters.CapitalizeFirstLetter(RoadHazards.Status.RESOLVED)}
+                          </button>
+                          <button className="w-full text-left px-4 py-2 hover:bg-blue-100"
+                            onClick={() => {
+                              handleFilter(RoadHazards.Status.REJECTED);
+                            }}
+                          >{Letters.CapitalizeFirstLetter(RoadHazards.Status.REJECTED)}
+                          </button>
+                        </div>
+                      )}
                     </div>
+                    {currentUser?.role === UserRole.MUNICIPALITIES && (
+                      <>
+                         <div className="relative">
+                          <button
+                            className="btn btn-warning btn-sm"
+                            onClick={() => setIsOpen(!isOpen)}
+                          >
+                            {isNational === null ? "Is National?" : isNational ? "Yes" : "No"}
+                          </button>
+
+                          {isOpen && (
+                            <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow-lg z-10">
+                              <button
+                                className="w-full text-left px-4 py-2 hover:bg-blue-100"
+                                onClick={() => handleIsNational(true)}
+                              >
+                                Yes
+                              </button>
+                              <button
+                                className="w-full text-left px-4 py-2 hover:bg-blue-100"
+                                onClick={() => handleIsNational(false)}
+                              >
+                                No
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
                   </div>
-                </>
-              )}
+                </div>
+
+                <div className='card'>
+                  <div className='card-body'>
+                    {loading ? <LoadingScreen /> : 
+                      <div>
+                        <Box sx={{  height: '80vh', width: '100%' }}>
+                          <DataGrid
+                            rows={rows}
+                            columns={columns}
+                            pageSize={5}
+                            rowsPerPageOptions={[5]}
+                            checkboxSelection={false} 
+                          />
+                        </Box>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div className="layout-overlay layout-menu-toggle"></div>
-    </div>
-  );
-};
-
-export default HazardReport;
+    </>
+  )
+}

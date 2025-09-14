@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { db, realtimeDb } from './firebase';
+import { realtimeDb } from './firebase';
 import { ref, push, set } from "firebase/database";
+import { RoadHazards } from "@enums";
 
 export default function ProtectedRoute({ children }) {
     const [response, setResponse] = useState(null);
@@ -18,11 +19,13 @@ export default function ProtectedRoute({ children }) {
             try {
                 const hazardRef = ref(realtimeDb, "roadhazards");
                 const newHazard = {
-                    imageUrl: "base64Image",
-                    dateSubmitted: "2025-04-11 00:00:00",
-                    fullAddress: "NEW Somewhere in Apas, Cebu City, Cebu",
-                    roadHazard: "Dummy Data",
-                    status: 0,
+                    image: "base64Image",
+                    description: "This is a dummy hazard report for testing purposes.",
+                    reportedAt: "2025-04-11 00:00:00",
+                    location: "Dummy Location, City, Country",
+                    type: "Test Data",
+                    status: RoadHazards.Status.PENDING,
+                    isNationalFlag: false,
                     latitude: 10.339278,
                     longitude: 123.904334,
                     userid: "opbG2JQJBpZj4sjZ9i0PsqynbkQ2",

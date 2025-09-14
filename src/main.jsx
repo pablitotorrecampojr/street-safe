@@ -1,4 +1,5 @@
 // src/main.jsx
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -17,6 +18,7 @@ import EditProfile from './pages/EditProfile';
 import AccessControl from './pages/AccessControl';
 import PageNotFound from './pages/PageNotFound';
 import ReviewPendingAccounts from './pages/ReviewPendingAccounts';
+import UserAccounts from './pages/UserAccounts';
 
 //TODO: import web view components
 import LoadingScreen from './webview/LoadingScreen';
@@ -76,15 +78,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             path="/access-control"
             element={
               <ProtectedRoute>
-                <AccessControl />
+                <ReviewPendingAccounts />
               </ProtectedRoute>
             }
           /> 
-           <Route
-            path="/pending-accounts"
+          <Route
+            path="/user-accounts"
             element={
               <ProtectedRoute>
-                <ReviewPendingAccounts />
+                <UserAccounts />
               </ProtectedRoute>
             }
           /> 

@@ -5,7 +5,6 @@ import municipalities from '../constants/municipalities.json';
 import districts from '../constants/districts.json';
 import { toast } from "react-toastify";
 import {signUp} from '../firebase/auth';
-import { set } from "firebase/database";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -59,8 +58,8 @@ const SignUp = () => {
       return;
     }
 
-    if (file.size > 1 * 1024 * 1024) {
-      toast.error("Each file must be less than 2MB.");
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Each file must be less than 10MB.");
       return;
     }    
   
@@ -74,6 +73,7 @@ const SignUp = () => {
     reader.readAsDataURL(file);
   };
 
+  const [processing, setProcessing] = useState(false); //* variable for disabling the submit button when processing
   const handleSubmit = async (e) => {
     e.preventDefault();
     let newErrors = {};
@@ -110,6 +110,7 @@ const SignUp = () => {
     }
 
     try {
+      setProcessing(true);
       const response = await signUp(formData);
       if (response.status === 200) {
         toast.success(response.message);
@@ -121,6 +122,8 @@ const SignUp = () => {
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
       throw error;
+    } finally {
+      setProcessing(false);
     }
   }
   
@@ -286,7 +289,13 @@ const SignUp = () => {
                           </div>
                           {errors.confirmPassword && <p className="error">{errors.confirmPassword}</p>}
                       </div>
-                      <button className="btn btn-primary d-grid w-100" type="submit">Sign up</button>
+                      <button 
+                        className="btn btn-primary d-grid w-100" 
+                        type="submit"
+                        disabled={processing}
+                      >
+                        {processing ? "Signing up..." : "Sign up"}
+                      </button>
                     </form>
 
                     <p className="text-center">

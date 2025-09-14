@@ -1,0 +1,86 @@
+{
+    "fullname": {
+      "required": true,
+      "minLength": 2,
+      "maxLength": 100,
+      "message": {
+        "required": "Full name is required.",
+        "minLength": "Full name must be at least 2 characters.",
+        "maxLength": "Full name must not exceed 100 characters."
+      }
+    },
+    "email": {
+      "required": true,
+      "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+      "message": {
+        "required": "Email is required.",
+        "pattern": "Please enter a valid email address."
+      }
+    },
+    "password": {
+        "required": true,
+        "minLength": 8,
+        "maxLength": 100,
+        "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,}$",
+        "message": {
+            "required": "Password is required.",
+            "minLength": "Password must be at least 8 characters.",
+            "maxLength": "Password must not exceed 100 characters.",
+            "pattern": "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+        }
+    }, 
+    "confirmPassword": {
+        "required": true,
+        "matchesField": "password",
+        "message": {
+            "required": "Please confirm your password.",
+            "matchesField": "Passwords do not match."
+        }
+    },
+    "validIDFront": {
+      "required": true,
+      "fileTypes": ["image/jpeg", "image/png"],
+      "maxSizeMB": 5,
+      "message": {
+        "required": "Valid ID front image is required.",
+        "fileTypes": "Only JPG and PNG files are allowed.",
+        "maxSizeMB": "File size must not exceed 5 MB."
+      }
+    },
+    "validIDBack": {
+      "required": true,
+      "fileTypes": ["image/jpeg", "image/png"],
+      "maxSizeMB": 5,
+      "message": {
+        "required": "Valid ID back image is required.",
+        "fileTypes": "Only JPG and PNG files are allowed.",
+        "maxSizeMB": "File size must not exceed 5 MB."
+      }
+    },
+    "role": {
+        "required": true,
+        "allowedValues": ["user", "admin", "authorities", "municipalities"],
+        "message": {
+            "required": "Role is required.",
+            "allowedValues": "Role must be either 'user', 'admin', 'authorities', or 'municipalities'."
+        }
+    },
+    "municipality": {
+        "requiredIf": {
+            "field": "role",
+            "equals": "municipalities"
+        },
+        "message": {
+            "requiredIf": "Municipality is required when role is 'municipalities'."
+        }
+    },
+    "district": {
+        "requiredIf": {
+            "field": "role",
+            "equals": "authorities"
+        },
+        "message": {
+            "requiredIf": "District is required when role is 'authorities'."
+        }
+    }
+}
