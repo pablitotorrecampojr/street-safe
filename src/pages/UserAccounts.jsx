@@ -60,7 +60,7 @@ export default function UserAccounts() {
                     label={
                         <div className="hover:text-blue-500 text-sm">
                             <i className="fa-solid fa-lock-open mr-2"></i>
-                            Unblock
+                            Activate
                         </div>
                     }
                     onClick={() => handleUpdatingUserStatus(params.row.id, UserStatus.ACTIVE)}

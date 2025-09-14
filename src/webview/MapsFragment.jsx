@@ -22,6 +22,7 @@ export default function MapsFragment() {
     useEffect(() => {
         const db = getDatabase();
         const roadhazardsRef = ref(db, "roadhazards");
+        console.log(`hazards ref: ${roadhazardsRef}`);
         const unsubscribe = onValue(
             roadhazardsRef,
             (snapshot) => {
@@ -124,8 +125,8 @@ export default function MapsFragment() {
                                         >
                                             <Popup>
                                                 <div>
-                                                    <h4>☢️ {hazard.roadHazard} ☢️</h4>
-                                                    <p>📌 {hazard.fullAddress.replace("Address:", "")}</p>
+                                                    <h4>☢️ {hazard.type} ☢️</h4>
+                                                    <p>📌 {hazard.localtion}</p>
                                                     {!fromAdmin && (
                                                         <a href="#"
                                                             onClick={() => {
