@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import accountSetting from "../../constants/account-setting.json"
 import { Badge } from '@components';
 import { statusOptions } from '@enums';
+import accountSettingJson from '../../constants/account-setting.json';
 
 export default function UsersDetails({ user, onClose, isOpen }) {
   return (
@@ -40,7 +41,7 @@ export default function UsersDetails({ user, onClose, isOpen }) {
               <p><span className="font-medium">Status:</span> 
                 <Badge 
                     status={statusOptions[user?.status]} 
-                    text={user?.status} 
+                    text={ accountSettingJson.pending_accounts[user?.status]} 
                 />
               </p>
             </div>

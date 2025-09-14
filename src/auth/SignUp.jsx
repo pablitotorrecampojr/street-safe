@@ -5,7 +5,6 @@ import municipalities from '../constants/municipalities.json';
 import districts from '../constants/districts.json';
 import { toast } from "react-toastify";
 import {signUp} from '../firebase/auth';
-import { set } from "firebase/database";
 
 const SignUp = () => {
   const navigate = useNavigate();
