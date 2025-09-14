@@ -1,7 +1,7 @@
 export const UserStatus = {
-    PENDING: 'pending',
-    ACTIVE: 'active',
-    BLOCKED: 'blocked',
+    PENDING: '0',
+    ACTIVE: '1',
+    BLOCKED: '2',
 };
 
 export const UserRole = {
