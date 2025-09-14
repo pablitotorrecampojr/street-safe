@@ -16,6 +16,7 @@ class FirebaseListenerService : Service() {
 
     private lateinit var database: DatabaseReference
     private lateinit var notificationHelper: NotificationHelper
+    private lateinit var realtimeDatabaseListener: RealtimeDatabaseListener
 
     private val CHANNEL_ID = "foreground_service_channel"
 
@@ -23,6 +24,8 @@ class FirebaseListenerService : Service() {
     override fun onCreate() {
         super.onCreate()
         notificationHelper = NotificationHelper(this)
+        realtimeDatabaseListener = RealtimeDatabaseListener(applicationContext)
+        realtimeDatabaseListener.startListening()
 
         // Create notification channel for the foreground service
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
