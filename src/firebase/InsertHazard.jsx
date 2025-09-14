@@ -20,7 +20,7 @@ export default function ProtectedRoute({ children }) {
                 const hazardRef = ref(realtimeDb, "roadhazards");
                 const newHazard = {
                     image: "base64Image",
-                    description: "This is a dummy hazard report for testing purposes.",
+                    description: "This is for another user.",
                     reportedAt: "2025-04-11 00:00:00",
                     location: "Dummy Location, City, Country",
                     type: "Test Data",
@@ -28,7 +28,7 @@ export default function ProtectedRoute({ children }) {
                     isNationalFlag: false,
                     latitude: 10.339278,
                     longitude: 123.904334,
-                    userid: "ow9TE9M1hcZ4UldoIcQQrkjxTqE2",
+                    userid: "ow9TE9M1hcZ4UldoIcQQrkjxTqE2xxxx",
                     id: generateRandomId(),
                 };
 

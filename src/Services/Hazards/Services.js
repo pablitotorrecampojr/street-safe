@@ -2,6 +2,7 @@ import { ref, get, onValue, update } from "firebase/database";
 import { realtimeDb } from "../../firebase/firebase";
 import { RoadHazards } from "@enums";
 import { NotificationServices } from "@services";
+import { Letters } from "@utils";
 
 export async function all() {
   try {
@@ -100,7 +101,7 @@ export async function updateStatus(hazardId, newStatus, resolvedAt = null, backt
     //TODO: send notification to user
     await NotificationServices.sendNotification(
       userId,
-      "Hazard Marked as "+ newStatus,
+      "Hazard Marked as "+ Letters.CapitalizeFirstLetter(newStatus),
       "Your reported hazard has been marked as "+ newStatus + ". Thank you for your contribution!"
     );
 
