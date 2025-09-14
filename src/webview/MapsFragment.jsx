@@ -22,7 +22,6 @@ export default function MapsFragment() {
     useEffect(() => {
         const db = getDatabase();
         const roadhazardsRef = ref(db, "roadhazards");
-        console.log(`hazards ref: ${roadhazardsRef}`);
         const unsubscribe = onValue(
             roadhazardsRef,
             (snapshot) => {
@@ -124,16 +123,24 @@ export default function MapsFragment() {
                                             icon={ isSelectedHazard ? selectedHazard : hazardIcon }
                                         >
                                             <Popup>
-                                                <div>
-                                                    <h4>☢️ {hazard.type} ☢️</h4>
-                                                    <p>📌 {hazard.localtion}</p>
+                                                <div className="">
+                                                    <h4 className="font-semibold text-red-600">
+                                                        ☢️ {hazard.type}
+                                                    </h4>
+                                                    <p className="text-gray-700 text-sm mb-2">
+                                                        📌 {hazard.location}
+                                                    </p>
+
                                                     {!fromAdmin && (
-                                                        <a href="#"
+                                                        <button
                                                             onClick={() => {
-                                                                navigate(`/hazard-details?hazardId=${hazard.id}&lat=${userLatitude}&lng=${userLongitude}`);
+                                                            navigate(`/hazard-details?hazardId=${hazard.id}&lat=${userLatitude}&lng=${userLongitude}`);
                                                             }}
-                                                            className="btn-link"
-                                                        > <span className='bx bx-map-alt'></span> View full detail</a>
+                                                            className="flex items-center text-blue-600 hover:text-blue-800 font-medium text-sm"
+                                                        >
+                                                            <span className="bx bx-map-alt mr-1"></span>
+                                                            View full detail
+                                                        </button>
                                                     )}
                                                 </div>
                                             </Popup>
