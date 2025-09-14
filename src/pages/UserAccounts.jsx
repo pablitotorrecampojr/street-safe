@@ -10,6 +10,7 @@ import { GridActionsCellItem } from '@mui/x-data-grid';
 import { UsersDetails } from "@components";
 import { toast } from "react-toastify";
 import { UserServices } from "@services";
+import accountSettingJson from '../constants/account-setting.json';
 
 export default function UserAccounts() {
     const [loading, setLoading] = useState(true);
@@ -37,7 +38,7 @@ export default function UserAccounts() {
             field: "status",
             headerName: "Status",
             width: 150,
-            renderCell: (params) => <Badge status={statusOptions[params.value]} text={params.value} />,
+            renderCell: (params) => <Badge status={statusOptions[params.value]} text={ accountSettingJson.pending_accounts[params.value]} />,
         },
         {
             field: 'actions',
