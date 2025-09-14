@@ -18,10 +18,13 @@ import androidx.core.content.ContextCompat
 class LandingPage : AppCompatActivity() {
 
     private val CAMERA_PERMISSION_REQUEST = 100
+    private lateinit var dbListener: RealtimeDatabaseListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.landingpage_activity)
+        dbListener = RealtimeDatabaseListener(this)
+        dbListener.startListening()
 
         checkAndRequestPermissions()
     }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.streetsafe_android.databinding.ActivityMainBinding
+import com.example.streetsafe_android.NotificationHelper
 
 class MainActivity : AppCompatActivity() {
 
