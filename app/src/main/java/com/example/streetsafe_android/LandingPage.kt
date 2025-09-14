@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
@@ -18,13 +19,10 @@ import androidx.core.content.ContextCompat
 class LandingPage : AppCompatActivity() {
 
     private val CAMERA_PERMISSION_REQUEST = 100
-    private lateinit var dbListener: RealtimeDatabaseListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.landingpage_activity)
-        dbListener = RealtimeDatabaseListener(this)
-        dbListener.startListening()
 
         checkAndRequestPermissions()
     }
@@ -38,6 +36,16 @@ class LandingPage : AppCompatActivity() {
             )
         } else {
             checkLocationStatus()
+            startListenerService()
+        }
+    }
+
+    private fun startListenerService() {
+        val serviceIntent = Intent(this, FirebaseListenerService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent)
+        } else {
+            startService(serviceIntent)
         }
     }
 
