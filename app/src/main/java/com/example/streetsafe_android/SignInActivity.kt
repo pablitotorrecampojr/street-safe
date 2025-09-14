@@ -66,21 +66,28 @@ class SignInActivity : AppCompatActivity() {
             auth.signInWithEmailAndPassword(emailText, passwordText)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        val userId = auth.currentUser?.uid
-                        if (userId != null) {
-                            db.collection("users").document(userId).get()
-                                .addOnSuccessListener { document ->
-                                    if (document.exists()) {
-                                        Toast.makeText(this, "Welcome back, ${document.getString("fullname")}!", Toast.LENGTH_LONG).show()
+                        val user = auth.currentUser
+                        if (user != null) {
+                            if (user.isEmailVerified) {
+                                db.collection("users").document(user.uid).get()
+                                    .addOnSuccessListener { document ->
+                                        if (document.exists()) {
+                                            Toast.makeText(this, "Welcome back, ${document.getString("fullname")}!", Toast.LENGTH_LONG).show()
+                                            startActivity(Intent(this, MainActivity::class.java))
+                                            finish()
+                                        } else {
+                                            auth.signOut()
+                                            Toast.makeText(this, "No user profile found. Please contact support.", Toast.LENGTH_LONG).show()
+                                        }
                                     }
-                                    startActivity(Intent(this, MainActivity::class.java))
-                                    finish()
-                                }
-                                .addOnFailureListener {
-                                    Toast.makeText(this, "Login successful but failed to load user data.", Toast.LENGTH_LONG).show()
-                                    startActivity(Intent(this, MainActivity::class.java))
-                                    finish()
-                                }
+                                    .addOnFailureListener {
+                                        auth.signOut()
+                                        Toast.makeText(this, "Failed to load user data. Please try again.", Toast.LENGTH_LONG).show()
+                                    }
+                            } else {
+                                auth.signOut()
+                                Toast.makeText(this, "Please verify your email before signing in.", Toast.LENGTH_LONG).show()
+                            }
                         }
                     } else {
                         Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_LONG).show()
