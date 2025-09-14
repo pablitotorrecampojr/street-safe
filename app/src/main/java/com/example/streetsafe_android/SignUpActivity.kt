@@ -66,17 +66,20 @@ class SignUpActivity : AppCompatActivity() {
                         val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
 
                         val user = hashMapOf(
+                            "uid" to userId,
                             "fullname" to fullNameText,
                             "email" to emailText,
                             "phone" to phoneText,
-                            "role" to "4",
+                            "role" to "3",
+                            "status" to "0",
                             "createdAt" to SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                         )
 
                         db.collection("users").document(userId).set(user)
                             .addOnSuccessListener {
+                                auth.signOut();
                                 Toast.makeText(this, "Sign-up Successful!", Toast.LENGTH_LONG).show()
-                                startActivity(Intent(this, MainActivity::class.java))
+                                startActivity(Intent(this, SignInActivity::class.java))
                                 finish()
                             }
                             .addOnFailureListener { e ->
