@@ -1,6 +1,7 @@
 import { ref, get, onValue, update } from "firebase/database";
 import { realtimeDb } from "../../firebase/firebase";
 import { RoadHazards } from "@enums";
+import { NotificationServices } from "@services";
 
 export async function all() {
   try {
@@ -45,7 +46,6 @@ export async function getById(hazardId) {
   }
 }
 
-
 export function subscribe(callback) {
   const roadHazardsRef = ref(realtimeDb, "roadhazards");
   const unsubscribe = onValue(roadHazardsRef, (snapshot) => {
@@ -70,24 +70,45 @@ export function subscribe(callback) {
  */
 export async function updateStatus(hazardId, newStatus, resolvedAt = null, backtoPending = false) {
   try {
-   
     const hazardRef = ref(realtimeDb, `roadhazards/${hazardId}`);
+    const hazardSnapshot = await get(hazardRef);
+    if (!hazardSnapshot.exists()) {
+      throw new Error(`Hazard with ID ${hazardId} does not exist`);
+    }
+    const hazardData = hazardSnapshot.val();
+    const userId = hazardData.userid;
+
     if (newStatus === RoadHazards.Status.NATIONAL) {
       await update(hazardRef, {
         isNationalFlag: true,
         resolvedAt: resolvedAt
       });
+      await NotificationServices.sendNotification(
+        userId,
+        "Hazard Marked as National",
+        "Your reported hazard has been marked as a national issue. Thank you for your contribution!"
+      );
     } else if (backtoPending) {
       await update(hazardRef, {
         status: RoadHazards.Status.PENDING,
         isNationalFlag: false,
         resolvedAt: null
       });
+      await NotificationServices.sendNotification(
+        userId,
+        "Hazard Marked as Pending",
+        "Your reported hazard has been marked as pending. Thank you for your contribution!"
+      );
     } else {
       await update(hazardRef, {
         status: newStatus,
         resolvedAt: resolvedAt
       });
+      await NotificationServices.sendNotification(
+        userId,
+        "Hazard Marked as "+ newStatus,
+        "Your reported hazard has been marked as "+ newStatus + ". Thank you for your contribution!"
+      );
     }
 
     return true;
