@@ -1,6 +1,8 @@
 import { ref, get, onValue, update } from "firebase/database";
 import { realtimeDb } from "../../firebase/firebase";
 import { RoadHazards } from "@enums";
+import { NotificationServices } from "@services";
+import { Letters } from "@utils";
 
 export async function all() {
   try {
@@ -45,7 +47,6 @@ export async function getById(hazardId) {
   }
 }
 
-
 export function subscribe(callback) {
   const roadHazardsRef = ref(realtimeDb, "roadhazards");
   const unsubscribe = onValue(roadHazardsRef, (snapshot) => {
@@ -70,8 +71,15 @@ export function subscribe(callback) {
  */
 export async function updateStatus(hazardId, newStatus, resolvedAt = null, backtoPending = false) {
   try {
-   
     const hazardRef = ref(realtimeDb, `roadhazards/${hazardId}`);
+    const hazardSnapshot = await get(hazardRef);
+    if (!hazardSnapshot.exists()) {
+      throw new Error(`Hazard with ID ${hazardId} does not exist`);
+    }
+    const hazardData = hazardSnapshot.val();
+    const userId = hazardData.userid;
+
+    //TODO: update status of hazard
     if (newStatus === RoadHazards.Status.NATIONAL) {
       await update(hazardRef, {
         isNationalFlag: true,
@@ -89,6 +97,13 @@ export async function updateStatus(hazardId, newStatus, resolvedAt = null, backt
         resolvedAt: resolvedAt
       });
     }
+
+    //TODO: send notification to user
+    await NotificationServices.sendNotification(
+      userId,
+      "Hazard Marked as "+ Letters.CapitalizeFirstLetter(newStatus),
+      "Your reported hazard has been marked as "+ newStatus + ". Thank you for your contribution!"
+    );
 
     return true;
   } catch (error) {
