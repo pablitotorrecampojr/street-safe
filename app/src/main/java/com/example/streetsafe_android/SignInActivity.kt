@@ -49,6 +49,7 @@ class SignInActivity : AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         signInButton.setOnClickListener {
+
             val emailText = emailInput.text.toString().trim()
             val passwordText = passwordInput.text.toString().trim()
 
@@ -62,6 +63,8 @@ class SignInActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            signInButton.isEnabled = false;
+            signInButton.text = "Signing In ..."
             // Authenticate User
             auth.signInWithEmailAndPassword(emailText, passwordText)
                 .addOnCompleteListener { task ->
@@ -84,19 +87,27 @@ class SignInActivity : AppCompatActivity() {
                                             finish()
                                         } else {
                                             auth.signOut()
+                                            signInButton.isEnabled = true;
+                                            signInButton.text = "Sign In";
                                             Toast.makeText(this, "No user profile found. Please contact support.", Toast.LENGTH_LONG).show()
                                         }
                                     }
                                     .addOnFailureListener {
                                         auth.signOut()
+                                        signInButton.isEnabled = true;
+                                        signInButton.text = "Sign In";
                                         Toast.makeText(this, "Failed to load user data. Please try again.", Toast.LENGTH_LONG).show()
                                     }
                             } else {
+                                signInButton.isEnabled = true;
+                                signInButton.text = "Sign In";
                                 auth.signOut()
                                 Toast.makeText(this, "Please verify your email before signing in.", Toast.LENGTH_LONG).show()
                             }
                         }
                     } else {
+                        signInButton.isEnabled = true;
+                        signInButton.text = "Sign In";
                         Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                     }
                 }
