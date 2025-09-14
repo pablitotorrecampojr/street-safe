@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import { getDatabase, ref, onValue } from "firebase/database";
 import LoadingScreen from './LoadingScreen';
 import { hazard_icons, hazard_color, hazard_status } from '../constants/hazard-report';
+import { RoadHazards } from '@enums';
+import { Letters } from '@utils';
 
 export default function HazardFragment() {
   const location = useLocation();
@@ -61,29 +63,44 @@ export default function HazardFragment() {
                 <div className="col-md-6 mb-4 mb-md-0 mx-auto">
                   <h1 className="text-center fw-bold">Report Status</h1>
 
-                  <div className="row justify-content-center" hidden={loading}>
-                    <div className="btn-group mt-4" role="group" aria-label="Basic example">
-                      <button
-                        type="button"
-                        className={`btn btn-outline-primary ${activeTab === "all" ? 'active' : ''}`}
-                        onClick={() => setActiveTab("all")}
-                      >
-                        All
-                      </button>
+                  <div className="w-full flex flex-row space-x-2 mt-4" hidden={loading}>
+                    <button
+                      type="button"
+                      className={`btn btn-outline-primary ${activeTab === "all" ? 'active' : ''}`}
+                      onClick={() => setActiveTab("all")}
+                    >
+                      All
+                    </button>
+                    <button
+                      type="button"
+                      className={`btn btn-outline-primary ${activeTab === RoadHazards.Status.PENDING ? 'active' : ''}`}
+                      onClick={() => setActiveTab(RoadHazards.Status.PENDING)}
+                    >
+                      { Letters.CapitalizeFirstLetter(RoadHazards.Status.PENDING) }
+                    </button>
 
-                      {Object.entries(hazard_status).map(([key, status]) => (
-                        <button
-                          key={key}
-                          type="button"
-                          className={`badge btn btn-outline-${hazard_color[key]} ${activeTab === key ? 'active' : ''}`}
-                          onClick={() => setActiveTab(key)}
-                        >
-                          <span className={`label-${hazard_color[key]}`}>
-                            <i className={`${hazard_icons[key]}`}></i>
-                          </span>
-                        </button>
-                      ))}
-                    </div>
+                    <button
+                      type="button"
+                      className={`btn btn-outline-primary ${activeTab === RoadHazards.Status.INVESTIGATING ? 'active' : ''}`}
+                      onClick={() => setActiveTab(RoadHazards.Status.INVESTIGATING)}
+                    >
+                      { Letters.CapitalizeFirstLetter(RoadHazards.Status.INVESTIGATING) }
+                    </button>
+
+                    <button
+                      type="button"
+                      className={`btn btn-outline-primary ${activeTab === RoadHazards.Status.RESOLVED ? 'active' : ''}`}
+                      onClick={() => setActiveTab(RoadHazards.Status.RESOLVED)}
+                    >
+                      { Letters.CapitalizeFirstLetter(RoadHazards.Status.RESOLVED) }
+                    </button>
+                    <button
+                      type="button"
+                      className={`btn btn-outline-primary ${activeTab === RoadHazards.Status.REJECTED ? 'active' : ''}`}
+                      onClick={() => setActiveTab(RoadHazards.Status.REJECTED)}
+                    >
+                      { Letters.CapitalizeFirstLetter(RoadHazards.Status.REJECTED) }
+                    </button>
                   </div>
 
                   {loading ? (
