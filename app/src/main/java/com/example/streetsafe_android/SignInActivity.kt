@@ -72,8 +72,15 @@ class SignInActivity : AppCompatActivity() {
                                 db.collection("users").document(user.uid).get()
                                     .addOnSuccessListener { document ->
                                         if (document.exists()) {
+                                            val status = document.getString("status");
+                                            //TODO: check if user is still pending
+                                            if (status == "0") {
+                                                startActivity(Intent(this, PendingAccountPrompt::class.java))
+                                            } else {
+                                                startActivity(Intent(this, MainActivity::class.java))
+                                            }
                                             Toast.makeText(this, "Welcome back, ${document.getString("fullname")}!", Toast.LENGTH_LONG).show()
-                                            startActivity(Intent(this, PendingAccountPrompt::class.java))
+
                                             finish()
                                         } else {
                                             auth.signOut()
