@@ -24,7 +24,7 @@ class LandingPage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.landingpage_activity)
-
+        SessionManager.loadFromPrefs(this)
         checkAndRequestPermissions()
     }
 

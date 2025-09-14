@@ -60,6 +60,9 @@ class SignUpActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            signUpButton.isEnabled = false;
+            signUpButton.text = "Signing up ...";
+
             auth.createUserWithEmailAndPassword(emailText, passwordText)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -93,6 +96,8 @@ class SignUpActivity : AppCompatActivity() {
                                 Toast.makeText(this, "Failed to send verification: ${it.message}", Toast.LENGTH_SHORT).show()
                             }
                     } else {
+                        signUpButton.isEnabled = true;
+                        signUpButton.text = "Sign up";
                         // Handle authentication failure
                         val errorMessage = task.exception?.localizedMessage ?: "Sign-up failed. Please try again."
                         Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()

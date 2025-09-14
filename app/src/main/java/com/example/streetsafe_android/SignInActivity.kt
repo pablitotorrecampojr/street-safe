@@ -80,6 +80,8 @@ class SignInActivity : AppCompatActivity() {
                                             if (status == "0") {
                                                 startActivity(Intent(this, PendingAccountPrompt::class.java))
                                             } else {
+                                                SessionManager.setUserId(document.getString("uid"))
+                                                SessionManager.saveToPrefs(this)
                                                 startActivity(Intent(this, MainActivity::class.java))
                                             }
                                             Toast.makeText(this, "Welcome back, ${document.getString("fullname")}!", Toast.LENGTH_LONG).show()
