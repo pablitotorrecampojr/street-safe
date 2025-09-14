@@ -78,38 +78,31 @@ export async function updateStatus(hazardId, newStatus, resolvedAt = null, backt
     const hazardData = hazardSnapshot.val();
     const userId = hazardData.userid;
 
+    //TODO: update status of hazard
     if (newStatus === RoadHazards.Status.NATIONAL) {
       await update(hazardRef, {
         isNationalFlag: true,
         resolvedAt: resolvedAt
       });
-      await NotificationServices.sendNotification(
-        userId,
-        "Hazard Marked as National",
-        "Your reported hazard has been marked as a national issue. Thank you for your contribution!"
-      );
     } else if (backtoPending) {
       await update(hazardRef, {
         status: RoadHazards.Status.PENDING,
         isNationalFlag: false,
         resolvedAt: null
       });
-      await NotificationServices.sendNotification(
-        userId,
-        "Hazard Marked as Pending",
-        "Your reported hazard has been marked as pending. Thank you for your contribution!"
-      );
     } else {
       await update(hazardRef, {
         status: newStatus,
         resolvedAt: resolvedAt
       });
-      await NotificationServices.sendNotification(
-        userId,
-        "Hazard Marked as "+ newStatus,
-        "Your reported hazard has been marked as "+ newStatus + ". Thank you for your contribution!"
-      );
     }
+
+    //TODO: send notification to user
+    await NotificationServices.sendNotification(
+      userId,
+      "Hazard Marked as "+ newStatus,
+      "Your reported hazard has been marked as "+ newStatus + ". Thank you for your contribution!"
+    );
 
     return true;
   } catch (error) {
