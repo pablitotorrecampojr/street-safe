@@ -73,7 +73,7 @@ class SignInActivity : AppCompatActivity() {
                                     .addOnSuccessListener { document ->
                                         if (document.exists()) {
                                             Toast.makeText(this, "Welcome back, ${document.getString("fullname")}!", Toast.LENGTH_LONG).show()
-                                            startActivity(Intent(this, MainActivity::class.java))
+                                            startActivity(Intent(this, PendingAccountPrompt::class.java))
                                             finish()
                                         } else {
                                             auth.signOut()
