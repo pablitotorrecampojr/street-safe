@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 class LandingPage : AppCompatActivity() {
 
     private val CAMERA_PERMISSION_REQUEST = 100
+    private val REQUEST_CODE_NOTIFICATIONS = 101
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,8 +37,26 @@ class LandingPage : AppCompatActivity() {
             )
         } else {
             checkLocationStatus()
-            startListenerService()
+            ensureNotificationPermission()
         }
+    }
+
+    private fun ensureNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    REQUEST_CODE_NOTIFICATIONS
+                )
+                return
+            }
+        }
+        startListenerService()
     }
 
     private fun startListenerService() {

@@ -1,5 +1,6 @@
 package com.example.streetsafe_android
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -18,6 +19,7 @@ class FirebaseListenerService : Service() {
 
     private val CHANNEL_ID = "foreground_service_channel"
 
+    @SuppressLint("ForegroundServiceType")
     override fun onCreate() {
         super.onCreate()
         notificationHelper = NotificationHelper(this)
