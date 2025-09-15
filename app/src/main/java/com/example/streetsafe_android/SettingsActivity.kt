@@ -68,7 +68,7 @@ class SettingsActivity  : AppCompatActivity() {
                 this, Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
         } else {
-            true // notifications auto-allowed before Android 13
+            true
         }
     }
 
@@ -117,7 +117,6 @@ class SettingsActivity  : AppCompatActivity() {
     }
 
     private fun resetSwitch(switch: Switch) {
-        // cannot revoke programmatically -> guide user
         switch.isChecked = true
         Toast.makeText(
             this,

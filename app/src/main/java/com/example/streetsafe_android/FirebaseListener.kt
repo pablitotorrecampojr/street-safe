@@ -40,8 +40,8 @@ class FirebaseListenerService : Service() {
 
         // Start the service in the foreground with a persistent notification
         val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("StreetSafe Listener")
-            .setContentText("Listening for hazard notifications...")
+            .setContentTitle("Street Safe Listener")
+            .setContentText("Listening for hazard notifications")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .build()
 
