@@ -5,6 +5,7 @@ export async function sendNotification(toUserId, title, message) {
     const notificationRef = ref(realtimeDb, `hazardUpdates`);
     const notification = {
       userId: toUserId,
+      sender: JSON.parse(localStorage.getItem("userData")).uid,
       title: title,
       message: message,
       timestamp: Date.now(),
