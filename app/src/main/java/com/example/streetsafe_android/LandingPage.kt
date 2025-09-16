@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -25,6 +26,11 @@ class LandingPage : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.landingpage_activity)
         SessionManager.loadFromPrefs(this)
+        checkAndRequestPermissions()
+    }
+
+    override fun onResume() {
+        super.onResume()
         checkAndRequestPermissions()
     }
 
@@ -120,7 +126,20 @@ class LandingPage : AppCompatActivity() {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 checkLocationStatus()
             } else {
-                Toast.makeText(this, "Camera permission denied.", Toast.LENGTH_SHORT).show()
+                AlertDialog.Builder(this)
+                    .setTitle("Camera Permission Needed")
+                    .setMessage("This app requires camera access to continue. Please enable it in settings.")
+                    .setPositiveButton("Go to Settings") { _, _ ->
+                        val intent = Intent(
+                            android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.fromParts("package", packageName, null)
+                        )
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .show()
+
             }
         }
     }

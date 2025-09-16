@@ -69,6 +69,7 @@ class ReportFragment : Fragment() {
                 openCamera()
             } else {
                 Toast.makeText(requireContext(), "Camera permission required!", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(requireContext(), SettingsActivity::class.java))
             }
         }
 
@@ -78,6 +79,7 @@ class ReportFragment : Fragment() {
                 getLocation()
             } else {
                 Toast.makeText(requireContext(), "Location permission required!", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(requireContext(), SettingsActivity::class.java))
             }
         }
 
@@ -259,7 +261,7 @@ class ReportFragment : Fragment() {
         {
             "image": "$image"
         }
-    """.trimIndent()
+        """.trimIndent()
 
         val mediaType = "application/json; charset=utf-8".toMediaType()
         val requestBody = json.toRequestBody(mediaType)
