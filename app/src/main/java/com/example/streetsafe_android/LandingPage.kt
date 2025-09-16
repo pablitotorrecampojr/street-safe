@@ -31,7 +31,7 @@ class LandingPage : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        checkAndRequestPermissions()
+        checkAndProceed()
     }
 
     private fun checkAndRequestPermissions() {
@@ -115,7 +115,6 @@ class LandingPage : AppCompatActivity() {
         }
     }
 
-    // Handle permission result for camera
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
