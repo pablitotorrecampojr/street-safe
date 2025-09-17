@@ -9,3 +9,4 @@ export { default as Divider } from "./Divider";
 export { default as UsersDetails } from "./Modals/UsersDetails";
 export { default as ViewHazards } from "./Modals/ViewHazards";
 export { default as HazardsView } from "./HazardsView";
+export { default as HazardDetails } from "./Modals/HazardDetails";

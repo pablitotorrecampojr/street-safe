@@ -21,7 +21,6 @@ export default function UsersDetails({ user, onClose, isOpen }) {
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            {/* Close Button */}
             <button
               onClick={onClose}
               className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
@@ -31,7 +30,6 @@ export default function UsersDetails({ user, onClose, isOpen }) {
 
             <h2 className="text-xl font-semibold mb-4">User Details</h2>
 
-            {/* Example user details */}
             <div className="space-y-2">
               <p><span className="font-medium">Unique ID:</span> {user?.id}</p>
               <p><span className="font-medium">Full Name:</span> {user?.fullname}</p>

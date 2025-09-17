@@ -102,7 +102,8 @@ export async function updateStatus(hazardId, newStatus, resolvedAt = null, backt
     await NotificationServices.sendNotification(
       userId,
       "Hazard Marked as "+ Letters.CapitalizeFirstLetter(newStatus),
-      "Your reported hazard has been marked as "+ newStatus + ". Thank you for your contribution!"
+      "Your reported hazard has been marked as "+ newStatus + ". Thank you for your contribution!",
+      hazardId
     );
 
     return true;
