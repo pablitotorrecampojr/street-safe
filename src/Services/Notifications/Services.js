@@ -27,15 +27,9 @@ export async function getNotifications() {
     const snapshot = await get(notificationsRef);
     if (snapshot.exists()) {
       const notifications = Object.values(snapshot.val());
-      return {
-        'status': 200,
-        'data': notifications.filter((notification) => notification.sender === JSON.parse(localStorage.getItem("userData")).uid)
-      };
+      return notifications.filter((notification) => notification.sender === JSON.parse(localStorage.getItem("userData")).uid);
     }
-    return {
-      'status': 404,
-      'data': []
-    };
+    return [];
   } catch (error) {
     console.error("[Notification] Error fetching notifications:", error);
     throw error;

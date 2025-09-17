@@ -25,7 +25,10 @@ export default function Notifications() {
         { field: 'timestamp', headerName: 'Date', width: 200 },
         { field: 'notified', headerName: 'Read', width: 100, 
             renderCell: (params) => (
-                params.value ? <Badge status="success" text="Yes" /> : <Badge status="danger" text="No" />
+                console.log(params.notified),
+                params.row.notified == true
+                 ? <Badge status="success" text="Yes" /> 
+                 : <Badge status="danger" text="No" />
             )
          },
         { field: 'actions', type: 'actions', headerName: 'Actions', width: 100,
@@ -44,17 +47,11 @@ export default function Notifications() {
     useEffect(() => {
         const fetchNotifications = async () => {
             const result = await NotificationServices.getNotifications();
-            console.log(result.data);
-            setRows(
-                result.data.map((notification, index) => ({
-                    id: index + 1,
-                    index: index + 1,
-                    hazardId: notification.hazardId,
-                    title: notification.title,
-                    message: notification.message,
-                    timestamp: new Date(notification.timestamp).toLocaleString(),
-                }))
-            );
+            const rowsWithId = result.map((notification, index) => ({
+            ...notification,
+            id: index // fallback: use array index
+            }));
+            setRows(rowsWithId);
             setLoading(false);
         };
         fetchNotifications();
