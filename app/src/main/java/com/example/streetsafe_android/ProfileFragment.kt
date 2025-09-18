@@ -72,6 +72,10 @@ class ProfileFragment : Fragment() {
         binding.settingsButton.setOnClickListener {
             startActivity(Intent(requireContext(), SettingsActivity::class.java))
         }
+
+        binding.notificationButton.setOnClickListener {
+            startActivity(Intent(requireContext(), NotificationsActivity::class.java))
+        }
     }
 
     override fun onDestroyView() {
