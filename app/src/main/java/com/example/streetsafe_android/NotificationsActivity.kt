@@ -2,6 +2,7 @@ package com.example.streetsafe_android
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +17,10 @@ class NotificationsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?)  {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notifications)
+
+        findViewById<ImageView>(R.id.backButton).setOnClickListener {
+            finish()
+        }
 
         container = findViewById(R.id.notificationsContainer)
         database = FirebaseDatabase.getInstance().getReference("hazardUpdates")
