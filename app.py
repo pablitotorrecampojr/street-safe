@@ -8,23 +8,23 @@ import re
 import os
 import gdown
 
-# Google Drive model download setup
-MODEL_PATH = 'models/best.pt'
-GDRIVE_FILE_ID = '1K73vo398C6xZHM_bCQUNjhhhobZHUyq9'
+# # Google Drive model download setup
+# MODEL_PATH = 'models/best.pt'
+# GDRIVE_FILE_ID = '1K73vo398C6xZHM_bCQUNjhhhobZHUyq9'
 
-def download_model_if_needed():
-    if not os.path.exists(MODEL_PATH):
-        os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
-        url = f'https://drive.google.com/uc?id={GDRIVE_FILE_ID}'
-        print("Downloading model from Google Drive...")
-        gdown.download(url, MODEL_PATH, quiet=False)
-        print("Model downloaded.")
+# def download_model_if_needed():
+#     if not os.path.exists(MODEL_PATH):
+#         os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
+#         url = f'https://drive.google.com/uc?id={GDRIVE_FILE_ID}'
+#         print("Downloading model from Google Drive...")
+#         gdown.download(url, MODEL_PATH, quiet=False)
+#         print("Model downloaded.")
 
 # Download the model if not already present
-download_model_if_needed()
+# download_model_if_needed()
 
 # Load YOLOv8 custom-trained model
-model = YOLO(MODEL_PATH)
+model = YOLO("weights/best.pt")
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -71,6 +71,9 @@ def detect_hazard():
     return jsonify({"detections": detections})
 
 # Run the Flask app
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+# if __name__ == '__main__':
+#     port = int(os.environ.get("PORT", 5000))
+#     app.run(host="0.0.0.0", port=port)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)

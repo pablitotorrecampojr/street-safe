@@ -1,6 +1,5 @@
-Flask
 ultralytics
+flask
+pillow
 numpy
-Pillow
 gunicorn
-gdown
