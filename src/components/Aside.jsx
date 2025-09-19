@@ -19,10 +19,12 @@ export default function Aside() {
       1: [
         { name: 'Dashboard', path: '/dashboard', icon: 'bx bx-home-circle' },
         { name: 'Hazard Report', path: '/hazard-report', icon: 'bx bx-error-circle' },
+        { name: 'Notifications', path: '/notifications', icon: 'bx bx-bell' },
       ],
       2: [
         { name: 'Dashboard', path: '/dashboard', icon: 'bx bx-home-circle' },
         { name: 'Hazard Report', path: '/hazard-report', icon: 'bx bx-error-circle' },
+        { name: 'Notifications', path: '/notifications', icon: 'bx bx-bell' },
       ],
     };
 

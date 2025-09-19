@@ -19,6 +19,7 @@ import AccessControl from './pages/AccessControl';
 import PageNotFound from './pages/PageNotFound';
 import ReviewPendingAccounts from './pages/ReviewPendingAccounts';
 import UserAccounts from './pages/UserAccounts';
+import Notifications from './pages/Notitications';
 
 //TODO: import web view components
 import LoadingScreen from './webview/LoadingScreen';
@@ -87,6 +88,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             element={
               <ProtectedRoute>
                 <UserAccounts />
+              </ProtectedRoute>
+            }
+          /> 
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <Notifications />
               </ProtectedRoute>
             }
           /> 
