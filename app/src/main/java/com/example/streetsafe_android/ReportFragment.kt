@@ -52,6 +52,7 @@ import java.io.IOException
 import android.util.Base64
 import android.graphics.BitmapFactory
 import android.widget.ProgressBar
+import java.util.concurrent.TimeUnit
 
 class ReportFragment : Fragment() {
     private val cameraPermission = Manifest.permission.CAMERA
@@ -62,7 +63,12 @@ class ReportFragment : Fragment() {
     private var imageCapture: ImageCapture? = null
     private var latitude: Double? = null
     private var longitude: Double? = null
-    val client = OkHttpClient()
+    val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS)  // wait up to 30s to connect
+        .writeTimeout(30, TimeUnit.SECONDS)    // wait up to 30s to send data
+        .readTimeout(60, TimeUnit.SECONDS)     // wait up to 60s for server response
+        .build()
+
     private val requestCameraPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
@@ -256,7 +262,7 @@ class ReportFragment : Fragment() {
 
     private fun sendPostRequest(image: String, onResult: (String?) -> Unit) {
         //val url = "http://192.168.107.46:5000/detect"
-        val url = "http://192.168.254.101:5000/detect"
+        val url = "https://street-safe.onrender.com/detect"
         val json = """
         {
             "image": "$image"

@@ -101,7 +101,7 @@ class LandingPage : AppCompatActivity() {
                 val intent = Intent(this, SignInActivity::class.java)
                 startActivity(intent)
                 finish()
-            }, 10000)
+            }, 3000)
         } else {
             if (!isInternetConnected()) {
                 Toast.makeText(this, "Internet connection is required.", Toast.LENGTH_SHORT).show()
