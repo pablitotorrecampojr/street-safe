@@ -6,7 +6,6 @@ import io
 import base64
 import re
 import os
-import gdown
 
 # # Google Drive model download setup
 # MODEL_PATH = 'models/best.pt'
