@@ -64,6 +64,10 @@
             android:foregroundServiceType="dataSync">
         </service>
 
+        <activity android:name=".PrivacyPolicyActivity" android:exported="false"/>
+        <activity android:name=".AboutActivity" android:exported="false"/>
+        <!-- Web views -->
+        <activity android:name=".LoadingScreen" android:exported="true"/>
 
     </application>
 
