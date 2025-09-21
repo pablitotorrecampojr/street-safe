@@ -7,6 +7,8 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
@@ -18,12 +20,18 @@ import androidx.core.content.ContextCompat
 class LandingPage : AppCompatActivity() {
 
     private val CAMERA_PERMISSION_REQUEST = 100
+    private val REQUEST_CODE_NOTIFICATIONS = 101
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.landingpage_activity)
-
+        SessionManager.loadFromPrefs(this)
         checkAndRequestPermissions()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkAndProceed()
     }
 
     private fun checkAndRequestPermissions() {
@@ -35,6 +43,34 @@ class LandingPage : AppCompatActivity() {
             )
         } else {
             checkLocationStatus()
+            ensureNotificationPermission()
+        }
+    }
+
+    private fun ensureNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    REQUEST_CODE_NOTIFICATIONS
+                )
+                return
+            }
+        }
+        startListenerService()
+    }
+
+    private fun startListenerService() {
+        val serviceIntent = Intent(this, FirebaseListenerService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent)
+        } else {
+            startService(serviceIntent)
         }
     }
 
@@ -65,7 +101,7 @@ class LandingPage : AppCompatActivity() {
                 val intent = Intent(this, SignInActivity::class.java)
                 startActivity(intent)
                 finish()
-            }, 10000)
+            }, 3000)
         } else {
             if (!isInternetConnected()) {
                 Toast.makeText(this, "Internet connection is required.", Toast.LENGTH_SHORT).show()
@@ -79,7 +115,6 @@ class LandingPage : AppCompatActivity() {
         }
     }
 
-    // Handle permission result for camera
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -90,7 +125,20 @@ class LandingPage : AppCompatActivity() {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 checkLocationStatus()
             } else {
-                Toast.makeText(this, "Camera permission denied.", Toast.LENGTH_SHORT).show()
+                AlertDialog.Builder(this)
+                    .setTitle("Camera Permission Needed")
+                    .setMessage("This app requires camera access to continue. Please enable it in settings.")
+                    .setPositiveButton("Go to Settings") { _, _ ->
+                        val intent = Intent(
+                            android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.fromParts("package", packageName, null)
+                        )
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .show()
+
             }
         }
     }

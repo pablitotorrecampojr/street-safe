@@ -60,29 +60,44 @@ class SignUpActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            signUpButton.isEnabled = false;
+            signUpButton.text = "Signing up ...";
+
             auth.createUserWithEmailAndPassword(emailText, passwordText)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
-
-                        val user = hashMapOf(
-                            "fullname" to fullNameText,
-                            "email" to emailText,
-                            "phone" to phoneText,
-                            "role" to "4",
-                            "createdAt" to SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-                        )
-
-                        db.collection("users").document(userId).set(user)
+                        val user = auth.currentUser
+                        val uid = user!!.uid
+                        user.sendEmailVerification()
                             .addOnSuccessListener {
-                                Toast.makeText(this, "Sign-up Successful!", Toast.LENGTH_LONG).show()
-                                startActivity(Intent(this, MainActivity::class.java))
-                                finish()
+                                val usersData = hashMapOf(
+                                    "uid" to uid,
+                                    "fullname" to fullNameText,
+                                    "email" to emailText,
+                                    "phone" to phoneText,
+                                    "role" to "3",
+                                    "status" to "0",
+                                    "createdAt" to SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+                                )
+
+                                db.collection("users").document(uid).set(usersData)
+                                    .addOnSuccessListener {
+                                        auth.signOut();
+                                        Toast.makeText(this, "Sign-up Successful!", Toast.LENGTH_LONG).show()
+                                        startActivity(Intent(this, SignInActivity::class.java))
+                                        finish()
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Toast.makeText(this, "Failed to save user: ${e.message}", Toast.LENGTH_LONG).show()
+                                    }
+                                Toast.makeText(this, "Verification email sent!", Toast.LENGTH_SHORT).show()
                             }
-                            .addOnFailureListener { e ->
-                                Toast.makeText(this, "Failed to save user: ${e.message}", Toast.LENGTH_LONG).show()
+                            .addOnFailureListener {
+                                Toast.makeText(this, "Failed to send verification: ${it.message}", Toast.LENGTH_SHORT).show()
                             }
                     } else {
+                        signUpButton.isEnabled = true;
+                        signUpButton.text = "Sign up";
                         // Handle authentication failure
                         val errorMessage = task.exception?.localizedMessage ?: "Sign-up failed. Please try again."
                         Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()

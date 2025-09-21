@@ -49,6 +49,7 @@ class SignInActivity : AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         signInButton.setOnClickListener {
+
             val emailText = emailInput.text.toString().trim()
             val passwordText = passwordInput.text.toString().trim()
 
@@ -62,27 +63,53 @@ class SignInActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            signInButton.isEnabled = false;
+            signInButton.text = "Signing In ..."
             // Authenticate User
             auth.signInWithEmailAndPassword(emailText, passwordText)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        val userId = auth.currentUser?.uid
-                        if (userId != null) {
-                            db.collection("users").document(userId).get()
-                                .addOnSuccessListener { document ->
-                                    if (document.exists()) {
-                                        Toast.makeText(this, "Welcome back, ${document.getString("fullname")}!", Toast.LENGTH_LONG).show()
+                        val user = auth.currentUser
+                        if (user != null) {
+                            if (user.isEmailVerified) {
+                                db.collection("users").document(user.uid).get()
+                                    .addOnSuccessListener { document ->
+                                        if (document.exists()) {
+                                            val status = document.getString("status");
+                                            //TODO: check if user is still pending
+                                            if (status == "0") {
+                                                startActivity(Intent(this, PendingAccountPrompt::class.java))
+                                            } else {
+                                                SessionManager.setUserId(document.getString("uid"))
+                                                SessionManager.saveToPrefs(this)
+                                                startActivity(Intent(this, MainActivity::class.java))
+                                            }
+                                            Toast.makeText(this, "Welcome back, ${document.getString("fullname")}!", Toast.LENGTH_LONG).show()
+
+                                            finish()
+                                        } else {
+                                            auth.signOut()
+                                            signInButton.isEnabled = true;
+                                            signInButton.text = "Sign In";
+                                            Toast.makeText(this, "No user profile found. Please contact support.", Toast.LENGTH_LONG).show()
+                                        }
                                     }
-                                    startActivity(Intent(this, MainActivity::class.java))
-                                    finish()
-                                }
-                                .addOnFailureListener {
-                                    Toast.makeText(this, "Login successful but failed to load user data.", Toast.LENGTH_LONG).show()
-                                    startActivity(Intent(this, MainActivity::class.java))
-                                    finish()
-                                }
+                                    .addOnFailureListener {
+                                        auth.signOut()
+                                        signInButton.isEnabled = true;
+                                        signInButton.text = "Sign In";
+                                        Toast.makeText(this, "Failed to load user data. Please try again.", Toast.LENGTH_LONG).show()
+                                    }
+                            } else {
+                                signInButton.isEnabled = true;
+                                signInButton.text = "Sign In";
+                                auth.signOut()
+                                Toast.makeText(this, "Please verify your email before signing in.", Toast.LENGTH_LONG).show()
+                            }
                         }
                     } else {
+                        signInButton.isEnabled = true;
+                        signInButton.text = "Sign In";
                         Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                     }
                 }
@@ -141,6 +168,7 @@ class SignInActivity : AppCompatActivity() {
                                 "fullname" to fullName,
                                 "email" to email,
                                 "role" to "3",
+                                "status" to '0',
                                 "createdAt" to SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                             )
 
