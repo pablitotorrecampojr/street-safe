@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- Back Button -->
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="37dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Back"
+        android:src="@drawable/icons_backbutton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="About"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <!-- About Text -->
+    <ScrollView
+        android:id="@+id/policyScrollView"
+        android:layout_width="315dp"
+        android:layout_height="623dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleText">
+
+        <TextView
+            android:id="@+id/policyText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:text="Street Safe is a mobile application dedicated to empowering communities through real-time road safety awareness. By enabling users to capture, report, and visualize road hazards such as potholes, obstructions, and dangerous intersections, Street Safe aims to create safer streets for pedestrians, drivers, and commuters alike.\n\nHarnessing the power of technology — including location services, camera-based detection, and crowdsourced reports — Street Safe serves as a digital bridge between citizens and local authorities, driving action through visibility and data.\n\nVision:\nTo build safer, smarter roads through community-powered hazard detection and transparent public reporting.\n\nMission:\n• To empower individuals to report road hazards quickly and accurately using their smartphones.\n• To collaborate with local governments and transport agencies by providing actionable data and insights from the community.\n• To leverage intelligent detection (like AI image recognition) for faster hazard identification and response.\n• To promote transparency and public safety, ensuring that no road hazard goes unnoticed or unaddressed." />
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
