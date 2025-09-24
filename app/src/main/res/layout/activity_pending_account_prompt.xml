@@ -12,7 +12,7 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your Account is Pending"
+        android:text="Your Account is not Verified"
         android:textSize="25sp"
         android:textStyle="bold"
         android:layout_marginBottom="16dp"
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:gravity="center"
-        android:text="Oops! 😖 Your account is currently pending for review by our admins." />
+        android:text="Oops! 😖 Your account isn’t verified yet. Please check your registered email and click the verification link to activate your account." />
 
     <TextView
         android:id="@+id/tvTime"
@@ -32,13 +32,13 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:gravity="center"
-        android:text="It should not take more than 3 to 5 business days." />
+        android:text="If the email is not in your inbox, kindly check your spam or junk folder" />
 
     <Button
         android:id="@+id/btnSignOut"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign Out"
+        android:text="Back to Sign up"
         android:textSize="12dp"
         android:background="@drawable/rounded_button"
         android:textColor="@android:color/white" />

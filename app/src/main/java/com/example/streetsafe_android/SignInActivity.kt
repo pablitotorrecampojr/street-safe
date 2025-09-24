@@ -101,10 +101,7 @@ class SignInActivity : AppCompatActivity() {
                                         Toast.makeText(this, "Failed to load user data. Please try again.", Toast.LENGTH_LONG).show()
                                     }
                             } else {
-                                signInButton.isEnabled = true;
-                                signInButton.text = "Sign In";
-                                auth.signOut()
-                                Toast.makeText(this, "Please verify your email before signing in.", Toast.LENGTH_LONG).show()
+                                startActivity(Intent(this, PendingAccountPrompt::class.java))
                             }
                         }
                     } else {

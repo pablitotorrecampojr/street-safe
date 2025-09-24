@@ -76,7 +76,7 @@ class SignUpActivity : AppCompatActivity() {
                                     "email" to emailText,
                                     "phone" to phoneText,
                                     "role" to "3",
-                                    "status" to "0",
+                                    "status" to "1",
                                     "createdAt" to SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                                 )
 

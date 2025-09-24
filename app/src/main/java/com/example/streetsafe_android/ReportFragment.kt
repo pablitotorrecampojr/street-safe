@@ -261,7 +261,7 @@ class ReportFragment : Fragment() {
     }
 
     private fun sendPostRequest(image: String, onResult: (String?) -> Unit) {
-        val url = "http://192.168.254.105:5000/detect"
+        val url = "http://192.168.254.104:5000/detect"
 //        val url = "https://street-safe.onrender.com/detect"
         val json = """
         {
@@ -410,8 +410,8 @@ class ReportFragment : Fragment() {
 
     private fun bitmapToBase64(bitmap: Bitmap): String {
         val outputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream)
         val byteArray = outputStream.toByteArray()
-        return android.util.Base64.encodeToString(byteArray, android.util.Base64.NO_WRAP)
+        return Base64.encodeToString(byteArray, Base64.NO_WRAP)
     }
 }

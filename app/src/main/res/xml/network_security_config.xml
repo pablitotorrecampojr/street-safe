@@ -17,4 +17,11 @@
         <domain includeSubdomains="true">192.168.107.46</domain>
     </domain-config>
 
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">192.168.254.105</domain>
+    </domain-config>
+
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true"> 192.168.254.104</domain>
+    </domain-config>
 </network-security-config>
