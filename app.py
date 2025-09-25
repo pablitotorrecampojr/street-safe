@@ -10,8 +10,8 @@ import os
 import logging
 
 logging.basicConfig(
-    filename="logs/conf/hazard_api.log",   # log file path
-    level=logging.INFO,          # or DEBUG for more detail
+    filename="logs/conf/hazard_api.log",   
+    level=logging.INFO,         
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 # Load YOLOv8 custom-trained model
@@ -34,7 +34,7 @@ def detect_hazard():
     image_bytes = base64.b64decode(image_b64)
     image = Image.open(io.BytesIO(image_bytes)).convert('RGB')
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    image.save(f"/logs/img/img_{timestamp}.jpg")
+    image.save(f"logs/img/img_{timestamp}.jpg")
 
     # Strip base64 prefix if it exists
     if image_b64.startswith("data:image"):
@@ -51,6 +51,9 @@ def detect_hazard():
 
     # Run YOLOv8 detection
     results = model.predict(source=image_np, save=False, conf=0.1)
+    annotated_frame = results[0].plot()
+    annotated_image = Image.fromarray(annotated_frame)
+    annotated_image.save(f"logs/detect/img_{timestamp}.jpg")
 
     detections = []
     if results and len(results[0].boxes) > 0:
