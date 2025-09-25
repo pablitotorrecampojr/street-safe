@@ -136,28 +136,28 @@ class ReportFragment : Fragment() {
                         }
 
                         requireActivity().runOnUiThread {
+                            progressBar.visibility = View.GONE
+
                             capturedImageView.setImageBitmap(bitmap)
                             capturedImageView.visibility = View.VISIBLE
                             previewView.visibility = View.GONE
 
-                            // Hide old UI
                             cityTextView.visibility = View.GONE
                             submitButton.visibility = View.GONE
 
-                            // Show confirm + cancel buttons
                             submitFinalButton.visibility = View.VISIBLE
                             cancelButton.visibility = View.VISIBLE
 
-                            // Cancel = retake
                             cancelButton.setOnClickListener {
                                 capturedImageView.visibility = View.GONE
                                 previewView.visibility = View.VISIBLE
+                                cityTextView.visibility = View.VISIBLE
                                 submitButton.visibility = View.VISIBLE
                                 submitFinalButton.visibility = View.GONE
                                 cancelButton.visibility = View.GONE
+                                submitButton.isEnabled = true
                             }
 
-                            // Confirm = send to API
                             submitFinalButton.setOnClickListener {
                                 progressBar.visibility = View.VISIBLE
                                 submitFinalButton.isEnabled = false

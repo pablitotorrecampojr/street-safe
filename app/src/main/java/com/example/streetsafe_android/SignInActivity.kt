@@ -155,17 +155,15 @@ class SignInActivity : AppCompatActivity() {
                 val email = account.email ?: ""
                 val fullName = account.displayName ?: ""
 
-                // Check if the user already exists in Firestore
                 db.collection("users").document(uid).get()
                     .addOnSuccessListener { document ->
                         if (!document.exists()) {
-                            // User does not exist, create new entry in Firestore
                             val userData = hashMapOf(
                                 "uid" to uid,
                                 "fullname" to fullName,
                                 "email" to email,
                                 "role" to "3",
-                                "status" to '0',
+                                "status" to "1",
                                 "createdAt" to SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                             )
 
