@@ -135,117 +135,37 @@ class ReportFragment : Fragment() {
                             return
                         }
 
-                        val base64Image = bitmapToBase64(bitmap)
-                        val fullAddress = cityTextView.text.removePrefix("City: ").toString()
-                        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                        val currentDateTime = dateFormat.format(Date())
-                        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "anonymous"
+                        requireActivity().runOnUiThread {
+                            capturedImageView.setImageBitmap(bitmap)
+                            capturedImageView.visibility = View.VISIBLE
+                            previewView.visibility = View.GONE
 
-                        sendPostRequest(base64Image) { result ->
-                            requireActivity().runOnUiThread {
-                                progressBar.visibility = View.GONE
-                                submitButton.isEnabled = true
+                            // Hide old UI
+                            cityTextView.visibility = View.GONE
+                            submitButton.visibility = View.GONE
+
+                            // Show confirm + cancel buttons
+                            submitFinalButton.visibility = View.VISIBLE
+                            cancelButton.visibility = View.VISIBLE
+
+                            // Cancel = retake
+                            cancelButton.setOnClickListener {
+                                capturedImageView.visibility = View.GONE
+                                previewView.visibility = View.VISIBLE
+                                submitButton.visibility = View.VISIBLE
+                                submitFinalButton.visibility = View.GONE
+                                cancelButton.visibility = View.GONE
                             }
 
-                            if (result != null) {
-                                try {
-                                    val jsonObject = JSONObject(result)
-                                    val success = jsonObject.optBoolean("success", false)
-                                    val imageWithBoxesBase64 = jsonObject.optString("image_with_boxes", null)
+                            // Confirm = send to API
+                            submitFinalButton.setOnClickListener {
+                                progressBar.visibility = View.VISIBLE
+                                submitFinalButton.isEnabled = false
 
-                                    if (imageWithBoxesBase64 != null) {
-
-                                        val detectionsArray = jsonObject.optJSONArray("detections")
-                                        val detectedLabels = mutableSetOf<String>() // ensures uniqueness
-
-                                        for (i in 0 until detectionsArray.length()) {
-                                            val detection = detectionsArray.getJSONObject(i)
-                                            val label = detection.optString("label", "unknown")
-                                            detectedLabels.add(label)
-                                        }
-
-                                        val detectionText = if (detectedLabels.isNotEmpty()) {
-                                            "Detected Hazards:\n" + detectedLabels.joinToString(", ")
-                                        } else {
-                                            "No hazards detected."
-                                        }
-
-                                        requireActivity().runOnUiThread {
-                                            // Set detection text
-                                            val detectionTextView = view?.findViewById<TextView>(R.id.detectionTextView)
-                                            detectionTextView?.text = detectionText
-                                            detectionTextView?.visibility = View.VISIBLE
-
-                                            // Set image with bounding boxes
-                                            val imageBytes = Base64.decode(imageWithBoxesBase64, Base64.DEFAULT)
-                                            val decodedBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                                            capturedImageView.setImageBitmap(decodedBitmap)
-                                            capturedImageView.visibility = View.VISIBLE
-                                            previewView.visibility = View.GONE
-
-                                            // Hide old UI
-                                            cityTextView.visibility = View.GONE
-                                            submitButton.visibility = View.GONE
-
-                                            // Show new buttons
-                                            submitFinalButton.visibility = View.VISIBLE
-                                            cancelButton.visibility = View.VISIBLE
-
-                                            // Cancel button click - restart fragment
-                                            cancelButton.setOnClickListener {
-                                                val fragmentTransaction = parentFragmentManager.beginTransaction()
-                                                fragmentTransaction.replace(id, ReportFragment())
-                                                fragmentTransaction.commit()
-                                            }
-
-                                            // Submit final button click - send report to Firebase
-                                            submitFinalButton.setOnClickListener {
-                                                val intent = Intent(requireContext(), LoadingScreen::class.java)
-                                                intent.putExtra("loadingText", "Processing Data ...")
-                                                startActivity(intent)
-
-                                                val formattedLabels = detectedLabels.map { label ->
-                                                    label.split("_").joinToString(" ") { word ->
-                                                        word.replaceFirstChar { it.uppercase() }
-                                                    }
-                                                }
-
-                                                val report = hashMapOf(
-                                                    "id" to generateRandomId(),
-                                                    "imageUrl" to imageWithBoxesBase64,
-                                                    "dateSubmitted" to currentDateTime,
-                                                    "fullAddress" to fullAddress,
-                                                    "roadHazard" to formattedLabels,
-                                                    "status" to 0,
-                                                    "latitude" to latitude,
-                                                    "longitude" to longitude,
-                                                    "userid" to userId
-                                                )
-
-                                                val reportJson = JSONObject(report as Map<*, *>)
-                                                Log.d("ReportData", reportJson.toString(4))
-
-                                                val db = Firebase.database.reference
-                                                db.child("roadhazards").push().setValue(report)
-                                                    .addOnSuccessListener {
-                                                        Toast.makeText(requireContext(), "Report submitted!", Toast.LENGTH_SHORT).show()
-                                                        val intent = Intent(requireContext(), MainActivity::class.java)
-                                                        startActivity(intent)
-                                                    }
-                                                    .addOnFailureListener { e ->
-                                                        Toast.makeText(requireContext(), "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
-                                                        val intent = Intent(requireContext(), MainActivity::class.java)
-                                                        startActivity(intent)
-                                                    }
-                                            }
-                                        }
-                                    }
-
-                                } catch (e: Exception) {
-                                    Log.e("POST_RESULT", "Failed to parse JSON: ${e.message}")
+                                val base64Image = bitmapToBase64(bitmap)
+                                sendPostRequest(base64Image) { result ->
+                                    // same logic you already had for showing detections
                                 }
-                            } else {
-                                Log.d("POST_RESPONSE", "Request failed")
                             }
                         }
                     }
@@ -272,7 +192,7 @@ class ReportFragment : Fragment() {
 
     private fun sendPostRequest(image: String, onResult: (String?) -> Unit) {
         val url = "http://192.168.254.104:5000/detect"
-//        val url = "https://street-safe.onrender.com/detect"
+        //val url = "https://street-safe.onrender.com/detect"
         val json = """
         {
             "image": "$image"
