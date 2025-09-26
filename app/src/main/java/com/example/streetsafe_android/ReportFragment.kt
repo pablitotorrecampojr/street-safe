@@ -181,7 +181,7 @@ class ReportFragment : Fragment() {
                                             //TODO: handle the success response of post request
                                             Toast.makeText(requireContext(), "Image Identified", Toast.LENGTH_SHORT).show()
                                         } else {
-                                            //TODO: handle the sending of road hazard if not detected by AI
+                                            //TODO: ask user for manual data when connecting to flask API fails
                                             capturedImageView.visibility = View.GONE
                                             previewView.visibility = View.VISIBLE
                                             cityTextView.visibility = View.VISIBLE
