@@ -8,6 +8,7 @@ import android.widget.ImageButton
 import android.widget.Switch
 import android.widget.Toast
 import android.widget.ToggleButton
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -40,6 +41,7 @@ class EditProfileActivity : AppCompatActivity() {
         val passwordInput = findViewById<EditText>(R.id.passwordInput)
         val confirmPasswordInput = findViewById<EditText>(R.id.confirmpasswordInput)
         val updateButton = findViewById<Button>(R.id.updateButton)
+        val deleteAccountButton = findViewById<Button>(R.id.deleteAccountButton)
         val backButton = findViewById<Button>(R.id.backButton)
         val toggleChangePassword = findViewById<Switch>(R.id.toggleChangePassword)
 
@@ -118,6 +120,55 @@ class EditProfileActivity : AppCompatActivity() {
                     Toast.makeText(this, "Update failed: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
         }
+
+        //TODO: handle user acount deletion
+        deleteAccountButton.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Delete Account")
+            builder.setMessage("Are you sure you want to delete your account? This action cannot be undone.")
+
+            // Confirm button
+            builder.setPositiveButton("Delete") { dialog, _ ->
+                val user = FirebaseAuth.getInstance().currentUser
+                val db = FirebaseFirestore.getInstance()
+
+                if (user != null) {
+                    val uid = user.uid
+
+                    //TODO: Delete Firestore data
+                    db.collection("users").document(uid).delete()
+                        .addOnSuccessListener {
+                            //TODO: Then delete Auth account
+                            user.delete()
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        Toast.makeText(this, "Account deleted", Toast.LENGTH_SHORT).show()
+                                        // TODO: redirect user to sign-in screen
+                                        startActivity(Intent(this, SignInActivity::class.java))
+                                    } else {
+                                        Toast.makeText(this, "Error deleting account", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(this, "Failed to delete user data", Toast.LENGTH_SHORT).show()
+                        }
+                }
+
+                dialog.dismiss()
+            }
+
+
+            // Cancel button
+            builder.setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+
+            // Show the alert
+            val dialog = builder.create()
+            dialog.show()
+        }
+
 
         // Handle back button click
         backButton.setOnClickListener {

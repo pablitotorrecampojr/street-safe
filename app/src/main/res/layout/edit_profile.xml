@@ -145,6 +145,20 @@
         app:layout_constraintTop_toBottomOf="@+id/confirmpasswordInput"
         app:layout_constraintVertical_bias="0.21" />
 
+    <Button
+        android:id="@+id/deleteAccountButton"
+        android:layout_width="299dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/rounded_button_red"
+        android:text="Delete Account"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        app:layout_constraintTop_toBottomOf="@+id/updateButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5" />
+
     <View
         android:id="@+id/view"
         android:layout_width="299dp"
