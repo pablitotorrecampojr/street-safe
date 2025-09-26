@@ -55,6 +55,10 @@ def detect_hazard():
     annotated_image = Image.fromarray(annotated_frame)
     annotated_image.save(f"logs/detect/img_{timestamp}.jpg")
 
+    buffered = io.BytesIO()
+    annotated_image.save(buffered, format="JPEG")
+    annotated_b64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
+
     detections = []
     if results and len(results[0].boxes) > 0:
         for box in results[0].boxes:
@@ -68,9 +72,27 @@ def detect_hazard():
                 "label": model.names[cls_id]
             })
     else:
-        print("No detections found.")
+        detections = []
 
-    return jsonify({"detections": detections})
+    if len(detections) <= 0:
+        return jsonify({
+            "success": False,
+            "message": "No hazards detected.",
+            "data": {
+                "detections": [],
+                "annotated_image": None
+            }
+        })
+
+    else:
+        return jsonify({
+            "success": True,
+            "message": f"{len(detections)} hazard(s) detected.",
+            "data": {
+                "detections": detections,
+                "annotated_image": annotated_b64
+            }
+        })
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
