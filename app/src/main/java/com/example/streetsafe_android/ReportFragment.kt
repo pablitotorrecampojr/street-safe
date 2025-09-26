@@ -241,8 +241,8 @@ class ReportFragment : Fragment() {
             "imageUrl" to base64Image,
             "dateSubmitted" to dateTime,
             "fullAddress" to fullAddress,
-            "roadHazard" to listOf(hazardDescription),
-            "status" to 0,
+            "roadHazard" to hazardDescription,
+            "status" to "0",
             "latitude" to latitude,
             "longitude" to longitude,
             "userid" to userId
