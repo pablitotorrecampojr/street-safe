@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 8
+names: ['alligator_cracks', 'clogged_drains', 'cracks', 'major_scaling', 'no_or_faded_road_markings', 'open_manhole', 'pothole', 'ravelling']
+
+roboflow:
+  workspace: streetsafeai
+  project: streetsafe_roadhazards
+  version: 11
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/streetsafeai/streetsafe_roadhazards/dataset/11
