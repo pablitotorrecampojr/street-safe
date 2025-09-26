@@ -170,6 +170,8 @@ class ReportFragment : Fragment() {
                                 val currentDateTime = dateFormat.format(Date())
                                 val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "anonymous"
 
+                                testSimpleConnection() //TODO: testing flask api
+
                                 sendPostRequest(base64Image) { result ->
                                     requireActivity().runOnUiThread {
                                         progressBar.visibility = View.GONE
@@ -177,8 +179,7 @@ class ReportFragment : Fragment() {
 
                                         if (result != null) {
                                             //TODO: handle the success response of post request
-                                            // Any UI updates for success case go here
-
+                                            Toast.makeText(requireContext(), "Image Identified", Toast.LENGTH_SHORT).show()
                                         } else {
                                             //TODO: handle the sending of road hazard if not detected by AI
                                             capturedImageView.visibility = View.GONE
@@ -268,8 +269,28 @@ class ReportFragment : Fragment() {
         return id.toString()
     }
 
+    private fun testSimpleConnection() {
+        val json = """{"image": "hello"}"""
+        val mediaType = "application/json".toMediaType()
+        val requestBody = json.toRequestBody(mediaType)
+
+        val request = Request.Builder()
+            .url("http://192.168.254.100:5000/detect")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("SIMPLE_TEST", "Even simple request failed: ${e.message}")
+            }
+            override fun onResponse(call: Call, response: Response) {
+                Log.d("SIMPLE_TEST", "Simple request worked: ${response.code}")
+            }
+        })
+    }
+
     private fun sendPostRequest(image: String, onResult: (String?) -> Unit) {
-        val url = "http://192.168.254.104:5000/detect"
+        val url = "http://192.168.254.100:5000/detect"
         //val url = "https://street-safe.onrender.com/detect"
 
         Log.d("NETWORK_DEBUG", "🚀 Starting request to: $url")
