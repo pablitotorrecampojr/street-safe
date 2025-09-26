@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "810744358418",
+    "firebase_url": "https://street-safe-1c78a-default-rtdb.firebaseio.com",
     "project_id": "street-safe-1c78a",
     "storage_bucket": "street-safe-1c78a.firebasestorage.app"
   },
@@ -13,6 +14,22 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "810744358418-a996eqg5m0kbs2v25kqjif9iqp1u8qv5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.streetsafe_android",
+            "certificate_hash": "6d2fa793afc7122db15f0433ec7dcc96ea79163a"
+          }
+        },
+        {
+          "client_id": "810744358418-hckoikn3cvgv6i60odkbut7jk854k9vm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.streetsafe_android",
+            "certificate_hash": "abeb950211e8289698107e3da1bd83406e913bce"
+          }
+        },
         {
           "client_id": "810744358418-ehsg14nrc7fop9bo2516gbcg6jmu633a.apps.googleusercontent.com",
           "client_type": 3
