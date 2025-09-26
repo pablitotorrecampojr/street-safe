@@ -20,6 +20,10 @@ model = YOLO("weights/best.pt")
 # Initialize Flask app
 app = Flask(__name__)
 
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({"message": "Welcome to the Hazard Detection API!"})
+
 @app.route('/detect', methods=['POST'])
 def detect_hazard():
     data = request.json
