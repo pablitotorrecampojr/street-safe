@@ -54,7 +54,7 @@ def detect_hazard():
         return jsonify({"error": f"Invalid image data: {str(e)}"}), 400
 
     # Run YOLOv8 detection
-    results = model.predict(source=image_np, save=False, conf=0.1)
+    results = model.predict(source=image_np, save=False, conf=0.30)
     annotated_frame = results[0].plot()
     annotated_image = Image.fromarray(annotated_frame)
     annotated_image.save(f"logs/detect/img_{timestamp}.jpg")
