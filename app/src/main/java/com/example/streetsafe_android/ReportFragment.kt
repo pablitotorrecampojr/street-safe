@@ -235,6 +235,35 @@ class ReportFragment : Fragment() {
                                                     dialog.dismiss()
                                                 }
                                                 .show()
+
+                                                val report = hashMapOf(
+                                                    "id" to generateRandomId(),
+                                                    "imageUrl" to imageWithBoxesBase64,
+                                                    "dateSubmitted" to currentDateTime,
+                                                    "fullAddress" to fullAddress,
+                                                    "roadHazard" to formattedLabels,
+                                                    "status" to 0,
+                                                    "latitude" to latitude,
+                                                    "longitude" to longitude,
+                                                    "userid" to userId
+                                                )
+
+                                                val reportJson = JSONObject(report as Map<*, *>)
+                                                Log.d("ReportData", reportJson.toString(4))
+
+                                                val db = Firebase.database.reference
+                                                db.child("roadhazards").push().setValue(report)
+                                                    .addOnSuccessListener {
+                                                        Toast.makeText(requireContext(), "Report submitted!", Toast.LENGTH_SHORT).show()
+                                                        val intent = Intent(requireContext(), MainActivity::class.java)
+                                                        startActivity(intent)
+                                                    }
+                                                    .addOnFailureListener { e ->
+                                                        Toast.makeText(requireContext(), "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                                                        val intent = Intent(requireContext(), MainActivity::class.java)
+                                                        startActivity(intent)
+                                                    }
+                                            }
                                         }
                                     }
                                 }
@@ -293,6 +322,7 @@ class ReportFragment : Fragment() {
         }
         return id.toString()
     }
+
 
     private fun testSimpleConnection() {
         val json = """{"image": "hello"}"""
