@@ -57,6 +57,10 @@ def detect_hazard():
     annotated_image = Image.fromarray(annotated_frame)
     annotated_image.save(f"logs/detect/img_{timestamp}.jpg")
 
+    buffered = io.BytesIO()
+    annotated_image.save(buffered, format="JPEG")
+    annotated_b64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
+
     detections = []
 
     if results and len(results[0].boxes) > 0:
@@ -66,16 +70,14 @@ def detect_hazard():
             x1, y1, x2, y2 = map(float, box.xyxy[0])
             label = f"{model.names[cls_id]}: {conf:.2f}"
             detections.append({
-                # uncomment the following lines if you want to include class_id and confidence in the response
-                # "class_id": cls_id,
-                # "confidence": conf,
-                # "bbox": [x1, y1, x2, y2],
-                "label": model.names[cls_id]
+                "label": model.names[cls_id],
+                "confidence": round(conf, 2)
             })
 
     return jsonify({
         "success": True,
         "detections": detections,
+        "annotated_image": annotated_b64
     })
 
 if __name__ == '__main__':
