@@ -23,7 +23,6 @@ export default function ProtectedRoute({ children }) {
                     description: "This is for another user.",
                     reportedAt: "2025-04-11 00:00:00",
                     location: "Dummy Location, City, Country",
-                    type: "Test Data",
                     status: RoadHazards.Status.PENDING,
                     isNationalFlag: false,
                     latitude: 10.339278,
