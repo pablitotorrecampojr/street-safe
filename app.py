@@ -9,6 +9,9 @@ import re
 import os
 import logging
 
+os.makedirs("logs/conf", exist_ok=True)
+os.makedirs("logs/detect", exist_ok=True)
+os.makedirs("logs/img", exist_ok=True)
 logging.basicConfig(
     filename="logs/conf/hazard_api.log",   
     level=logging.INFO,         
