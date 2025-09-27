@@ -1,5 +1,4 @@
-ultralytics
 flask
+ultralytics
 pillow
 numpy
-gunicorn
