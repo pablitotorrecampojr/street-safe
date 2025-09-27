@@ -143,7 +143,7 @@ export default function HazardFragment() {
                             >
                               <div className="accordion-body">
                                 <img
-                                  src={"data:image/jpeg;base64," + hazard.imageUrl}
+                                  src={"data:image/jpeg;base64," + hazard.image}
                                   alt="Hazard Preview"
                                   className="img-fluid mb-3"
                                   style={{
@@ -153,8 +153,8 @@ export default function HazardFragment() {
                                   }}
                                 />
                                 <p className="text-black">
-                                  <strong>Date Submitted:</strong> {hazard.dateSubmitted || 'N/A'}<br />
-                                  <strong>Location:</strong> {hazard.fullAddress}<br />
+                                  <strong>Date Submitted:</strong> {hazard.reportedAt || 'N/A'}<br />
+                                  <strong>Location:</strong> {hazard.location || 'Unknown'}<br />
                                   <strong>Status:</strong> {hazard_status[hazard.status] || 'Unknown'}
                                 </p>
                               </div>

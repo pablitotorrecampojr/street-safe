@@ -58,7 +58,6 @@ export default function HazardReport() {
   const columns = [
     { field: 'index', headerName: '#', width: 30 },
     { field: 'id', headerName: 'UID', width: 30 },
-    { field: 'type', headerName: 'Type', width: 150 },
     { field: 'location', headerName: 'Location', width: 200 },
     { field: 'description', headerName: 'Description', width: 300 },
     { field: 'status', headerName: 'Status', width: 120,
