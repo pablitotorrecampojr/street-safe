@@ -1,16 +1,29 @@
 from ultralytics import YOLO
 import numpy as np
 from flask import Flask, request, jsonify
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
+from datetime import datetime
 import io
 import base64
 import re
+import os
+import logging
+
+logging.basicConfig(
+    filename="logs/conf/hazard_api.log",   
+    level=logging.INFO,         
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 # Load YOLOv8 custom-trained model
-model = YOLO('D:/Torrexx/Github/street-safe-python/runs/detect/train5/weights/best.pt')
+model = YOLO('model/best.pt')
 
 # Initialize Flask app
 app = Flask(__name__)
+
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({"message": "Welcome to the Hazard Detection API!"})
 
 @app.route('/detect', methods=['POST'])
 def detect_hazard():
@@ -19,6 +32,12 @@ def detect_hazard():
 
     if not image_b64:
         return jsonify({"error": "No image provided"}), 400
+
+    # generate image from base 64
+    image_bytes = base64.b64decode(image_b64)
+    image = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    image.save(f"logs/img/img_{timestamp}.jpg")
 
     if image_b64.startswith("data:image"):
         image_b64 = re.sub(r"^data:image\/[a-zA-Z]+;base64,", "", image_b64)
@@ -34,8 +53,11 @@ def detect_hazard():
     # Run YOLOv8 detection
     results = model.predict(source=image_np, save=False, conf=0.25)
 
+    annotated_frame = results[0].plot()
+    annotated_image = Image.fromarray(annotated_frame)
+    annotated_image.save(f"logs/detect/img_{timestamp}.jpg")
+
     detections = []
-    draw = ImageDraw.Draw(image)
 
     if results and len(results[0].boxes) > 0:
         for box in results[0].boxes:
@@ -50,19 +72,10 @@ def detect_hazard():
                 # "bbox": [x1, y1, x2, y2],
                 "label": model.names[cls_id]
             })
-            # Draw box and label
-            draw.rectangle([x1, y1, x2, y2], outline="red", width=3)
-            draw.text((x1, y1 - 10), label, fill="red")
-
-    # Convert drawn image back to base64
-    output_buffer = io.BytesIO()
-    image.save(output_buffer, format="PNG")
-    output_b64 = base64.b64encode(output_buffer.getvalue()).decode('utf-8')
 
     return jsonify({
         "success": True,
         "detections": detections,
-        "image_with_boxes": f"{output_b64}"
     })
 
 if __name__ == '__main__':
