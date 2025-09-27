@@ -153,7 +153,7 @@ export default function HazardFragment() {
                                   }}
                                 />
                                 <p className="text-black">
-                                  <strong>Date Submitted:</strong> {hazard.dateSubmitted || 'N/A'}<br />
+                                  <strong>Date Submitted:</strong> {hazard.reportedAt || 'N/A'}<br />
                                   <strong>Location:</strong> {hazard.location || 'Unknown'}<br />
                                   <strong>Status:</strong> {hazard_status[hazard.status] || 'Unknown'}
                                 </p>
