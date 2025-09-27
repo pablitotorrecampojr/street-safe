@@ -180,6 +180,7 @@ class ReportFragment : Fragment() {
                                         if (result != null) {
                                             //TODO: handle the success response of post request
                                             Toast.makeText(requireContext(), "Image Identified", Toast.LENGTH_SHORT).show()
+                                            Log.d("SIMPLE_TEST", "Even simple request failed: ${result}")
                                         } else {
                                             //TODO: ask user for manual data when connecting to flask API fails
                                             capturedImageView.visibility = View.GONE
@@ -238,14 +239,14 @@ class ReportFragment : Fragment() {
         val base64Image = bitmapToBase64(bitmap)
         val report = hashMapOf(
             "id" to generateRandomId(),
-            "imageUrl" to base64Image,
-            "dateSubmitted" to dateTime,
-            "fullAddress" to fullAddress,
-            "roadHazard" to hazardDescription,
-            "status" to "0",
+            "userid" to userId,
+            "image" to base64Image,
+            "location" to fullAddress,
+            "reportedAt" to dateTime,
+            "status" to "pending",
+            "description" to hazardDescription,
             "latitude" to latitude,
             "longitude" to longitude,
-            "userid" to userId
         )
 
         val db = Firebase.database.reference
