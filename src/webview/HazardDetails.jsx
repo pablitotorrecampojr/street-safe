@@ -81,7 +81,7 @@ export default function HazardDetails() {
                                 <strong>Hazard:</strong> {hazard.description}
                             </p>
                             <p className="mb-2">
-                                <strong>Status:</strong> {hazard_status[hazard.status]}
+                                <strong>Status:</strong> {hazard.status}
                             </p>
                             <p className="mb-0">
                                 <strong>Location:</strong> {hazard.location}
