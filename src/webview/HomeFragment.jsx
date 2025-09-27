@@ -2,6 +2,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { getDatabase, ref, onValue, set } from "firebase/database";
 import LoadingScreen from './LoadingScreen';
+import { RoadHazards } from '@enums';
+import { Letters } from '@utils';
 
 export default function HomeFragment() { 
     const location = useLocation();
@@ -10,15 +12,17 @@ export default function HomeFragment() {
     const [roadHazards, setRoadHazards] = useState([]);
     const [loading, setLoading] = useState(true);
     const [pendingHazard, setPendingHazard] = useState(0);
-    const [inProgressHazard, setInProgressHazard] = useState(0);
+    const [investigating, setInvestigating] = useState(0);
     const [resolvedHazard, setResolvedHazard] = useState(0);
+    const [rejectedHazard, setRejectedHazard] = useState(0);
 
     useEffect(() => {
         const db = getDatabase();
         const roadhazardsRef = ref(db, "roadhazards");
         let _pendingHazard = 0;
-        let _inProgressHazard = 0;
+        let _investigating = 0;
         let _resolvedHazard = 0;
+        let _rejectedHazard = 0;
         const unsubscribe = onValue(
             roadhazardsRef,
             (snapshot) => {
@@ -27,13 +31,16 @@ export default function HomeFragment() {
                 const filteredHazards = data.filter(hazard => {
                     const matchUser = String(hazard.userid) === String(userId);
                     if (matchUser) {
-                        const status = parseInt(hazard.status);
-                        if (isNaN(status) || status === 0) {
+                        const status = hazard.status;
+                        console.log("Hazard Status:", status);
+                        if (status === RoadHazards.Status.PENDING) {
                             _pendingHazard++;
-                        } else if (status === 1) {
-                            _inProgressHazard++;
-                        } else if (status === 2) {
+                        } else if (status === RoadHazards.Status.INVESTIGATING) {
+                            _investigating++;
+                        } else if (status === RoadHazards.Status.RESOLVED) {
                             _resolvedHazard++;
+                        } else if (status === RoadHazards.Status.REJECTED) {
+                            _rejectedHazard++;
                         }
                     }
                     return matchUser;
@@ -43,8 +50,9 @@ export default function HomeFragment() {
                 );
                 setRoadHazards(sortedDescending);
                 setPendingHazard(_pendingHazard);
-                setInProgressHazard(_inProgressHazard);
+                setInvestigating(_investigating);
                 setResolvedHazard(_resolvedHazard);
+                setRejectedHazard(_rejectedHazard);
             } else {
                 setRoadHazards([]);
             }
@@ -65,81 +73,42 @@ export default function HomeFragment() {
                      {loading ? (
                         <LoadingScreen loadingText="Fetching Map Data..." />
                     ) : (
-                        <div className="content-wrapper">
-                            <div className="container-xxl flex-grow-1 container-p-y">
-                                <div className="row">
-                                    <div className="col-lg-8 mb-2 order-0">
-                                        <div className="card">
-                                            <div className="d-flex align-items-end row">
-                                                <div className="col-sm-7">
-                                                    <div className="card-body">
-                                                    <h5 className="card-title text-primary">Welcome back 🎉</h5>
-                                                    <p className="mb-4">
-                                                        You have reported <span className="fw-bold">{roadHazards.length}</span> road hazards in total. Keep the community safe by reporting any road hazards you encounter.
-                                                    </p>
-
-                                                    <a href='#' className="btn btn-sm btn-outline-primary"
-                                                        onClick={() => { 
-                                                            window.location.href = '/report-hazard?isHomeFramentButton=true';
-                                                        }}
-                                                    >Report Hazards
-                                                    </a>
-                                                    </div>
-                                                </div>
-                                                <div className="col-sm-5 text-center text-sm-left">
-                                                    <div className="card-body pb-0 px-0 px-md-4">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <div className="p-4 space-y-4">
+                            <div className='p-4 rounded-lg bg-white shadow-sm text-left'>
+                                <h1 className='font-semibold mb-2'>Welcome back 🎉</h1>
+                                <p className="">
+                                    You have reported <span className="fw-bold">{roadHazards.length}</span> road hazards in total. Keep the community safe by reporting any road hazards you encounter.
+                                </p>
+                            </div>
+                            <div className="flex flex-col md:flex-row gap-4">
+                                <div className="flex-1 p-4 bg-white shadow-sm rounded-md flex flex-col items-center justify-center">
+                                    <i className={`fa-solid fa-hourglass-half text-2xl mb-1 text-${RoadHazards.Style["pending"]}`}></i>
+                                    <p className="font-medium">
+                                        {Letters.CapitalizeFirstLetter(RoadHazards.Status.PENDING)}
+                                    </p>
+                                    <p className="text-xl font-bold mt-2">{pendingHazard}</p>
                                 </div>
-                                <div className="row px-2 py-2">
-                                    <div className="col-6 p-1">
-                                        <div className="card">
-                                            <div className="card-body">
-                                            <div className="card-title d-flex align-items-start justify-content-between">
-                                                <div className="avatar flex-shrink-0">
-                                                    <span className={`badge rounded-pill bg-label-info mr-4`}>
-                                                        <i className='bx bx-time-five'></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <span className="fw-semibold d-block mb-1">Pending</span>
-                                                <h3 className="card-title mb-2">{ pendingHazard }</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-6 p-1">
-                                        <div className="card">
-                                            <div className="card-body">
-                                            <div className="card-title d-flex align-items-start justify-content-between">
-                                                <div className="avatar flex-shrink-0">
-                                                    <span className={`badge rounded-pill bg-label-warning mr-4`}>
-                                                        <i className='bx bx-loader-circle'></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <span className="fw-semibold d-block mb-1">In Progress</span>
-                                                <h3 className="card-title mb-2">{ inProgressHazard }</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-12 p-1">
-                                        <div className="card">
-                                            <div className="card-body">
-                                            <div className="card-title d-flex align-items-start justify-content-between">
-                                                <div className="avatar flex-shrink-0">
-                                                    <span className={`badge rounded-pill bg-label-success mr-4`}>
-                                                        <i className='bx bx-check-circle'></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <span className="fw-semibold d-block mb-1">Resolved</span>
-                                                <h3 className="card-title mb-2">{ resolvedHazard }</h3>
-                                            </div>
-                                        </div>
-                                    </div>
+
+                                <div className="flex-1 p-4 bg-white shadow-sm rounded-md flex flex-col items-center justify-center">
+                                     <i className={`fa-solid fa-magnifying-glass text-2xl mb-1 text-${RoadHazards.Style["investigating"]}`}></i>
+                                    <p className="font-medium">
+                                        {Letters.CapitalizeFirstLetter(RoadHazards.Status.INVESTIGATING)}
+                                    </p>
+                                    <p className="text-xl font-bold mt-2">{investigating}</p>
+                                </div>
+                                <div className="flex-1 p-4 bg-white shadow-sm rounded-md flex flex-col items-center justify-center">
+                                     <i className={`fa-solid fa-thumbs-up text-2xl mb-1 text-${RoadHazards.Style["resolved"]}`}></i>
+                                    <p className="font-medium">
+                                        {Letters.CapitalizeFirstLetter(RoadHazards.Status.RESOLVED)}
+                                    </p>
+                                    <p className="text-xl font-bold mt-2">{resolvedHazard}</p>
+                                </div>
+                                <div className="flex-1 p-4 bg-white shadow-sm rounded-md flex flex-col items-center justify-center">
+                                     <i className={`fa-solid fa-thumbs-down text-2xl mb-1 text-${RoadHazards.Style["rejected"]}`}></i>
+                                    <p className="font-medium">
+                                        {Letters.CapitalizeFirstLetter(RoadHazards.Status.REJECTED)}
+                                    </p>
+                                    <p className="text-xl font-bold mt-2">{rejectedHazard}</p>
                                 </div>
                             </div>
                         </div>
