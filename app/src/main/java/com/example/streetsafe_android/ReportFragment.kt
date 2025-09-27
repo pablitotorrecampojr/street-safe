@@ -179,8 +179,6 @@ class ReportFragment : Fragment() {
 
                                         if (result != null) {
                                             Toast.makeText(requireContext(), "Image Identified", Toast.LENGTH_SHORT).show()
-                                            Log.d("SIMPLE_TEST", "Response: $result")
-
                                             try {
                                                 val json = JSONObject(result)
 
@@ -188,11 +186,6 @@ class ReportFragment : Fragment() {
                                                     val detections = json.getJSONObject("detections")
                                                     val annotatedImage = json.getString("annotated_image")
 
-                                                    // Convert base64 to Bitmap
-                                                    val bitmap = decodeBase64ToBitmap(annotatedImage)
-                                                    capturedImageView.setImageBitmap(bitmap)
-
-                                                    // Build description string
                                                     val sb = StringBuilder()
                                                     val keys = detections.keys()
                                                     while (keys.hasNext()) {
@@ -200,9 +193,14 @@ class ReportFragment : Fragment() {
                                                         val conf = detections.getDouble(key)
                                                         sb.append("$key: $conf\n")
                                                     }
-//                                                    textView.text = sb.toString()
 
-//                                                    sendReportButton.visibility = View.VISIBLE
+                                                    val intent = Intent(requireContext(), ResultActivity::class.java)
+                                                    intent.putExtra("annotated_image", annotatedImage)
+                                                    intent.putExtra("detections", sb.toString())
+                                                    intent.putExtra("latitude", latitude)
+                                                    intent.putExtra("longitude", longitude)
+                                                    intent.putExtra("fullAddress", fullAddress)
+                                                    startActivity(intent)
                                                 }
                                             } catch (e: Exception) {
                                                 Log.e("SIMPLE_TEST", "Failed to parse response", e)
