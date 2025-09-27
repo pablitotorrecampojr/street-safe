@@ -72,22 +72,19 @@ export default function HazardDetails() {
                         </div>
                         <div className="card-body">
                             <img
-                                src={`data:image/jpeg;base64,${hazard.imageUrl}`}
+                                src={`data:image/jpeg;base64,${hazard.image}`}
                                 alt="Hazard Preview"
                                 className="img-fluid mb-3"
                                 style={{ maxHeight: "300px", objectFit: "contain" }}
                             />
                             <p className='mb-2'>
-                                <strong>Report ID:</strong> {hazard.id}
-                            </p>
-                            <p className='mb-2'>
-                                <strong>Hazard:</strong> {hazard.roadHazard}
+                                <strong>Hazard:</strong> {hazard.description}
                             </p>
                             <p className="mb-2">
                                 <strong>Status:</strong> {hazard_status[hazard.status]}
                             </p>
                             <p className="mb-0">
-                                <strong>Location:</strong> {hazard.fullAddress}
+                                <strong>Location:</strong> {hazard.location}
                             </p>
                         </div>
                     </div>
