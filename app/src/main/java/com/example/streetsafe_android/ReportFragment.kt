@@ -178,9 +178,35 @@ class ReportFragment : Fragment() {
                                         submitButton.isEnabled = true
 
                                         if (result != null) {
-                                            //TODO: handle the success response of post request
                                             Toast.makeText(requireContext(), "Image Identified", Toast.LENGTH_SHORT).show()
-                                            Log.d("SIMPLE_TEST", "Even simple request failed: ${result}")
+                                            Log.d("SIMPLE_TEST", "Response: $result")
+
+                                            try {
+                                                val json = JSONObject(result)
+
+                                                if (json.getBoolean("success")) {
+                                                    val detections = json.getJSONObject("detections")
+                                                    val annotatedImage = json.getString("annotated_image")
+
+                                                    // Convert base64 to Bitmap
+                                                    val bitmap = decodeBase64ToBitmap(annotatedImage)
+                                                    capturedImageView.setImageBitmap(bitmap)
+
+                                                    // Build description string
+                                                    val sb = StringBuilder()
+                                                    val keys = detections.keys()
+                                                    while (keys.hasNext()) {
+                                                        val key = keys.next()
+                                                        val conf = detections.getDouble(key)
+                                                        sb.append("$key: $conf\n")
+                                                    }
+//                                                    textView.text = sb.toString()
+
+//                                                    sendReportButton.visibility = View.VISIBLE
+                                                }
+                                            } catch (e: Exception) {
+                                                Log.e("SIMPLE_TEST", "Failed to parse response", e)
+                                            }
                                         } else {
                                             //TODO: ask user for manual data when connecting to flask API fails
                                             capturedImageView.visibility = View.GONE
@@ -452,5 +478,10 @@ class ReportFragment : Fragment() {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream)
         val byteArray = outputStream.toByteArray()
         return Base64.encodeToString(byteArray, Base64.NO_WRAP)
+    }
+
+    private fun decodeBase64ToBitmap(base64Str: String): Bitmap {
+        val decodedBytes = Base64.decode(base64Str, Base64.DEFAULT)
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
     }
 }
