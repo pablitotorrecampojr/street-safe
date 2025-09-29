@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { getDatabase, ref, onValue } from "firebase/database";
+import { getDatabase, ref, query, orderByChild, equalTo, onValue } from "firebase/database";
 import LoadingScreen from './LoadingScreen';
 import { hazard_icons, hazard_color, hazard_status } from '../constants/hazard-report';
 import { RoadHazards } from '@enums';
@@ -13,8 +13,6 @@ export default function HazardFragment() {
 
   const [roadHazards, setRoadHazards] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeIndex, setActiveIndex] = useState(null);
-  const [activeTab, setActiveTab] = useState("all");
 
   const handleAccordionClick = (index) => {
     setActiveIndex(prev => (prev === index ? null : index));
@@ -24,13 +22,15 @@ export default function HazardFragment() {
     const db = getDatabase();
     const roadhazardsRef = ref(db, "roadhazards");
 
+    const q = query(roadhazardsRef, orderByChild("userId"), equalTo(userId));
     const unsubscribe = onValue(
-      roadhazardsRef,
+      q,
       (snapshot) => {
         if (snapshot.exists()) {
           const data = Object.values(snapshot.val());
+          console.log('data', data);
           const sortedDescending = data.sort(
-            (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
+            (a, b) => new Date(b.reportedAt) - new Date(a.reportedAt)
           );
           setRoadHazards(sortedDescending);
         } else {
@@ -47,129 +47,77 @@ export default function HazardFragment() {
     return () => unsubscribe();
   }, []);
 
-  const filteredHazards = roadHazards.filter(hazard => {
-    const matchUser = String(hazard.userid) === String(userId);
-    const matchStatus = activeTab === "all" || String(hazard.status) === activeTab;
-    return matchUser && matchStatus;
-  });
+  const [filterHazards, setFilterHazards] = useState([]);
+  const [activeFilter, setActiveIndex] = useState('all');
+  useEffect(() => {
+    setFilterHazards(roadHazards);
+  }, [roadHazards]);
+
+  useEffect(() => {
+    console.log(roadHazards);
+    console.log(filterHazards);
+  })
+ 
+  const handleOnChange = (value) => {
+    if (value === 'all') {
+      setFilterHazards(roadHazards);
+    } else {
+      setFilterHazards(
+        roadHazards.filter((hazard) => hazard.status === value )
+      );
+    }
+  };
 
   return (
-    <div className="layout-wrapper layout-content-navbar">
-      <div className="layout-container">
-        <div className="layout-page">
-          <div className="content-wrapper">
-            <div className="container-xxl flex-grow-1 container-p-y">
-              <div className="row">
-                <div className="col-md-6 mb-4 mb-md-0 mx-auto">
-                  <h1 className="text-center fw-bold">Report Status</h1>
-
-                  <div className="w-full flex flex-row space-x-2 mt-4" hidden={loading}>
-                    <button
-                      type="button"
-                      className={`btn btn-outline-primary ${activeTab === "all" ? 'active' : ''}`}
-                      onClick={() => setActiveTab("all")}
-                    >
-                      All
-                    </button>
-                    <button
-                      type="button"
-                      className={`btn btn-outline-primary ${activeTab === RoadHazards.Status.PENDING ? 'active' : ''}`}
-                      onClick={() => setActiveTab(RoadHazards.Status.PENDING)}
-                    >
-                      { Letters.CapitalizeFirstLetter(RoadHazards.Status.PENDING) }
-                    </button>
-
-                    <button
-                      type="button"
-                      className={`btn btn-outline-primary ${activeTab === RoadHazards.Status.INVESTIGATING ? 'active' : ''}`}
-                      onClick={() => setActiveTab(RoadHazards.Status.INVESTIGATING)}
-                    >
-                      { Letters.CapitalizeFirstLetter(RoadHazards.Status.INVESTIGATING) }
-                    </button>
-
-                    <button
-                      type="button"
-                      className={`btn btn-outline-primary ${activeTab === RoadHazards.Status.RESOLVED ? 'active' : ''}`}
-                      onClick={() => setActiveTab(RoadHazards.Status.RESOLVED)}
-                    >
-                      { Letters.CapitalizeFirstLetter(RoadHazards.Status.RESOLVED) }
-                    </button>
-                    <button
-                      type="button"
-                      className={`btn btn-outline-primary ${activeTab === RoadHazards.Status.REJECTED ? 'active' : ''}`}
-                      onClick={() => setActiveTab(RoadHazards.Status.REJECTED)}
-                    >
-                      { Letters.CapitalizeFirstLetter(RoadHazards.Status.REJECTED) }
-                    </button>
-                  </div>
-
-                  {loading ? (
-                    <LoadingScreen loadingText="Fetching Map Data..." />
-                  ) : filteredHazards.length === 0 ? (
-                    <div className="card mt-4">
-                      <div className="card-body">
-                        <h1 className="text-center">No Data Found!</h1>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="accordion mt-4" id="accordionExample">
-                      {filteredHazards.map((hazard, index) => {
-                        const headingId = `heading${index}`;
-                        const collapseId = `collapse${index}`;
-                        const isActive = activeIndex === index;
-
-                        return (
-                          <div
-                            className={`card accordion-item ${isActive ? 'active' : ''}`}
-                            key={hazard.id || index}
-                          >
-                            <h2 className="accordion-header border-bottom" id={headingId}>
-                              <button
-                                type="button"
-                                className={`accordion-button ${isActive ? '' : 'collapsed'}`}
-                                aria-expanded={isActive}
-                                onClick={() => handleAccordionClick(index)}
-                              >
-                                <span className={`badge rounded-pill bg-label-${hazard_color[hazard.status]} mr-4`}>
-                                  <i className={hazard_icons[hazard.status]}></i>
-                                </span>
-                                {hazard.roadHazard || `Hazard ${index + 1}`}
-                              </button>
-                            </h2>
-
-                            <div
-                              id={collapseId}
-                              className={`accordion-collapse ${isActive ? 'show mt-4 mb-4' : 'collapse'}`}
-                            >
-                              <div className="accordion-body">
-                                <img
-                                  src={"data:image/jpeg;base64," + hazard.image}
-                                  alt="Hazard Preview"
-                                  className="img-fluid mb-3"
-                                  style={{
-                                    maxWidth: "100%",
-                                    maxHeight: "300px",
-                                    objectFit: "cover"
-                                  }}
-                                />
-                                <p className="text-black">
-                                  <strong>Date Submitted:</strong> {hazard.reportedAt || 'N/A'}<br />
-                                  <strong>Location:</strong> {hazard.location || 'Unknown'}<br />
-                                  <strong>Status:</strong> {hazard_status[hazard.status] || 'Unknown'}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
+    <>
+      {loading ? (
+        <div className='w-full h-screen flex flex-col item-center'> 
+          <LoadingScreen  />
+        </div>
+      ) : (
+        <div className='space-y-2'>
+          <div className='w-full text-center pb-2 pt-2 bg-white '>
+            <h1 className='font-semibold text-2xl'>Reported Hazard</h1>
+          </div>
+          <div className="flex justify-end p-2">
+            <div className="w-1/2">
+              <div className="relative w-full">
+                <select
+                  id="status"
+                  className="w-full border-2 border-blue-500 rounded-md pl-3 pr-10 py-2 appearance-none bg-white focus:outline-none"
+                  defaultValue=""
+                  onChange={e => handleOnChange(e.target.value)}
+                >
+                  <option value="all">All</option>
+                  <option value={RoadHazards.Status.PENDING}>
+                    {Letters.CapitalizeFirstLetter(RoadHazards.Status.PENDING)}
+                  </option>
+                  <option value={RoadHazards.Status.INVESTIGATING}>
+                    {Letters.CapitalizeFirstLetter(RoadHazards.Status.INVESTIGATING)}
+                  </option>
+                  <option value={RoadHazards.Status.RESOLVED}>
+                    {Letters.CapitalizeFirstLetter(RoadHazards.Status.RESOLVED)}
+                  </option>
+                  <option value={RoadHazards.Status.REJECTED}>
+                    {Letters.CapitalizeFirstLetter(RoadHazards.Status.REJECTED)}
+                  </option>
+                </select>
+                <i className="bi bi-caret-down-fill"></i>
               </div>
             </div>
           </div>
+          <div className='w-full bg-white p-2'>
+            {filterHazards.map((hazard, index) => (
+              <div
+                className="bg-white w-full border-2 border-red-500"
+                key={hazard.id || index}
+              >
+                <span>{hazard.description}</span>
+              </div>
+            ))}
+          </div>
         </div>
-      </div> 
-    </div>
+      )}
+    </>
   );
 }
