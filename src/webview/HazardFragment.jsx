@@ -13,7 +13,6 @@ export default function HazardFragment() {
 
   const [roadHazards, setRoadHazards] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeIndex, setActiveIndex] = useState(null);
   const [activeTab, setActiveTab] = useState("all");
 
   const handleAccordionClick = (index) => {
@@ -69,7 +68,7 @@ export default function HazardFragment() {
           </div>
           <div className='flex flex-col'>
             <div className='self-end w-1/2 p-2'>
-              <select className='w-full border p-2'>
+              <select className='w-full border p-2' onChange={(e) => setActiveTab(e.target.value)}>
                 <option value="all" className="" defaultValue>All</option>
                 <option value={RoadHazards.Status.PENDING} className="">{Letters.CapitalizeFirstLetter(RoadHazards.Status.PENDING)}</option>
                 <option value={RoadHazards.Status.INVESTIGATING} className="">{Letters.CapitalizeFirstLetter(RoadHazards.Status.INVESTIGATING)}</option>
@@ -88,7 +87,7 @@ export default function HazardFragment() {
                       onClick={() => toggle(index)}
                     >
                       {Letters.truncate(data.description, 40) || `hazard ${index}`}
-                      <span className="ml-2">{openIndex === index ? <i class="fa-solid fa-minus"></i> : <i class="fa-solid fa-plus"></i> }</span>
+                      <span className="ml-2">{openIndex === index ? <i className="fa-solid fa-minus"></i> : <i className="fa-solid fa-plus"></i> }</span>
                     </button>
                     <div className={`overflow-hidden transition-all ${openIndex === index ? "p-4" : "max-h-0 p-0"}`}>
                       <div className='w-full p-2 flex flex-col md:flex-row'>
