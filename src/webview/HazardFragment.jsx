@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { getDatabase, ref, query, orderByChild, equalTo, onValue } from "firebase/database";
+import { getDatabase, ref, onValue } from "firebase/database";
 import LoadingScreen from './LoadingScreen';
 import { hazard_icons, hazard_color, hazard_status } from '../constants/hazard-report';
 import { RoadHazards } from '@enums';
@@ -13,6 +13,8 @@ export default function HazardFragment() {
 
   const [roadHazards, setRoadHazards] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeIndex, setActiveIndex] = useState(null);
+  const [activeTab, setActiveTab] = useState("all");
 
   const handleAccordionClick = (index) => {
     setActiveIndex(prev => (prev === index ? null : index));
@@ -22,15 +24,13 @@ export default function HazardFragment() {
     const db = getDatabase();
     const roadhazardsRef = ref(db, "roadhazards");
 
-    const q = query(roadhazardsRef, orderByChild("userId"), equalTo(userId));
     const unsubscribe = onValue(
-      q,
+      roadhazardsRef,
       (snapshot) => {
         if (snapshot.exists()) {
           const data = Object.values(snapshot.val());
-          console.log('data', data);
           const sortedDescending = data.sort(
-            (a, b) => new Date(b.reportedAt) - new Date(a.reportedAt)
+            (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
           );
           setRoadHazards(sortedDescending);
         } else {
@@ -47,77 +47,34 @@ export default function HazardFragment() {
     return () => unsubscribe();
   }, []);
 
-  const [filterHazards, setFilterHazards] = useState([]);
-  const [activeFilter, setActiveIndex] = useState('all');
-  useEffect(() => {
-    setFilterHazards(roadHazards);
-  }, [roadHazards]);
-
-  useEffect(() => {
-    console.log(roadHazards);
-    console.log(filterHazards);
-  })
- 
-  const handleOnChange = (value) => {
-    if (value === 'all') {
-      setFilterHazards(roadHazards);
-    } else {
-      setFilterHazards(
-        roadHazards.filter((hazard) => hazard.status === value )
-      );
-    }
-  };
+  const filteredHazards = roadHazards.filter(hazard => {
+    const matchUser = String(hazard.userid) === String(userId);
+    const matchStatus = activeTab === "all" || String(hazard.status) === activeTab;
+    return matchUser && matchStatus;
+  });
 
   return (
-    <>
+    <div className='w-full h-screen'>
       {loading ? (
-        <div className='w-full h-screen flex flex-col item-center'> 
-          <LoadingScreen  />
-        </div>
+        <LoadingScreen />
       ) : (
         <div className='space-y-2'>
-          <div className='w-full text-center pb-2 pt-2 bg-white '>
-            <h1 className='font-semibold text-2xl'>Reported Hazard</h1>
+          <div className='w-full p-2 text-center bg-white shadow-sm'>
+            <h1 className='font-semibold text-2xl'>Reported Hazards</h1>
           </div>
-          <div className="flex justify-end p-2">
-            <div className="w-1/2">
-              <div className="relative w-full">
-                <select
-                  id="status"
-                  className="w-full border-2 border-blue-500 rounded-md pl-3 pr-10 py-2 appearance-none bg-white focus:outline-none"
-                  defaultValue=""
-                  onChange={e => handleOnChange(e.target.value)}
-                >
-                  <option value="all">All</option>
-                  <option value={RoadHazards.Status.PENDING}>
-                    {Letters.CapitalizeFirstLetter(RoadHazards.Status.PENDING)}
-                  </option>
-                  <option value={RoadHazards.Status.INVESTIGATING}>
-                    {Letters.CapitalizeFirstLetter(RoadHazards.Status.INVESTIGATING)}
-                  </option>
-                  <option value={RoadHazards.Status.RESOLVED}>
-                    {Letters.CapitalizeFirstLetter(RoadHazards.Status.RESOLVED)}
-                  </option>
-                  <option value={RoadHazards.Status.REJECTED}>
-                    {Letters.CapitalizeFirstLetter(RoadHazards.Status.REJECTED)}
-                  </option>
-                </select>
-                <i className="bi bi-caret-down-fill"></i>
-              </div>
+          <div className='flex flex-col'>
+            <div className='self-end w-1/2 p-2'>
+              <select className='w-full border p-2 text-xl'>
+                <option value="all" className="" selected>All</option>
+                <option value={RoadHazards.Status.PENDING} className="">{Letters.CapitalizeFirstLetter(RoadHazards.Status.PENDING)}</option>
+                <option value={RoadHazards.Status.INVESTIGATING} className="">{Letters.CapitalizeFirstLetter(RoadHazards.Status.INVESTIGATING)}</option>
+                <option value={RoadHazards.Status.REJECTED} className="">{Letters.CapitalizeFirstLetter(RoadHazards.Status.REJECTED)}</option>
+                <option value={RoadHazards.Status.RESOLVED} className="">{Letters.CapitalizeFirstLetter(RoadHazards.Status.RESOLVED)}</option>
+              </select>
             </div>
-          </div>
-          <div className='w-full bg-white p-2'>
-            {filterHazards.map((hazard, index) => (
-              <div
-                className="bg-white w-full border-2 border-red-500"
-                key={hazard.id || index}
-              >
-                <span>{hazard.description}</span>
-              </div>
-            ))}
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
