@@ -10,3 +10,7 @@ export function generateRandomString() {
     }
     return string;
 }
+
+export function truncate(str, length = 20) {
+  return str.length > length ? str.substring(0, length) + "..." : str;
+};
