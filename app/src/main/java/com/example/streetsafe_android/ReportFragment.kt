@@ -183,20 +183,12 @@ class ReportFragment : Fragment() {
                                                 val json = JSONObject(result)
 
                                                 if (json.getBoolean("success")) {
-                                                    val detections = json.getJSONObject("detections")
+                                                    val detections = json.getString("detections")
                                                     val annotatedImage = json.getString("annotated_image")
-
-                                                    val sb = StringBuilder()
-                                                    val keys = detections.keys()
-                                                    while (keys.hasNext()) {
-                                                        val key = keys.next()
-                                                        val conf = detections.getDouble(key)
-                                                        sb.append("$key: $conf\n")
-                                                    }
 
                                                     val intent = Intent(requireContext(), ResultActivity::class.java)
                                                     intent.putExtra("annotated_image", annotatedImage)
-                                                    intent.putExtra("detections", sb.toString())
+                                                    intent.putExtra("detections", detections.toString())
                                                     intent.putExtra("latitude", latitude)
                                                     intent.putExtra("longitude", longitude)
                                                     intent.putExtra("fullAddress", fullAddress)
