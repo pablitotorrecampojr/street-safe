@@ -54,7 +54,7 @@ def detect_hazard():
         return jsonify({"error": f"Invalid image data: {str(e)}"}), 400
 
     # Run YOLOv8 detection
-    results = model.predict(source=image_np, save=False, conf=0.25)
+    results = model.predict(source=image_np, save=False, conf=0.2)
 
     annotated_frame = results[0].plot()
     annotated_image = Image.fromarray(annotated_frame)
@@ -64,22 +64,22 @@ def detect_hazard():
     annotated_image.save(buffered, format="JPEG")
     annotated_b64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
 
-    detections = []
-
+    detections = {}
+    detections_str = ""
     if results and len(results[0].boxes) > 0:
         for box in results[0].boxes:
             cls_id = int(box.cls[0])
             conf = float(box.conf[0])
-            x1, y1, x2, y2 = map(float, box.xyxy[0])
-            label = f"{model.names[cls_id]}: {conf:.2f}"
-            detections.append({
-                "label": model.names[cls_id],
-                "confidence": round(conf, 2)
-            })
+            label = model.names[cls_id]
+
+            if label not in detections or conf > detections[label]:
+                detections[label] = round(conf, 2)
+
+    detections_str = ", ".join([f"{label}: {conf}" for label, conf in detections.items()])
 
     return jsonify({
         "success": True,
-        "detections": detections,
+        "detections": detections_str,
         "annotated_image": annotated_b64
     })
 
