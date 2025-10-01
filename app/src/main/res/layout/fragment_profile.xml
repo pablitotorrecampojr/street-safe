@@ -23,12 +23,12 @@
         android:id="@+id/notificationButton"
         android:layout_width="331dp"
         android:layout_height="53dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/rounded_button_gray"
         android:drawableStart="@drawable/icons_notifications_15"
         android:minHeight="48dp"
         android:paddingStart="12dp"
-        android:text="    Privacy Policy"
+        android:text="    Notifications"
         android:textAlignment="textStart"
         android:textAllCaps="false"
         android:textSize="14sp"
@@ -65,24 +65,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailTextView" />
 
-    <Button
-        android:id="@+id/signOutButton"
-        android:layout_width="331dp"
-        android:layout_height="53dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/rounded_button_red"
-        android:drawableStart="@drawable/icons_signout_white_15"
-        android:minHeight="48dp"
-        android:paddingStart="12dp"
-        android:text="    Sign Out"
-        android:textAlignment="textStart"
-        android:textAllCaps="false"
-        android:textColor="@android:color/white"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/settingsButton" />
-
     <TextView
         android:id="@+id/nameTextView"
         android:layout_width="wrap_content"
@@ -100,7 +82,7 @@
         android:id="@+id/settingsButton"
         android:layout_width="331dp"
         android:layout_height="53dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/rounded_button_gray"
         android:drawableStart="@drawable/icons_settings_15"
         android:minHeight="48dp"
@@ -111,6 +93,41 @@
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/notificationButton" />
+        app:layout_constraintTop_toBottomOf="@+id/privacyButton" />
+
+    <Button
+        android:id="@+id/privacyButton"
+        android:layout_width="331dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="336dp"
+        android:background="@drawable/rounded_button_gray"
+        android:drawableStart="@drawable/icons8_cloud_privacy_15px"
+        android:minHeight="48dp"
+        android:paddingStart="12dp"
+        android:text="    Privacy"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/signOutButton"
+        android:layout_width="331dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_button_red"
+        android:drawableStart="@drawable/icons_signout_white_15"
+        android:minHeight="48dp"
+        android:paddingStart="12dp"
+        android:text="    Sign Out"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settingsButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

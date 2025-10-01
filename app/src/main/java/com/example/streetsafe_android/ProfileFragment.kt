@@ -69,6 +69,10 @@ class ProfileFragment : Fragment() {
             startActivity(Intent(requireContext(), EditProfileActivity::class.java))
         }
 
+        binding.privacyButton.setOnClickListener {
+            startActivity(Intent(requireContext(), PrivacyPolicyActivity::class.java))
+        }
+
         binding.settingsButton.setOnClickListener {
             startActivity(Intent(requireContext(), AboutActivity::class.java))
         }
