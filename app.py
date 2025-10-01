@@ -65,6 +65,7 @@ def detect_hazard():
     annotated_b64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
 
     detections = {}
+    detections_str = ""
     if results and len(results[0].boxes) > 0:
         for box in results[0].boxes:
             cls_id = int(box.cls[0])
@@ -74,9 +75,11 @@ def detect_hazard():
             if label not in detections or conf > detections[label]:
                 detections[label] = round(conf, 2)
 
+    detections_str = ", ".join([f"{label}: {conf}" for label, conf in detections.items()])
+
     return jsonify({
         "success": True,
-        "detections": detections,
+        "detections": detections_str,
         "annotated_image": annotated_b64
     })
 
