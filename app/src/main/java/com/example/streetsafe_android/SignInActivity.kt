@@ -33,6 +33,7 @@ class SignInActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.sign_in)
+        setContentView(binding.root)
 
         // Initialize Firebase Auth and Firestore
         auth = FirebaseAuth.getInstance()
@@ -115,7 +116,6 @@ class SignInActivity : AppCompatActivity() {
 
         //TODO: handle google sign in process
         binding.googleSignInButton.setOnClickListener {
-            setSigningInState(true)
             signInGoogle()
         }
 
@@ -130,6 +130,7 @@ class SignInActivity : AppCompatActivity() {
     private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            setSigningInState(true)
             handleResults(task)
         }
     }
@@ -138,9 +139,11 @@ class SignInActivity : AppCompatActivity() {
         if (task.isSuccessful) {
             val account: GoogleSignInAccount? = task.result
             if (account != null) {
+                setSigningInState(true)
                 updateUI(account)
             }
         } else {
+            setSigningInState(false)
             Toast.makeText(this, task.exception.toString(), Toast.LENGTH_SHORT).show()
         }
     }
