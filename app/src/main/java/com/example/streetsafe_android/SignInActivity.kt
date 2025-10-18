@@ -3,10 +3,13 @@ package com.example.streetsafe_android
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
+import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.example.streetsafe_android.databinding.SignInBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -25,6 +28,7 @@ class SignInActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
     private lateinit var googleSignInClient: GoogleSignInClient
+    private val binding by lazy { SignInBinding.inflate(layoutInflater) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,13 +38,6 @@ class SignInActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
-        // Get UI elements
-        val emailInput = findViewById<EditText>(R.id.emailInput)
-        val passwordInput = findViewById<EditText>(R.id.passwordInput)
-        val signInButton = findViewById<Button>(R.id.signinButton)
-        val signUpLink = findViewById<TextView>(R.id.signupLink)
-        val googleSignInButton = findViewById<Button>(R.id.googleSignInButton)
-
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
@@ -48,23 +45,23 @@ class SignInActivity : AppCompatActivity() {
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
-        signInButton.setOnClickListener {
+        binding.signinButton.setOnClickListener {
 
-            val emailText = emailInput.text.toString().trim()
-            val passwordText = passwordInput.text.toString().trim()
+            val emailText = binding.emailInput.text.toString().trim()
+            val passwordText = binding.passwordInput.text.toString().trim()
 
             if (emailText.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(emailText).matches()) {
-                emailInput.error = "Enter a valid email"
+                binding.emailInput.error = "Enter a valid email"
                 return@setOnClickListener
             }
 
             if (passwordText.isEmpty()) {
-                passwordInput.error = "Enter your password"
+                binding.passwordInput.error = "Enter your password"
                 return@setOnClickListener
             }
 
-            signInButton.isEnabled = false;
-            signInButton.text = "Signing In ..."
+            binding.signinButton.isEnabled = false;
+            binding.signinButton.text = "Signing In ..."
             // Authenticate User
             auth.signInWithEmailAndPassword(emailText, passwordText)
                 .addOnCompleteListener { task ->
@@ -89,15 +86,15 @@ class SignInActivity : AppCompatActivity() {
                                             finish()
                                         } else {
                                             auth.signOut()
-                                            signInButton.isEnabled = true;
-                                            signInButton.text = "Sign In";
+                                            binding.signinButton.isEnabled = true;
+                                            binding.signinButton.text = "Sign In";
                                             Toast.makeText(this, "No user profile found. Please contact support.", Toast.LENGTH_LONG).show()
                                         }
                                     }
                                     .addOnFailureListener {
                                         auth.signOut()
-                                        signInButton.isEnabled = true;
-                                        signInButton.text = "Sign In";
+                                        binding.signinButton.isEnabled = true;
+                                        binding.signinButton.text = "Sign In";
                                         Toast.makeText(this, "Failed to load user data. Please try again.", Toast.LENGTH_LONG).show()
                                     }
                             } else {
@@ -105,18 +102,20 @@ class SignInActivity : AppCompatActivity() {
                             }
                         }
                     } else {
-                        signInButton.isEnabled = true;
-                        signInButton.text = "Sign In";
+                        binding.signinButton.isEnabled = true;
+                        binding.signinButton.text = "Sign In";
                         Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                     }
                 }
         }
 
-        signUpLink.setOnClickListener {
+        binding.signupLink.setOnClickListener {
             startActivity(Intent(this, SignUpActivity::class.java))
         }
 
-        googleSignInButton.setOnClickListener {
+        //TODO: handle google sign in process
+        binding.googleSignInButton.setOnClickListener {
+            setSigningInState(true)
             signInGoogle()
         }
 
@@ -146,6 +145,25 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
+    //TODO: handle disabling buttons on google sign in
+    private fun setSigningInState(isSigningIn: Boolean) {
+        if (isSigningIn) {
+            Log.d("isSigningIn", "false | google sign in in progress")
+            binding.googleSignInButton.text = "Signing in, please wait..."
+            binding.googleSignInButton.isEnabled = false
+            binding.signinButton.text = "Signing in, please wait..."
+            binding.signinButton.isEnabled = false
+            binding.signInProgressBar.visibility = View.VISIBLE
+        } else {
+            binding.googleSignInButton.text = "Google Sign in"
+            binding.googleSignInButton.isEnabled = true
+            binding.signinButton.text = "Sign In"
+            binding.signinButton.isEnabled = true
+            binding.signInProgressBar.visibility = View.GONE
+        }
+    }
+
+    //TODO: handle updating ui & creating firestore
     private fun updateUI(account: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         auth.signInWithCredential(credential).addOnCompleteListener { task ->
@@ -177,14 +195,12 @@ class SignInActivity : AppCompatActivity() {
                                 }
                         }
 
-                        // Navigate to MainActivity
-                        val intent = Intent(this, MainActivity::class.java).apply {
+                        //TODO: Navigate to MainActivity
+                        startActivity(Intent(this, MainActivity::class.java).apply {
                             putExtra("email", email)
                             putExtra("fullName", fullName)
-                        }
-                        startActivity(intent)
+                        })
                         finish()
-
                     }
                     .addOnFailureListener {
                         Toast.makeText(this, "Error checking user: ${it.message}", Toast.LENGTH_SHORT).show()
@@ -194,5 +210,4 @@ class SignInActivity : AppCompatActivity() {
             }
         }
     }
-
 }
