@@ -85,7 +85,7 @@ export default function Navbar() {
                     <a className="nav-link dropdown-toggle hide-arrow" href="#" data-bs-toggle="dropdown" onClick={handleToggleUserProfile}>
                         <div className="avatar avatar-online bg-primary rounded-circle d-flex justify-content-center align-items-center" style={{ width: "50px", height: "50px" }}>
                             <span className="fw-bold fs-5 text-white">
-                                {userData ? userData.fullname.charAt(0).toUpperCase() : "A"}
+                                {(userData && userData.fullname) ? userData.fullname.charAt(0).toUpperCase() : "A"}
                             </span>
                         </div>
                     </a>
