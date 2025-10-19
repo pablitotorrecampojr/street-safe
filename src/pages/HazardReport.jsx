@@ -28,46 +28,34 @@ export default function HazardReport() {
   const [currentUser, setCurrentUser] = useState(null);
   useEffect(() => {
     setCurrentUser(JSON.parse(localStorage.getItem("userData")) || null);
+    let filterHazardsByRole = [];
     if (currentUser?.role === UserRole.AUTHORITIES) {
-      setRows(
-        hazards
-          .filter((hazard) => {
-            if (hazard.isNationalFlag == true) {
-              return HazardUtils.findDistrict(
-                hazard.location,
-                currentUser?.district
-              );
-            } return false;
-          })
-          .map((hazard, index) => ({
-            index: index + 1,
-            id: hazard.id,
-            ...hazard,
-          }))
-      );
+      filterHazardsByRole = hazards
+        .filter((hazard) => 
+          hazard.isNationalFlag &&
+          HazardUtils.findDistrict(
+            hazard.location,
+            currentUser?.district
+          )
+        );
     } else if (currentUser?.role === UserRole.MUNICIPALITIES) {
-      setRows(
-        hazards
-        .filter((hazard) => HazardUtils.findBarangayInMunicipality(
-          hazard.location, 
-          currentUser?.municipality,
-          currentUser?.barangay
-        ))
-        .map((hazard, index) => ({
-          index: index + 1,
-          id: hazard.id,
-          ...hazard,
-        }))
-      );
+      filterHazardsByRole = hazards
+        .filter((hazard) => 
+          HazardUtils.findBarangayInMunicipality(
+            hazard.location,
+            currentUser.municipality,
+            currentUser.barangay
+          )
+        );
     } else {
-      setRows(
-        hazards.map((hazard, index) => ({
-          index: index + 1,
-          id: hazard.id,
-          ...hazard,
-        }))
-      );
+      filterHazardsByRole = hazards;
     }
+    const mapped = filterHazardsByRole.map((hazard, index) => ({
+      index: index + 1,
+      id: hazard.id,
+      ...hazard,
+    }));
+    setRows(mapped);
   }, [hazards]);  
 
   //TODO: handleing viewing road hazards
