@@ -18,7 +18,6 @@ export default function HazardReport() {
   useEffect(() => {
     const unsubscribe = Hazards.subscribe((data) => {
       setHazards(data);
-      setAllHazards(data);
       setLoading(false);
     });
     return () => unsubscribe();
@@ -56,6 +55,7 @@ export default function HazardReport() {
       ...hazard,
     }));
     setRows(mapped);
+    setAllHazards(mapped);
   }, [hazards]);  
 
   //TODO: handleing viewing road hazards
@@ -267,11 +267,11 @@ export default function HazardReport() {
   const handleFilter = (status) => {
     setStatusOpen(false);
     setFilter({ status: status });
-    setHazards(allHazards.filter((hazard) => hazard.status === status));
+    setRows(allHazards.filter((hazard) => hazard.status === status));
   };
   const handleIsNational = (isNational) => {
     setIsOpen(false);
-    setHazards(allHazards.filter((hazard) => hazard.isNationalFlag === isNational));
+    setRows(allHazards.filter((hazard) => hazard.isNationalFlag === isNational));
     setFilter({ status: null })
   }
   return (
