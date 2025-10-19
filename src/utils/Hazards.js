@@ -23,6 +23,10 @@ export function findBarangayInMunicipality(address, municipality, barangay) {
     return (matchedBarangay.toLowerCase() == barangay.toLowerCase());
 }
 
+export function findDistrict(address, district) {
+    
+}
+
 export function checkLocation(fullLocationString) {
     const municipalities = municipalitiesJson;
     const districts = districtsJson;
