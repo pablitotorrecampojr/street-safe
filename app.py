@@ -78,7 +78,7 @@ def detect_hazard():
     detections_str = ", ".join([f"{label}: {conf}" for label, conf in detections.items()])
 
     return jsonify({
-        "success": True,
+        "success": True if detections else False,
         "detections": detections_str,
         "annotated_image": annotated_b64
     })
