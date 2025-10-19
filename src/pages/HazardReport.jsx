@@ -24,6 +24,7 @@ export default function HazardReport() {
     return () => unsubscribe();
   }, []);
 
+  //TODO: filter hazard based on role and national flag
   const [currentUser, setCurrentUser] = useState(null);
   useEffect(() => {
     setCurrentUser(JSON.parse(localStorage.getItem("userData")) || null);
@@ -57,7 +58,9 @@ export default function HazardReport() {
   const [rows, setRows] = useState([]);
   const columns = [
     { field: 'index', headerName: '#', width: 30 },
-    { field: 'id', headerName: 'UID', width: 30 },
+    // { field: 'id', headerName: 'UID', width: 30 },
+    { field: 'latitude', headerName: 'Latitude', width: 130 },
+    { field: 'longitude', headerName: 'Longitude', width: 130 },
     { field: 'location', headerName: 'Location', width: 200 },
     { field: 'description', headerName: 'Description', width: 300 },
     { field: 'status', headerName: 'Status', width: 120,
@@ -73,6 +76,11 @@ export default function HazardReport() {
         return params.value ? <Badge status="success" text="Yes" /> : <Badge status="danger" text="No" />;
       }
     },
+    { field: 'reportedAt', headerName: 'Reported At', width: 200,
+      renderCell: (params) => {
+        return new Date(params.value).toLocaleString();
+      }
+     },
     { field: 'resolvedAt', headerName: 'Resolved At', width: 200,
       renderCell: (params) => {
         if (!params.value) return <i>To be determined</i>;
