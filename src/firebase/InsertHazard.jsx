@@ -20,17 +20,16 @@ export default function ProtectedRoute({ children }) {
                 const hazardRef = ref(realtimeDb, "roadhazards");
                 const newHazard = {
                     image: "base64Image",
-                    description: "This is for another user.",
+                    description: "This is for another test.",
                     reportedAt: "2025-04-11 00:00:00",
-                    location: "Dummy Location, City, Country",
+                    location: "Address: 9W8J+2WF, Cabancalan Road, Cabancalan, Mandaue, Cebu, Philippines",
                     status: RoadHazards.Status.PENDING,
                     isNationalFlag: false,
-                    latitude: 10.339278,
-                    longitude: 123.904334,
+                    latitude: 10.351795924396939,
+                    longitude: 123.92153666932859,
                     userid: "ow9TE9M1hcZ4UldoIcQQrkjxTqE2",
                     id: generateRandomId(),
                 };
-
                 const newRef = push(hazardRef);
                 await set(newRef, newHazard);
 

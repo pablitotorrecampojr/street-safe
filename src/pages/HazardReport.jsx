@@ -6,7 +6,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import { RoadHazards, UserRole  } from '@enums';
-import { Letters } from '@utils';
+import { Letters, Hazards as HazardUtils } from '@utils';
 import { set } from 'firebase/database';
  
 export default function HazardReport() {
@@ -38,6 +38,20 @@ export default function HazardReport() {
             ...hazard,
           }))
       );
+    } else if (currentUser?.role === UserRole.MUNICIPALITIES) {
+      setRows(
+        hazards
+        .filter((hazard) => HazardUtils.findBarangayInMunicipality(
+          hazard.location, 
+          currentUser?.municipality,
+          currentUser?.barangay
+        ))
+        .map((hazard, index) => ({
+          index: index + 1,
+          id: hazard.id,
+          ...hazard,
+        }))
+      );
     } else {
       setRows(
         hazards.map((hazard, index) => ({
@@ -47,7 +61,6 @@ export default function HazardReport() {
         }))
       );
     }
-    console.log(hazards);
   }, [hazards]);  
 
   //TODO: handleing viewing road hazards

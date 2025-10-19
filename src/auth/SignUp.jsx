@@ -202,7 +202,7 @@ const SignUp = () => {
                             <option value="">Select District</option>
                             {Object.entries(districts.districts).map(([key, district]) => (
                               <option key={key} value={key}>
-                                {district.code} / {district.name}
+                                {district.code} / {district.name} / { district.district }
                               </option>
                             ))}
                           </select>
