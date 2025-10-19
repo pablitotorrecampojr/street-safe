@@ -31,7 +31,14 @@ export default function HazardReport() {
     if (currentUser?.role === UserRole.AUTHORITIES) {
       setRows(
         hazards
-          .filter((hazard) => hazard.isNationalFlag === true)
+          .filter((hazard) => {
+            if (hazard.isNationalFlag == true) {
+              return HazardUtils.findDistrict(
+                hazard.location,
+                currentUser?.district
+              );
+            } return false;
+          })
           .map((hazard, index) => ({
             index: index + 1,
             id: hazard.id,
@@ -302,7 +309,10 @@ export default function HazardReport() {
                   <div className='flex justify-end gap-2'>
                     <div className="relative">
                       <button className="btn btn-info btn-sm"
-                       onClick={() => {setRows(allHazards); setFilter({status: null});} }
+                       onClick={() => {
+                          setRows(allHazards); 
+                          setFilter({status: null});
+                        } }
                       >
                         <i className="fa-solid fa-rotate-left"></i>
                       </button>
