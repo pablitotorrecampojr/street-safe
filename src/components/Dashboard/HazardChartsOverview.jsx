@@ -23,6 +23,10 @@ export default function HazardsChartOverview() {
 
     //TODO: filtering out hazard based on account and role
     useEffect(() => {
+        if (!hazards || hazards.length === 0) {
+            setLoading(true);
+            return;
+        }
         setCurrentUser(JSON.parse(localStorage.getItem("userData")) || null);
         let filterHazardsByRole = [];
         if (currentUser?.role === UserRole.AUTHORITIES) {
