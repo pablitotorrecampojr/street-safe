@@ -67,6 +67,7 @@ class ReportFragment : Fragment() {
     private var latitude: Double? = null
     private var longitude: Double? = null
     private val binding by lazy { FragmentReportBinding.inflate(layoutInflater) }
+    val allHazards = Hazards.DEFAULT
     val client = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)  // wait up to 30s to connect
         .writeTimeout(30, TimeUnit.SECONDS)    // wait up to 30s to send data
@@ -159,6 +160,7 @@ class ReportFragment : Fragment() {
                                 submitFinalButton.visibility = View.GONE
                                 cancelButton.visibility = View.GONE
                                 submitButton.isEnabled = true
+                                submitFinalButton.isEnabled = true
                             }
 
                             submitFinalButton.setOnClickListener {
@@ -194,6 +196,7 @@ class ReportFragment : Fragment() {
                                                     intent.putExtra("longitude", longitude)
                                                     intent.putExtra("fullAddress", fullAddress)
                                                     startActivity(intent)
+                                                    requireActivity().finish()
                                                 } else {
                                                     //TODO: handle if python backend response success false
                                                     manualHazardDescription(bitmap, fullAddress, currentDateTime, userId)
@@ -238,17 +241,28 @@ class ReportFragment : Fragment() {
         binding.cancelButton.visibility = View.GONE
         binding.submitReport.isEnabled = true
 
-        val inputEditText = EditText(requireContext())
-        inputEditText.hint = "Describe the hazard..."
+        val spinner = Spinner(requireContext())
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,
+            allHazards
+        )
+        spinner.adapter = adapter
 
         AlertDialog.Builder(requireContext())
             .setTitle("No hazards detected")
             .setMessage("YOLO could not detect any hazard. Please describe the hazard manually.")
-            .setView(inputEditText)
+            .setView(spinner)
             .setPositiveButton("Submit") { dialog, _ ->
-                val hazardDescription = inputEditText.text.toString().trim()
-                if (hazardDescription.isNotEmpty()) {
-                    sendManualReport(bitmap, fullAddress, currentDateTime, userId, hazardDescription)
+                val selectedHazard = spinner.selectedItem.toString()
+                if (selectedHazard.isNotEmpty()) {
+                    sendManualReport(
+                        bitmap,
+                        fullAddress,
+                        currentDateTime,
+                        userId,
+                        selectedHazard
+                    )
                 } else {
                     Toast.makeText(requireContext(), "Please write a description.", Toast.LENGTH_SHORT).show()
                 }
@@ -256,6 +270,7 @@ class ReportFragment : Fragment() {
             }
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
+                binding.submitFinalButton.isEnabled = true;
             }
             .show()
     }
@@ -307,7 +322,7 @@ class ReportFragment : Fragment() {
         val requestBody = json.toRequestBody(mediaType)
 
         val request = Request.Builder()
-            .url("http://192.168.254.100:5000/detect")
+            .url("http://192.168.1.13:5000/detect")
             .post(requestBody)
             .build()
 
