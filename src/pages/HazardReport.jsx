@@ -6,7 +6,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import { RoadHazards, UserRole  } from '@enums';
-import { Letters } from '@utils';
+import { Letters, Hazards as HazardUtils } from '@utils';
 import { set } from 'firebase/database';
  
 export default function HazardReport() {
@@ -18,35 +18,51 @@ export default function HazardReport() {
   useEffect(() => {
     const unsubscribe = Hazards.subscribe((data) => {
       setHazards(data);
-      setAllHazards(data);
       setLoading(false);
     });
     return () => unsubscribe();
   }, []);
 
+  //TODO: filter hazard based on role and national flag
   const [currentUser, setCurrentUser] = useState(null);
+  const [hazardFrequencies, setHazardFrequencies] = useState(null);
   useEffect(() => {
     setCurrentUser(JSON.parse(localStorage.getItem("userData")) || null);
+    let filterHazardsByRole = [];
     if (currentUser?.role === UserRole.AUTHORITIES) {
-      setRows(
-        hazards
-          .filter((hazard) => hazard.isNationalFlag === true)
-          .map((hazard, index) => ({
-            index: index + 1,
-            id: hazard.id,
-            ...hazard,
-          }))
-      );
+      filterHazardsByRole = hazards
+        .filter((hazard) => 
+          hazard.isNationalFlag &&
+          HazardUtils.findDistrict(
+            hazard.location,
+            currentUser?.district
+          )
+        );
+    } else if (currentUser?.role === UserRole.MUNICIPALITIES) {
+      filterHazardsByRole = hazards
+        .filter((hazard) => 
+          HazardUtils.findBarangayInMunicipality(
+            hazard.location,
+            currentUser.municipality,
+            currentUser.barangay
+          )
+        );
     } else {
-      setRows(
-        hazards.map((hazard, index) => ({
-          index: index + 1,
-          id: hazard.id,
-          ...hazard,
-        }))
-      );
+      filterHazardsByRole = hazards;
     }
-    console.log(hazards);
+    const mapped = filterHazardsByRole.map((hazard, index) => ({
+      index: index + 1,
+      id: hazard.id,
+      ...hazard,
+    }));
+
+    setHazardFrequencies(HazardUtils.countFrequencyOnType(
+      mapped.map(h => h.description),
+      RoadHazards.Types
+    ).byType);
+
+    setRows(mapped);
+    setAllHazards(mapped);
   }, [hazards]);  
 
   //TODO: handleing viewing road hazards
@@ -57,9 +73,35 @@ export default function HazardReport() {
   const [rows, setRows] = useState([]);
   const columns = [
     { field: 'index', headerName: '#', width: 30 },
-    { field: 'id', headerName: 'UID', width: 30 },
+    { field: 'latitude', headerName: 'Latitude', width: 130 },
+    { field: 'longitude', headerName: 'Longitude', width: 130 },
     { field: 'location', headerName: 'Location', width: 200 },
-    { field: 'description', headerName: 'Description', width: 300 },
+    { field: 'description', headerName: 'Description', width: 250 },
+    { field: 'frequency', headerName: 'Frequency', width: 300 , 
+      renderCell: (params) => {
+        console.log(hazardFrequencies);
+        const desc = params.row.description?.toLowerCase() || '';
+        const matchedTypes = Object.entries(hazardFrequencies)
+          .filter(([type]) => {
+            return (
+              desc.includes(type.toLowerCase()) ||
+              desc.includes(type.toLowerCase().slice(0, -1))
+            )
+          })
+        
+        if (matchedTypes.length === 0) return <span className="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full">None</span>;
+
+        return (
+          <div className="flex flex-wrap gap-1">
+            {matchedTypes.map(([type, count]) => (
+              <span key={type} className="bg-pink-100 text-pink-700 text-xs px-2 py-1 rounded-full">
+                {type}: {count}
+              </span>
+            ))}
+          </div>
+        );
+      }
+    },
     { field: 'status', headerName: 'Status', width: 120,
       renderCell: (params) => { 
         return <Badge 
@@ -73,6 +115,11 @@ export default function HazardReport() {
         return params.value ? <Badge status="success" text="Yes" /> : <Badge status="danger" text="No" />;
       }
     },
+    { field: 'reportedAt', headerName: 'Reported At', width: 200,
+      renderCell: (params) => {
+        return new Date(params.value).toLocaleString();
+      }
+     },
     { field: 'resolvedAt', headerName: 'Resolved At', width: 200,
       renderCell: (params) => {
         if (!params.value) return <i>To be determined</i>;
@@ -251,11 +298,11 @@ export default function HazardReport() {
   const handleFilter = (status) => {
     setStatusOpen(false);
     setFilter({ status: status });
-    setHazards(allHazards.filter((hazard) => hazard.status === status));
+    setRows(allHazards.filter((hazard) => hazard.status === status));
   };
   const handleIsNational = (isNational) => {
     setIsOpen(false);
-    setHazards(allHazards.filter((hazard) => hazard.isNationalFlag === isNational));
+    setRows(allHazards.filter((hazard) => hazard.isNationalFlag === isNational));
     setFilter({ status: null })
   }
   return (
@@ -281,7 +328,10 @@ export default function HazardReport() {
                   <div className='flex justify-end gap-2'>
                     <div className="relative">
                       <button className="btn btn-info btn-sm"
-                       onClick={() => {setRows(allHazards); setFilter({status: null});} }
+                       onClick={() => {
+                          setRows(allHazards); 
+                          setFilter({status: null});
+                        } }
                       >
                         <i className="fa-solid fa-rotate-left"></i>
                       </button>

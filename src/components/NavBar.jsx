@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from "react-toastify";
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase/firebase';
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import AccountSetting from '../constants/account-setting.json';
+import { UserRole } from '@enums';
+import districtsJson from '../constants/districts.json';
 
 export default function Navbar() {
     const navigate = useNavigate();
@@ -77,7 +79,16 @@ export default function Navbar() {
 
             <div className="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
             <div className="navbar-nav align-items-center">
-                <h4 className="fw-bold">Street Safe</h4>
+                <h4 className="font-semibold">
+                    {(() => {
+                        if (userData?.role ==  UserRole.MUNICIPALITIES) return `${userData?.barangay}, ${userData?.municipality}`;
+                        if (userData?.role == UserRole.AUTHORITIES) {
+                            const district = districtsJson["districts"][userData?.district];
+                            return `${district?.name}, ${district?.code}, ${district?.district}`
+                        }
+                        return "Street Safe";
+                    })()}
+                </h4>
             </div>
 
             <ul className="navbar-nav flex-row align-items-center ms-auto">
@@ -85,7 +96,7 @@ export default function Navbar() {
                     <a className="nav-link dropdown-toggle hide-arrow" href="#" data-bs-toggle="dropdown" onClick={handleToggleUserProfile}>
                         <div className="avatar avatar-online bg-primary rounded-circle d-flex justify-content-center align-items-center" style={{ width: "50px", height: "50px" }}>
                             <span className="fw-bold fs-5 text-white">
-                                {userData ? userData.fullname.charAt(0).toUpperCase() : "A"}
+                                {(userData && userData.fullname) ? userData.fullname.charAt(0).toUpperCase() : "A"}
                             </span>
                         </div>
                     </a>

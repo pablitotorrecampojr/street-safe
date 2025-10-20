@@ -1,34 +1,12 @@
-import {useEffect, useState} from 'react';
-import { useNavigate } from 'react-router-dom';
-import {Aside, NavBar, Divider, HazardsView } from '@components';
-import { LoadingScreen } from '@webview';
-import UsersView from '../components/UsersView';
-import { Hazards } from '@services';
-import { UserRole, RoadHazards } from '@enums';
-import { Letters } from '@utils';
+import {Aside, NavBar, UsersOverview, HazardsOverview, HazardsChartOverview } from '@components';
 
 const Dashboard = () => {
-  const navigate = useNavigate();
   const handleNavbarToggle = () => { 
     const htmlElement = document.getElementById("main-html");
     if (htmlElement) {
         htmlElement.classList.remove("light-style", "layout-menu-fixed", "layout-menu-expanded");
     }
   }
-
-  const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [hazards, setHazards] = useState([]);
-  useEffect(() => {
-    setCurrentUser(JSON.parse(localStorage.getItem('userData')));
-
-    const unsubscribe = Hazards.subscribe((data) => {
-      setHazards(data);
-      setLoading(false);
-    });
-
-    return () => unsubscribe && unsubscribe();
-  }, []); 
 
   return (
     <div className="layout-wrapper layout-content-navbar">
@@ -44,57 +22,16 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                <div className='mb-4'><Divider text="Users Overview" /></div>
-                <div className='row'>
-                  <div className='col-md-3 mb-4'>
-                    <UsersView icon="faUser" color="success" role="0" />
-                  </div>
-                  <div className='col-md-3 mb-4'>
-                    <UsersView icon="faUsersGear" color="warning" role="1" />
-                  </div>
-                  <div className='col-md-3 mb-4'>
-                    <UsersView icon="faUsers" color="primary" role="2" />
-                  </div>
-                  <div className='col-md-3 mb-4'>
-                    <UsersView icon="faUserTie" color="danger" role="3" />
-                  </div>
+                <div className='w-full flex flex-row gap-2 mb-4'>
+                  <UsersOverview />
+
+                  <HazardsOverview />
                 </div>
 
-                <div className='mb-4'><Divider text="Hazards Overview" /></div>
-                <div className="row">
-                  <div className="col-md-3 mb-4">
-                    <HazardsView 
-                      icon="fa-solid fa-hourglass-half" 
-                      color="info" 
-                      status={Letters.CapitalizeFirstLetter(RoadHazards.Status.PENDING)} 
-                      total={hazards.filter(hazard => hazard.status === RoadHazards.Status.PENDING).length} 
-                    />
-                  </div>
-                  <div className="col-md-3 mb-4">
-                    <HazardsView 
-                      icon="fa-solid fa-magnifying-glass" 
-                      color="warning" 
-                      status={Letters.CapitalizeFirstLetter(RoadHazards.Status.INVESTIGATING)} 
-                      total={hazards.filter(hazard => hazard.status === RoadHazards.Status.INVESTIGATING).length} 
-                    />
-                  </div>
-                  <div className="col-md-3 mb-4">
-                    <HazardsView 
-                      icon="fa-solid fa-thumbs-up" 
-                      color="success" 
-                      status={Letters.CapitalizeFirstLetter(RoadHazards.Status.RESOLVED)} 
-                      total={hazards.filter(hazard => hazard.status === RoadHazards.Status.RESOLVED).length} 
-                    />
-                  </div>
-                  <div className="col-md-3 mb-4">
-                    <HazardsView 
-                      icon="fa-solid fa-thumbs-down" 
-                      color="danger" 
-                      status={Letters.CapitalizeFirstLetter(RoadHazards.Status.REJECTED)} 
-                      total={hazards.filter(hazard => hazard.status === RoadHazards.Status.REJECTED).length} 
-                    />
-                  </div>
+                <div className='w-full'>
+                  <HazardsChartOverview />
                 </div>
+
               </div>
             </div>
           </div>

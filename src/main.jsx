@@ -34,6 +34,7 @@ import InsertHazard from './firebase/InsertHazard';
 // src/App.jsx
 import {app} from './firebase/firebase';
 import './index.css';
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
