@@ -207,6 +207,7 @@ class SignInActivity : AppCompatActivity() {
                     }
                     .addOnFailureListener {
                         Toast.makeText(this, "Error checking user: ${it.message}", Toast.LENGTH_SHORT).show()
+                        setSigningInState(false)
                     }
             } else {
                 Toast.makeText(this, task.exception.toString(), Toast.LENGTH_SHORT).show()

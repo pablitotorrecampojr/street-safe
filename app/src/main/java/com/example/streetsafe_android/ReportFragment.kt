@@ -181,7 +181,6 @@ class ReportFragment : Fragment() {
                                         submitButton.isEnabled = true
 
                                         if (result != null) {
-                                            Toast.makeText(requireContext(), "Image Identified", Toast.LENGTH_SHORT).show()
                                             try {
                                                 val json = JSONObject(result)
 
@@ -203,6 +202,7 @@ class ReportFragment : Fragment() {
                                                 }
                                             } catch (e: Exception) {
                                                 Log.e("SIMPLE_TEST", "Failed to parse response", e)
+                                                manualHazardDescription(bitmap, fullAddress, currentDateTime, userId)
                                             }
                                         } else {
                                             //TODO: trigger manual hazard description
@@ -298,7 +298,7 @@ class ReportFragment : Fragment() {
         val db = Firebase.database.reference
         db.child("roadhazards").push().setValue(report)
             .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Report submitted manually!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Report submitted!", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(requireContext(), MainActivity::class.java))
             }
             .addOnFailureListener { e ->
