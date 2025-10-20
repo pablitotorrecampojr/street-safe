@@ -80,14 +80,13 @@ export default function Navbar() {
             <div className="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
             <div className="navbar-nav align-items-center">
                 <h4 className="font-semibold">
-                    <i className="bi bi-geo-alt-fill text-red-500 text-xl mr-2"></i>
                     {(() => {
                         if (userData?.role ==  UserRole.MUNICIPALITIES) return `${userData?.barangay}, ${userData?.municipality}`;
                         if (userData?.role == UserRole.AUTHORITIES) {
                             const district = districtsJson["districts"][userData?.district];
                             return `${district?.name}, ${district?.code}, ${district?.district}`
                         }
-                        return "";
+                        return "Street Safe";
                     })()}
                 </h4>
             </div>
