@@ -75,7 +75,7 @@ export default function () {
                             </div>
                         </> : 
                         <>
-                            <table className="min-w-full bg-gray-100 border border-gray-300 rounded-lg text-sm overflow-hidden">
+                            <table className="min-w-full border border-gray-300 rounded-lg text-sm overflow-hidden">
                                 <tbody className="text-gray-800">
                                 <tr className="border-t hover:bg-gray-50">
                                     <td className="px-4 py-1">

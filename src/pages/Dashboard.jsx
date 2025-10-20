@@ -1,9 +1,7 @@
 import {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import {Aside, NavBar, Divider, HazardsView } from '@components';
-import { UsersOverview } from '@components';
+import {Aside, NavBar, UsersOverview, HazardsOverview } from '@components';
 import { Hazards } from '@services';
-
 const Dashboard = () => {
   const navigate = useNavigate();
   const handleNavbarToggle = () => { 
@@ -44,14 +42,7 @@ const Dashboard = () => {
                 <div className='w-full flex flex-row gap-2'>
                   <UsersOverview />
 
-                  <div className="max-w-sm bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                    <div className="p-4">
-                      <h2 className="text-lg font-semibold text-gray-800">Users Overview</h2>
-                      <p className="text-gray-600 mt-2">
-                        This is a simple card component made with Tailwind CSS.
-                      </p>
-                    </div>
-                  </div>
+                  <HazardsOverview />
                 </div>
 
               </div>

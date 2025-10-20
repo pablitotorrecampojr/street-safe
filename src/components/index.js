@@ -11,3 +11,4 @@ export { default as ViewHazards } from "./Modals/ViewHazards";
 export { default as HazardsView } from "./HazardsView";
 export { default as HazardDetails } from "./Modals/HazardDetails";
 export { default as UsersOverview } from "./UsersOverview";
+export { default as HazardsOverview } from './HazardsOverview';
