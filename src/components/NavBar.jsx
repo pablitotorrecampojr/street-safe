@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from "react-toastify";
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase/firebase';
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import AccountSetting from '../constants/account-setting.json';
+import { UserRole } from '@enums';
+import districtsJson from '../constants/districts.json';
 
 export default function Navbar() {
     const navigate = useNavigate();
@@ -77,7 +79,17 @@ export default function Navbar() {
 
             <div className="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
             <div className="navbar-nav align-items-center">
-                <h4 className="fw-bold">Street Safe</h4>
+                <h4 className="font-semibold">
+                    <i className="bi bi-geo-alt-fill text-red-500 text-xl mr-2"></i>
+                    {(() => {
+                        if (userData?.role ==  UserRole.MUNICIPALITIES) return `${userData?.barangay}, ${userData?.municipality}`;
+                        if (userData?.role == UserRole.AUTHORITIES) {
+                            const district = districtsJson["districts"][userData?.district];
+                            return `${district?.name}, ${district?.code}, ${district?.district}`
+                        }
+                        return "";
+                    })()}
+                </h4>
             </div>
 
             <ul className="navbar-nav flex-row align-items-center ms-auto">
