@@ -1,29 +1,12 @@
-import {useEffect, useState} from 'react';
-import { useNavigate } from 'react-router-dom';
 import {Aside, NavBar, UsersOverview, HazardsOverview, HazardsChartOverview } from '@components';
-import { Hazards } from '@services';
+
 const Dashboard = () => {
-  const navigate = useNavigate();
   const handleNavbarToggle = () => { 
     const htmlElement = document.getElementById("main-html");
     if (htmlElement) {
         htmlElement.classList.remove("light-style", "layout-menu-fixed", "layout-menu-expanded");
     }
   }
-
-  const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [hazards, setHazards] = useState([]);
-  useEffect(() => {
-    setCurrentUser(JSON.parse(localStorage.getItem('userData')));
-
-    const unsubscribe = Hazards.subscribe((data) => {
-      setHazards(data);
-      setLoading(false);
-    });
-
-    return () => unsubscribe && unsubscribe();
-  }, []); 
 
   return (
     <div className="layout-wrapper layout-content-navbar">
