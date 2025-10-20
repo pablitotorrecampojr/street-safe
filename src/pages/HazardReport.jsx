@@ -66,7 +66,6 @@ export default function HazardReport() {
   const [rows, setRows] = useState([]);
   const columns = [
     { field: 'index', headerName: '#', width: 30 },
-    // { field: 'id', headerName: 'UID', width: 30 },
     { field: 'latitude', headerName: 'Latitude', width: 130 },
     { field: 'longitude', headerName: 'Longitude', width: 130 },
     { field: 'location', headerName: 'Location', width: 200 },
