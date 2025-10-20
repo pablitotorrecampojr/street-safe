@@ -39,7 +39,7 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                <div className='w-full flex flex-row gap-2'>
+                <div className='w-full flex flex-row gap-2 mb-4'>
                   <UsersOverview />
 
                   <HazardsOverview />

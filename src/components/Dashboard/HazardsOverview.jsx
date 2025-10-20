@@ -27,7 +27,7 @@ export default function HazardsOverview() {
     return (
         <div className="max-w-sm bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
             <div className="p-4">
-                <h2 className="mb-4 font-semibold text-gray-800">Hazards Overview</h2>
+                <h2 className="mb-4 font-semibold">Hazards Overview</h2>
                 <div className="overflow-x-auto">
                     <div className="min-w-full flex flex-col justify-center items-center rounded-lg text-sm overflow-hidden">
                         {loading ? 

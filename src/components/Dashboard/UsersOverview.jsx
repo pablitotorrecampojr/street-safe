@@ -66,7 +66,7 @@ export default function () {
     return (
         <div className="max-w-sm bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
             <div className="p-4">
-                <h2 className="mb-4 font-semibold text-gray-800">Users Overview</h2>
+                <h2 className="mb-4 font-semibold">Users Overview</h2>
                 <div className="overflow-x-auto">
                     {loading ? 
                         <>
