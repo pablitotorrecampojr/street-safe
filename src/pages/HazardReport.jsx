@@ -25,6 +25,7 @@ export default function HazardReport() {
 
   //TODO: filter hazard based on role and national flag
   const [currentUser, setCurrentUser] = useState(null);
+  const [hazardFrequencies, setHazardFrequencies] = useState(null);
   useEffect(() => {
     setCurrentUser(JSON.parse(localStorage.getItem("userData")) || null);
     let filterHazardsByRole = [];
@@ -54,6 +55,12 @@ export default function HazardReport() {
       id: hazard.id,
       ...hazard,
     }));
+
+    setHazardFrequencies(HazardUtils.countFrequencyOnType(
+      mapped.map(h => h.description),
+      RoadHazards.Types
+    ).byType);
+
     setRows(mapped);
     setAllHazards(mapped);
   }, [hazards]);  
@@ -69,7 +76,32 @@ export default function HazardReport() {
     { field: 'latitude', headerName: 'Latitude', width: 130 },
     { field: 'longitude', headerName: 'Longitude', width: 130 },
     { field: 'location', headerName: 'Location', width: 200 },
-    { field: 'description', headerName: 'Description', width: 300 },
+    { field: 'description', headerName: 'Description', width: 250 },
+    { field: 'frequency', headerName: 'Frequency', width: 300 , 
+      renderCell: (params) => {
+        console.log(hazardFrequencies);
+        const desc = params.row.description?.toLowerCase() || '';
+        const matchedTypes = Object.entries(hazardFrequencies)
+          .filter(([type]) => {
+            return (
+              desc.includes(type.toLowerCase()) ||
+              desc.includes(type.toLowerCase().slice(0, -1))
+            )
+          })
+        
+        if (matchedTypes.length === 0) return <span className="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full">None</span>;
+
+        return (
+          <div className="flex flex-wrap gap-1">
+            {matchedTypes.map(([type, count]) => (
+              <span key={type} className="bg-pink-100 text-pink-700 text-xs px-2 py-1 rounded-full">
+                {type}: {count}
+              </span>
+            ))}
+          </div>
+        );
+      }
+    },
     { field: 'status', headerName: 'Status', width: 120,
       renderCell: (params) => { 
         return <Badge 
