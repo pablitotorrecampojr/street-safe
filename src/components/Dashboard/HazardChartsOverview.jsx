@@ -9,6 +9,7 @@ export default function HazardsChartOverview() {
     const [hazards, setHazards] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentUser, setCurrentUser ] = useState(JSON.parse(localStorage.getItem("userData")) || null);
+    const [listOfFrequency, pushListOfFrequency] = useState([]);
 
     //TODO: subscribe to realtime db
     useEffect(() => {
@@ -43,21 +44,23 @@ export default function HazardsChartOverview() {
         } else {
             filterHazardsByRole = hazards;
         }
-        console.table(filterHazardsByRole);
+        
+        let listOfHazards = filterHazardsByRole.map(hazard => hazard.description);
+        pushListOfFrequency(HazardUtils.countFrequencyOnType(listOfHazards, RoadHazards.Types));
         setLoading(false);
     }, [hazards, currentUser?.role]);
 
     //TODO: handle chart js data
     ChartJS.register(ArcElement, Tooltip, Legend);
     const data = {
-    labels: RoadHazards.Types,
+        labels: RoadHazards.Types,
         datasets: [
             {
-            label: "Frequency",
-            data: [12, 5, 7, 4, 2, 9, 1, 6, 3, 8, 2, 5, 3, 4, 6, 13],
-            backgroundColor: RoadHazards.hazardColors,
-            borderColor: RoadHazards.hazardColors,
-            borderWidth: 1,
+                label: "Frequency",
+                data: listOfFrequency,
+                backgroundColor: RoadHazards.hazardColors,
+                borderColor: RoadHazards.hazardColors,
+                borderWidth: 1,
             },
         ],
     };

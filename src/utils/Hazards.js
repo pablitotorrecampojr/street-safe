@@ -125,3 +125,22 @@ export function findDistrict(address, district) {
     return authorityDistrict.district === districtName;
     
 }
+
+
+//TODO: count frequency based hazard type,
+export function countFrequencyOnType(inputStringType, listOfTypes) {
+    const counts = Object.fromEntries(listOfTypes.map(type => [type, 0]));
+
+    inputStringType.forEach(str => {
+        if (!str) return;
+        const lowerStr = str.toLowerCase();
+        listOfTypes.forEach(type => {
+            const lowerType = type.toLowerCase();
+            if (lowerStr.includes(lowerType) || lowerStr.includes(lowerType.slice(0, -1))) {
+                counts[type]++;
+            }
+        });
+    });
+
+     return listOfTypes.map(type => counts[type]);
+}
