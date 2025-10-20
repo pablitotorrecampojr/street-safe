@@ -1,11 +1,8 @@
 import {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import {Aside, NavBar, Divider, HazardsView } from '@components';
-import { LoadingScreen } from '@webview';
-import UsersView from '../components/UsersView';
+import { UsersOverview } from '@components';
 import { Hazards } from '@services';
-import { UserRole, RoadHazards } from '@enums';
-import { Letters } from '@utils';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -44,57 +41,19 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                <div className='mb-4'><Divider text="Users Overview" /></div>
-                <div className='row'>
-                  <div className='col-md-3 mb-4'>
-                    <UsersView icon="faUser" color="success" role="0" />
-                  </div>
-                  <div className='col-md-3 mb-4'>
-                    <UsersView icon="faUsersGear" color="warning" role="1" />
-                  </div>
-                  <div className='col-md-3 mb-4'>
-                    <UsersView icon="faUsers" color="primary" role="2" />
-                  </div>
-                  <div className='col-md-3 mb-4'>
-                    <UsersView icon="faUserTie" color="danger" role="3" />
+                <div className='w-full flex flex-row gap-2'>
+                  <UsersOverview />
+
+                  <div className="max-w-sm bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                    <div className="p-4">
+                      <h2 className="text-lg font-semibold text-gray-800">Users Overview</h2>
+                      <p className="text-gray-600 mt-2">
+                        This is a simple card component made with Tailwind CSS.
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className='mb-4'><Divider text="Hazards Overview" /></div>
-                <div className="row">
-                  <div className="col-md-3 mb-4">
-                    <HazardsView 
-                      icon="fa-solid fa-hourglass-half" 
-                      color="info" 
-                      status={Letters.CapitalizeFirstLetter(RoadHazards.Status.PENDING)} 
-                      total={hazards.filter(hazard => hazard.status === RoadHazards.Status.PENDING).length} 
-                    />
-                  </div>
-                  <div className="col-md-3 mb-4">
-                    <HazardsView 
-                      icon="fa-solid fa-magnifying-glass" 
-                      color="warning" 
-                      status={Letters.CapitalizeFirstLetter(RoadHazards.Status.INVESTIGATING)} 
-                      total={hazards.filter(hazard => hazard.status === RoadHazards.Status.INVESTIGATING).length} 
-                    />
-                  </div>
-                  <div className="col-md-3 mb-4">
-                    <HazardsView 
-                      icon="fa-solid fa-thumbs-up" 
-                      color="success" 
-                      status={Letters.CapitalizeFirstLetter(RoadHazards.Status.RESOLVED)} 
-                      total={hazards.filter(hazard => hazard.status === RoadHazards.Status.RESOLVED).length} 
-                    />
-                  </div>
-                  <div className="col-md-3 mb-4">
-                    <HazardsView 
-                      icon="fa-solid fa-thumbs-down" 
-                      color="danger" 
-                      status={Letters.CapitalizeFirstLetter(RoadHazards.Status.REJECTED)} 
-                      total={hazards.filter(hazard => hazard.status === RoadHazards.Status.REJECTED).length} 
-                    />
-                  </div>
-                </div>
               </div>
             </div>
           </div>
