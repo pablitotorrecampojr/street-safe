@@ -54,6 +54,7 @@ import android.util.Base64
 import android.graphics.BitmapFactory
 import android.widget.EditText
 import android.widget.ProgressBar
+import com.example.streetsafe_android.databinding.FragmentReportBinding
 import java.util.concurrent.TimeUnit
 
 class ReportFragment : Fragment() {
@@ -65,6 +66,8 @@ class ReportFragment : Fragment() {
     private var imageCapture: ImageCapture? = null
     private var latitude: Double? = null
     private var longitude: Double? = null
+    private val binding by lazy { FragmentReportBinding.inflate(layoutInflater) }
+    val allHazards = Hazards.DEFAULT
     val client = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)  // wait up to 30s to connect
         .writeTimeout(30, TimeUnit.SECONDS)    // wait up to 30s to send data
@@ -105,7 +108,6 @@ class ReportFragment : Fragment() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         checkAndOpenCamera()
         checkAndRequestLocationPermission()
-        val defects = loadDefectsFromJson()
         val capturedImageView = view.findViewById<ImageView>(R.id.capturedImageView)
 
         val submitButton = view.findViewById<Button>(R.id.submitReport)
@@ -158,6 +160,7 @@ class ReportFragment : Fragment() {
                                 submitFinalButton.visibility = View.GONE
                                 cancelButton.visibility = View.GONE
                                 submitButton.isEnabled = true
+                                submitFinalButton.isEnabled = true
                             }
 
                             submitFinalButton.setOnClickListener {
@@ -178,7 +181,6 @@ class ReportFragment : Fragment() {
                                         submitButton.isEnabled = true
 
                                         if (result != null) {
-                                            Toast.makeText(requireContext(), "Image Identified", Toast.LENGTH_SHORT).show()
                                             try {
                                                 val json = JSONObject(result)
 
@@ -193,40 +195,18 @@ class ReportFragment : Fragment() {
                                                     intent.putExtra("longitude", longitude)
                                                     intent.putExtra("fullAddress", fullAddress)
                                                     startActivity(intent)
+                                                    requireActivity().finish()
+                                                } else {
+                                                    //TODO: handle if python backend response success false
+                                                    manualHazardDescription(bitmap, fullAddress, currentDateTime, userId)
                                                 }
                                             } catch (e: Exception) {
                                                 Log.e("SIMPLE_TEST", "Failed to parse response", e)
+                                                manualHazardDescription(bitmap, fullAddress, currentDateTime, userId)
                                             }
                                         } else {
-                                            //TODO: ask user for manual data when connecting to flask API fails
-                                            capturedImageView.visibility = View.GONE
-                                            previewView.visibility = View.VISIBLE
-                                            cityTextView.visibility = View.VISIBLE
-                                            submitButton.visibility = View.VISIBLE
-                                            submitFinalButton.visibility = View.GONE
-                                            cancelButton.visibility = View.GONE
-                                            submitButton.isEnabled = true
-
-                                            val inputEditText = EditText(requireContext())
-                                            inputEditText.hint = "Describe the hazard..."
-
-                                            AlertDialog.Builder(requireContext())
-                                                .setTitle("No hazards detected")
-                                                .setMessage("YOLO could not detect any hazard. Please describe the hazard manually.")
-                                                .setView(inputEditText)
-                                                .setPositiveButton("Submit") { dialog, _ ->
-                                                    val hazardDescription = inputEditText.text.toString().trim()
-                                                    if (hazardDescription.isNotEmpty()) {
-                                                        sendManualReport(bitmap, fullAddress, currentDateTime, userId, hazardDescription)
-                                                    } else {
-                                                        Toast.makeText(requireContext(), "Please write a description.", Toast.LENGTH_SHORT).show()
-                                                    }
-                                                    dialog.dismiss()
-                                                }
-                                                .setNegativeButton("Cancel") { dialog, _ ->
-                                                    dialog.dismiss()
-                                                }
-                                                .show()
+                                            //TODO: trigger manual hazard description
+                                            manualHazardDescription(bitmap, fullAddress, currentDateTime, userId)
                                         }
                                     }
                                 }
@@ -243,6 +223,56 @@ class ReportFragment : Fragment() {
             )
         }
 
+    }
+
+    //TODO: ask user for manual data when connecting to flask API fails
+    private fun manualHazardDescription(
+        bitmap: Bitmap,
+        fullAddress: String,
+        currentDateTime: String,
+        userId: String,
+    ) {
+        //TODO: ask user for manual data when connecting to flask API fails
+        binding.capturedImageView.visibility = View.GONE
+        previewView.visibility = View.VISIBLE
+        binding.tvCity.visibility = View.VISIBLE
+        binding.submitReport.visibility = View.VISIBLE
+        binding.submitFinalButton.visibility = View.GONE
+        binding.cancelButton.visibility = View.GONE
+        binding.submitReport.isEnabled = true
+
+        val spinner = Spinner(requireContext())
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,
+            allHazards
+        )
+        spinner.adapter = adapter
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("No hazards detected")
+            .setMessage("YOLO could not detect any hazard. Please describe the hazard manually.")
+            .setView(spinner)
+            .setPositiveButton("Submit") { dialog, _ ->
+                val selectedHazard = spinner.selectedItem.toString()
+                if (selectedHazard.isNotEmpty()) {
+                    sendManualReport(
+                        bitmap,
+                        fullAddress,
+                        currentDateTime,
+                        userId,
+                        selectedHazard
+                    )
+                } else {
+                    Toast.makeText(requireContext(), "Please write a description.", Toast.LENGTH_SHORT).show()
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+                binding.submitFinalButton.isEnabled = true;
+            }
+            .show()
     }
 
     private fun sendManualReport(
@@ -268,7 +298,7 @@ class ReportFragment : Fragment() {
         val db = Firebase.database.reference
         db.child("roadhazards").push().setValue(report)
             .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Report submitted manually!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Report submitted!", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(requireContext(), MainActivity::class.java))
             }
             .addOnFailureListener { e ->
@@ -292,7 +322,7 @@ class ReportFragment : Fragment() {
         val requestBody = json.toRequestBody(mediaType)
 
         val request = Request.Builder()
-            .url("http://192.168.254.100:5000/detect")
+            .url("http://192.168.1.13:5000/detect")
             .post(requestBody)
             .build()
 
@@ -307,7 +337,7 @@ class ReportFragment : Fragment() {
     }
 
     private fun sendPostRequest(image: String, onResult: (String?) -> Unit) {
-        val url = "http://192.168.254.100:5000/detect"
+        val url = "http://192.168.1.13:5000/detect"
         //val url = "https://street-safe.onrender.com/detect"
 
         Log.d("NETWORK_DEBUG", "🚀 Starting request to: $url")
