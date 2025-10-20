@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import {Aside, NavBar, UsersOverview, HazardsOverview } from '@components';
+import {Aside, NavBar, UsersOverview, HazardsOverview, HazardsChartOverview } from '@components';
 import { Hazards } from '@services';
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -43,6 +43,10 @@ const Dashboard = () => {
                   <UsersOverview />
 
                   <HazardsOverview />
+                </div>
+
+                <div className='w-full'>
+                  <HazardsChartOverview />
                 </div>
 
               </div>

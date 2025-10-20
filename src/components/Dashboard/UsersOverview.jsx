@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { db } from "../firebase/firebase";
+import { db } from "../../firebase/firebase";
 import { getDocs, collection } from "firebase/firestore";
 import { UserRole } from '@enums';
 
