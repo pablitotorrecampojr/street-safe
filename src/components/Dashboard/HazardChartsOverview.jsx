@@ -9,7 +9,9 @@ export default function HazardsChartOverview() {
     const [hazards, setHazards] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentUser, setCurrentUser ] = useState(JSON.parse(localStorage.getItem("userData")) || null);
-    const [listOfFrequency, pushListOfFrequency] = useState([]);
+    const [listOfFrequency, setListOfFrequency] = useState([]);
+    const [listOfTypes, setListOfTypes] = useState(RoadHazards.Types);
+    const [listOfTypesColors, setListOfTypesColors] = useState(RoadHazards.hazardColors);
 
     //TODO: subscribe to realtime db
     useEffect(() => {
@@ -45,21 +47,31 @@ export default function HazardsChartOverview() {
             filterHazardsByRole = hazards;
         }
         
-        let listOfHazards = filterHazardsByRole.map(hazard => hazard.description);
-        pushListOfFrequency(HazardUtils.countFrequencyOnType(listOfHazards, RoadHazards.Types));
+        const listOfHazards = filterHazardsByRole.map(h => h.description);
+        const frequencies = HazardUtils.countFrequencyOnType(listOfHazards, RoadHazards.Types);
+        const positiveIndices = RoadHazards.Types
+            .map((t, idx) => (frequencies.byType[t] > 0 ? idx : -1))
+            .filter(idx => idx >= 0);
+
+        const filteredTypes = positiveIndices.map(i => RoadHazards.Types[i]);
+        const filteredCounts = positiveIndices.map(i => frequencies.countsOnly[i]);
+        const filteredColors = positiveIndices.map(i => RoadHazards.hazardColors[i]);
+        setListOfTypes(filteredTypes);
+        setListOfFrequency(filteredCounts);
+        setListOfTypesColors(filteredColors);
         setLoading(false);
     }, [hazards, currentUser?.role]);
 
     //TODO: handle chart js data
     ChartJS.register(ArcElement, Tooltip, Legend);
     const data = {
-        labels: RoadHazards.Types,
+        labels: listOfTypes,
         datasets: [
             {
                 label: "Frequency",
                 data: listOfFrequency,
-                backgroundColor: RoadHazards.hazardColors,
-                borderColor: RoadHazards.hazardColors,
+                backgroundColor: listOfTypesColors,
+                borderColor: listOfTypesColors,
                 borderWidth: 1,
             },
         ],

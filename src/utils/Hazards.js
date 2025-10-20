@@ -142,5 +142,8 @@ export function countFrequencyOnType(inputStringType, listOfTypes) {
         });
     });
 
-     return listOfTypes.map(type => counts[type]);
+     return {
+        byType:  counts,
+        countsOnly: listOfTypes.map(type => counts[type])
+     };
 }
