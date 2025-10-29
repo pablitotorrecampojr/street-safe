@@ -432,9 +432,9 @@ class ReportFragment : Fragment() {
             val addresses: List<Address> = geocoder.getFromLocation(latitude, longitude, 1) ?: emptyList()
             if (addresses.isNotEmpty()) {
                 val address: Address = addresses[0]
-                Log.d("Address", address.toString())
                 val fullAddress = address.getAddressLine(0)
-                view?.findViewById<TextView>(R.id.tvCity)?.text = "Address: $fullAddress"
+                getBarangayBasedOnLocation(fullAddress)
+                view?.findViewById<TextView>(R.id.tvCity)?.text = "$fullAddress"
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -459,6 +459,12 @@ class ReportFragment : Fragment() {
             e.printStackTrace()
             emptyList()
         }
+    }
+
+    private fun getBarangayBasedOnLocation(baseLocation: String) {
+        val jsonMunicipalities = requireContext().assets.open("municipalities.json")
+            .bufferedReader().use { it.readText() }
+        Log.d("barangay_location", baseLocation)
     }
 
     private fun imageProxyToBitmap(imageProxy: ImageProxy): Bitmap {
@@ -498,10 +504,5 @@ class ReportFragment : Fragment() {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream)
         val byteArray = outputStream.toByteArray()
         return Base64.encodeToString(byteArray, Base64.NO_WRAP)
-    }
-
-    private fun decodeBase64ToBitmap(base64Str: String): Bitmap {
-        val decodedBytes = Base64.decode(base64Str, Base64.DEFAULT)
-        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
     }
 }
