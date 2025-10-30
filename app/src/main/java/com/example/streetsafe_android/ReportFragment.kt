@@ -440,25 +440,6 @@ class ReportFragment : Fragment() {
         }
     }
 
-    private fun loadDefectsFromJson(): List<RoadDefect> {
-        val jsonString = requireContext().assets.open("road_defects.json")
-            .bufferedReader().use { it.readText() }
-        return try {
-            val jsonArray = org.json.JSONArray(jsonString)
-            val defectList = mutableListOf<RoadDefect>()
-            for (i in 0 until jsonArray.length()) {
-                val obj = jsonArray.getJSONObject(i)
-                val id = obj.getInt("id")
-                val label = obj.getString("label")
-                defectList.add(RoadDefect(id, label))
-            }
-            defectList
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emptyList()
-        }
-    }
-
     fun getBarangaysFromLocation(context: Context, location: String): List<String>? {
         val jsonString = context.assets.open("municipalities.json").bufferedReader().use { it.readText() }
         val type = object : TypeToken<Map<String, List<String>>>() {}.type
