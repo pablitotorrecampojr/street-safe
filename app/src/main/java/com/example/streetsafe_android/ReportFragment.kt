@@ -449,8 +449,7 @@ class ReportFragment : Fragment() {
                         position: Int,
                         id: Long
                     ) {
-                        val selectedBarangay = parent?.getItemAtPosition(position).toString()
-                        Toast.makeText(requireContext(), "$selectedBarangay", Toast.LENGTH_SHORT).show()
+                        parent?.getItemAtPosition(position).toString()
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>?) {
