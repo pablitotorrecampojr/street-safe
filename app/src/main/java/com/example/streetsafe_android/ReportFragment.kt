@@ -48,6 +48,7 @@ import org.json.JSONObject
 import java.io.IOException
 import android.util.Base64
 import android.graphics.BitmapFactory
+import android.widget.AdapterView
 import android.widget.ProgressBar
 import com.example.streetsafe_android.databinding.FragmentReportBinding
 import com.google.gson.Gson
@@ -431,15 +432,32 @@ class ReportFragment : Fragment() {
                 val address: Address = addresses[0]
                 val fullAddress = address.getAddressLine(0)
                 val listOfBarangays = getBarangaysFromLocation(requireContext(), fullAddress) ?: emptyList()
+                val barangayListSpinner = view?.findViewById<Spinner>(R.id.barangayLists)
                 Log.d("listOfBarangays", "${listOfBarangays}")
                 val adapter = ArrayAdapter(
                     requireContext(),
                     R.layout.spinner_item,
+                    R.id.spinner_text,
                     listOfBarangays
                 )
-                adapter.setDropDownViewResource(R.layout.fragment_report)
-                binding.barangayLists.adapter = adapter
+                adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item)
                 view?.findViewById<TextView>(R.id.tvCity)?.text = "$fullAddress"
+                barangayListSpinner?.adapter = adapter
+                barangayListSpinner?.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        val selectedBarangay = parent?.getItemAtPosition(position).toString()
+                        Toast.makeText(requireContext(), "$selectedBarangay", Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>?) {
+                        // Optional: you can leave this empty
+                    }
+                }
             }
 
         } catch (e: Exception) {
