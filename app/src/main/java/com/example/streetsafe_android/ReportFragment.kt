@@ -3,6 +3,7 @@ package com.example.streetsafe_android
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -30,21 +31,16 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.camera.view.PreviewView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
 import java.util.*
-import java.util.concurrent.ExecutionException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -52,9 +48,10 @@ import org.json.JSONObject
 import java.io.IOException
 import android.util.Base64
 import android.graphics.BitmapFactory
-import android.widget.EditText
 import android.widget.ProgressBar
 import com.example.streetsafe_android.databinding.FragmentReportBinding
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.util.concurrent.TimeUnit
 
 class ReportFragment : Fragment() {
@@ -433,7 +430,8 @@ class ReportFragment : Fragment() {
             if (addresses.isNotEmpty()) {
                 val address: Address = addresses[0]
                 val fullAddress = address.getAddressLine(0)
-                getBarangayBasedOnLocation(fullAddress)
+                val listOfBarangays= getBarangaysFromLocation(requireContext(),fullAddress)
+                Log.d("listOfBarangays", "${listOfBarangays.toString()}")
                 view?.findViewById<TextView>(R.id.tvCity)?.text = "$fullAddress"
             }
         } catch (e: Exception) {
@@ -461,10 +459,14 @@ class ReportFragment : Fragment() {
         }
     }
 
-    private fun getBarangayBasedOnLocation(baseLocation: String) {
-        val jsonMunicipalities = requireContext().assets.open("municipalities.json")
-            .bufferedReader().use { it.readText() }
-        Log.d("barangay_location", baseLocation)
+    fun getBarangaysFromLocation(context: Context, location: String): List<String>? {
+        val jsonString = context.assets.open("municipalities.json").bufferedReader().use { it.readText() }
+        val type = object : TypeToken<Map<String, List<String>>>() {}.type
+        val data: Map<String, List<String>> = Gson().fromJson(jsonString, type)
+        val matchedMunicipality = data.keys.firstOrNull { key ->
+            location.contains(key, ignoreCase = true)
+        }
+        return matchedMunicipality?.let { data[it] }
     }
 
     private fun imageProxyToBitmap(imageProxy: ImageProxy): Bitmap {
