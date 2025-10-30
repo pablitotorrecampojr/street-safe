@@ -3,6 +3,7 @@ package com.example.streetsafe_android
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -30,21 +31,16 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.camera.view.PreviewView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
 import java.util.*
-import java.util.concurrent.ExecutionException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -52,9 +48,11 @@ import org.json.JSONObject
 import java.io.IOException
 import android.util.Base64
 import android.graphics.BitmapFactory
-import android.widget.EditText
+import android.widget.AdapterView
 import android.widget.ProgressBar
 import com.example.streetsafe_android.databinding.FragmentReportBinding
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.util.concurrent.TimeUnit
 
 class ReportFragment : Fragment() {
@@ -152,6 +150,9 @@ class ReportFragment : Fragment() {
                             submitFinalButton.visibility = View.VISIBLE
                             cancelButton.visibility = View.VISIBLE
 
+                            view.findViewById<TextView>(R.id.currentLocationLabel)?.visibility = View.GONE
+                            view.findViewById<Spinner>(R.id.barangayLists)?.visibility = View.GONE
+
                             cancelButton.setOnClickListener {
                                 capturedImageView.visibility = View.GONE
                                 previewView.visibility = View.VISIBLE
@@ -161,6 +162,8 @@ class ReportFragment : Fragment() {
                                 cancelButton.visibility = View.GONE
                                 submitButton.isEnabled = true
                                 submitFinalButton.isEnabled = true
+                                view.findViewById<TextView>(R.id.currentLocationLabel)?.visibility = View.VISIBLE
+                                view.findViewById<Spinner>(R.id.barangayLists)?.visibility = View.VISIBLE
                             }
 
                             submitFinalButton.setOnClickListener {
@@ -432,33 +435,50 @@ class ReportFragment : Fragment() {
             val addresses: List<Address> = geocoder.getFromLocation(latitude, longitude, 1) ?: emptyList()
             if (addresses.isNotEmpty()) {
                 val address: Address = addresses[0]
-                Log.d("Address", address.toString())
                 val fullAddress = address.getAddressLine(0)
-                view?.findViewById<TextView>(R.id.tvCity)?.text = "Address: $fullAddress"
+                val listOfBarangays = getBarangaysFromLocation(requireContext(), fullAddress) ?: emptyList()
+                val barangayListSpinner = view?.findViewById<Spinner>(R.id.barangayLists)
+                val detectedLocation = view?.findViewById<TextView>(R.id.tvCity)
+                Log.d("listOfBarangays", "${listOfBarangays}")
+                val adapter = ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_spinner_dropdown_item,
+                    listOfBarangays
+                )
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                detectedLocation?.text = "$fullAddress"
+                barangayListSpinner?.adapter = adapter
+                barangayListSpinner?.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        parent?.getItemAtPosition(position).toString()
+                        detectedLocation?.text = "${fullAddress} : ${parent?.getItemAtPosition(position).toString()}"
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>?) {
+                        // Optional: you can leave this empty
+                    }
+                }
             }
+
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(requireContext(), "Error getting address: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun loadDefectsFromJson(): List<RoadDefect> {
-        val jsonString = requireContext().assets.open("road_defects.json")
-            .bufferedReader().use { it.readText() }
-        return try {
-            val jsonArray = org.json.JSONArray(jsonString)
-            val defectList = mutableListOf<RoadDefect>()
-            for (i in 0 until jsonArray.length()) {
-                val obj = jsonArray.getJSONObject(i)
-                val id = obj.getInt("id")
-                val label = obj.getString("label")
-                defectList.add(RoadDefect(id, label))
-            }
-            defectList
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emptyList()
+    fun getBarangaysFromLocation(context: Context, location: String): List<String>? {
+        val jsonString = context.assets.open("municipalities.json").bufferedReader().use { it.readText() }
+        val type = object : TypeToken<Map<String, List<String>>>() {}.type
+        val data: Map<String, List<String>> = Gson().fromJson(jsonString, type)
+        val matchedMunicipality = data.keys.firstOrNull { key ->
+            location.contains(key, ignoreCase = true)
         }
+        return matchedMunicipality?.let { data[it] }
     }
 
     private fun imageProxyToBitmap(imageProxy: ImageProxy): Bitmap {
@@ -498,10 +518,5 @@ class ReportFragment : Fragment() {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream)
         val byteArray = outputStream.toByteArray()
         return Base64.encodeToString(byteArray, Base64.NO_WRAP)
-    }
-
-    private fun decodeBase64ToBitmap(base64Str: String): Bitmap {
-        val decodedBytes = Base64.decode(base64Str, Base64.DEFAULT)
-        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
     }
 }

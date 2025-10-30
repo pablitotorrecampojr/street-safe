@@ -58,6 +58,8 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:1.2.3")
     implementation("androidx.camera:camera-view:1.2.3")
 
+    implementation("com.google.code.gson:gson:2.11.0")
+
     // Other libs
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
