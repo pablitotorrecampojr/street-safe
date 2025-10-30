@@ -436,11 +436,10 @@ class ReportFragment : Fragment() {
                 Log.d("listOfBarangays", "${listOfBarangays}")
                 val adapter = ArrayAdapter(
                     requireContext(),
-                    R.layout.spinner_item,
-                    R.id.spinner_text,
+                    android.R.layout.simple_spinner_dropdown_item,
                     listOfBarangays
                 )
-                adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item)
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 view?.findViewById<TextView>(R.id.tvCity)?.text = "$fullAddress"
                 barangayListSpinner?.adapter = adapter
                 barangayListSpinner?.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
