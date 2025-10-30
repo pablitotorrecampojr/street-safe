@@ -430,10 +430,18 @@ class ReportFragment : Fragment() {
             if (addresses.isNotEmpty()) {
                 val address: Address = addresses[0]
                 val fullAddress = address.getAddressLine(0)
-                val listOfBarangays= getBarangaysFromLocation(requireContext(),fullAddress)
-                Log.d("listOfBarangays", "${listOfBarangays.toString()}")
+                val listOfBarangays = getBarangaysFromLocation(requireContext(), fullAddress) ?: emptyList()
+                Log.d("listOfBarangays", "${listOfBarangays}")
+                val adapter = ArrayAdapter(
+                    requireContext(),
+                    R.layout.spinner_item,
+                    listOfBarangays
+                )
+                adapter.setDropDownViewResource(R.layout.fragment_report)
+                binding.barangayLists.adapter = adapter
                 view?.findViewById<TextView>(R.id.tvCity)?.text = "$fullAddress"
             }
+
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(requireContext(), "Error getting address: ${e.message}", Toast.LENGTH_SHORT).show()
