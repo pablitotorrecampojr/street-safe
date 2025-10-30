@@ -150,6 +150,9 @@ class ReportFragment : Fragment() {
                             submitFinalButton.visibility = View.VISIBLE
                             cancelButton.visibility = View.VISIBLE
 
+                            view.findViewById<TextView>(R.id.currentLocationLabel)?.visibility = View.GONE
+                            view.findViewById<Spinner>(R.id.barangayLists)?.visibility = View.GONE
+
                             cancelButton.setOnClickListener {
                                 capturedImageView.visibility = View.GONE
                                 previewView.visibility = View.VISIBLE
@@ -159,6 +162,8 @@ class ReportFragment : Fragment() {
                                 cancelButton.visibility = View.GONE
                                 submitButton.isEnabled = true
                                 submitFinalButton.isEnabled = true
+                                view.findViewById<TextView>(R.id.currentLocationLabel)?.visibility = View.VISIBLE
+                                view.findViewById<Spinner>(R.id.barangayLists)?.visibility = View.VISIBLE
                             }
 
                             submitFinalButton.setOnClickListener {
@@ -433,6 +438,7 @@ class ReportFragment : Fragment() {
                 val fullAddress = address.getAddressLine(0)
                 val listOfBarangays = getBarangaysFromLocation(requireContext(), fullAddress) ?: emptyList()
                 val barangayListSpinner = view?.findViewById<Spinner>(R.id.barangayLists)
+                val detectedLocation = view?.findViewById<TextView>(R.id.tvCity)
                 Log.d("listOfBarangays", "${listOfBarangays}")
                 val adapter = ArrayAdapter(
                     requireContext(),
@@ -440,7 +446,7 @@ class ReportFragment : Fragment() {
                     listOfBarangays
                 )
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                view?.findViewById<TextView>(R.id.tvCity)?.text = "$fullAddress"
+                detectedLocation?.text = "$fullAddress"
                 barangayListSpinner?.adapter = adapter
                 barangayListSpinner?.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
@@ -450,6 +456,7 @@ class ReportFragment : Fragment() {
                         id: Long
                     ) {
                         parent?.getItemAtPosition(position).toString()
+                        detectedLocation?.text = "${fullAddress} : ${parent?.getItemAtPosition(position).toString()}"
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>?) {
