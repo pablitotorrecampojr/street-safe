@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Hazards } from '@services';
-import { RoadHazards } from '@enums';
+import { RoadHazards, UserRole } from '@enums';
+import { Hazards as HazardUtils } from '@utils';
 
 export default function HazardsOverview() {
     const [pendingCount, setPendingCount] = useState(0);
@@ -8,7 +9,8 @@ export default function HazardsOverview() {
     const [resolvedCount, setResolvedCount] = useState(0);
     const [rejectedCount, setRejectedCount] = useState(0);
     const [loading, setLoading] = useState(true);
-    const [hazards, setHazards] = useState([])
+    const [hazards, setHazards] = useState([]);
+    const [currentUser, setCurrentUser ] = useState(JSON.parse(localStorage.getItem("userData")) || null);
 
     useEffect(() => {
         setLoading(true);
@@ -27,6 +29,7 @@ export default function HazardsOverview() {
             console.log("No hazards yet...");
             return;
         }
+        setCurrentUser(JSON.parse(localStorage.getItem("userData")) || null);
         const countByStatus = (hazardList) => {
             console.log("Counting hazards by status...", hazardList);
             setPendingCount(
@@ -42,7 +45,32 @@ export default function HazardsOverview() {
                 hazardList.filter(hazard => hazard.status === RoadHazards.Status.REJECTED).length
             );
         };
-        countByStatus(hazards);
+
+        //TODO filtering hazards out based on user role
+        let filterHazardsByRole = [];
+        if (currentUser?.role === UserRole.AUTHORITIES) {
+            filterHazardsByRole = hazards
+            .filter((hazard) => 
+                hazard.isNationalFlag &&
+                HazardUtils.findDistrict(
+                    hazard.location,
+                    currentUser?.district
+                )
+            );
+        } else if (currentUser?.role === UserRole.MUNICIPALITIES) {
+            filterHazardsByRole = hazards
+            .filter((hazard) => 
+                HazardUtils.findBarangayInMunicipality(
+                    hazard.location,
+                    currentUser.municipality,
+                    currentUser.barangay
+                )
+            );
+        } else {
+            filterHazardsByRole = hazards;
+        }
+
+        countByStatus(filterHazardsByRole);
     }, [hazards]);
 
     return (
