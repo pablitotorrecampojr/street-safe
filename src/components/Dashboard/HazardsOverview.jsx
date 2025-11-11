@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Hazards } from '@services';
-import { RoadHazards } from '@enums';
+import { RoadHazards, UserRole } from '@enums';
+import { Hazards as HazardUtils } from '@utils';
 
 export default function HazardsOverview() {
     const [pendingCount, setPendingCount] = useState(0);
@@ -8,22 +9,69 @@ export default function HazardsOverview() {
     const [resolvedCount, setResolvedCount] = useState(0);
     const [rejectedCount, setRejectedCount] = useState(0);
     const [loading, setLoading] = useState(true);
-    const [hazards, setHazards] = useState([])
+    const [hazards, setHazards] = useState([]);
+    const [currentUser, setCurrentUser ] = useState(JSON.parse(localStorage.getItem("userData")) || null);
 
     useEffect(() => {
+        setLoading(true);
+
         const unsubscribe = Hazards.subscribe((data) => {
+            console.log("Received hazards data:", data);
             setHazards(data);
-            countByStatus(data);
-        });
-        const countByStatus = (hazardList) => {
-            setPendingCount(hazardList.filter(hazard => hazard.status == RoadHazards.Status.PENDING).length);
-            setInvestigatingCount(hazardList.filter(hazard => hazard.status == RoadHazards.Status.INVESTIGATING).length)
-            setResolvedCount(hazardList.filter(hazard => hazard.status == RoadHazards.Status.RESOLVED).length)
-            setRejectedCount(hazardList.filter(hazard => hazard.status == RoadHazards.Status.REJECTED).length)
             setLoading(false);
-        };
+        });
+
         return () => unsubscribe && unsubscribe();
     }, []);
+
+    useEffect(() => {
+        if (!hazards || hazards.length === 0) {
+            console.log("No hazards yet...");
+            return;
+        }
+        setCurrentUser(JSON.parse(localStorage.getItem("userData")) || null);
+        const countByStatus = (hazardList) => {
+            setPendingCount(
+                hazardList.filter(hazard => hazard.status === RoadHazards.Status.PENDING).length
+            );
+            setInvestigatingCount(
+                hazardList.filter(hazard => hazard.status === RoadHazards.Status.INVESTIGATING).length
+            );
+            setResolvedCount(
+                hazardList.filter(hazard => hazard.status === RoadHazards.Status.RESOLVED).length
+            );
+            setRejectedCount(
+                hazardList.filter(hazard => hazard.status === RoadHazards.Status.REJECTED).length
+            );
+        };
+
+        //TODO filtering hazards out based on user role
+        let filterHazardsByRole = [];
+        if (currentUser?.role === UserRole.AUTHORITIES) {
+            filterHazardsByRole = hazards
+            .filter((hazard) => 
+                hazard.isNationalFlag &&
+                HazardUtils.findDistrict(
+                    hazard.location,
+                    currentUser?.district
+                )
+            );
+        } else if (currentUser?.role === UserRole.MUNICIPALITIES) {
+            filterHazardsByRole = hazards
+            .filter((hazard) => 
+                HazardUtils.findBarangayInMunicipality(
+                    hazard.location,
+                    currentUser.municipality,
+                    currentUser.barangay
+                )
+            );
+        } else {
+            filterHazardsByRole = hazards;
+        }
+
+        countByStatus(filterHazardsByRole);
+    }, [hazards]);
+
     return (
         <div className="max-w-sm bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
             <div className="p-4">
