@@ -31,7 +31,6 @@ export default function HazardsOverview() {
         }
         setCurrentUser(JSON.parse(localStorage.getItem("userData")) || null);
         const countByStatus = (hazardList) => {
-            console.log("Counting hazards by status...", hazardList);
             setPendingCount(
                 hazardList.filter(hazard => hazard.status === RoadHazards.Status.PENDING).length
             );
