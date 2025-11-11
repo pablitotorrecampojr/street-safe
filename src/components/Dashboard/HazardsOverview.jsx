@@ -11,19 +11,40 @@ export default function HazardsOverview() {
     const [hazards, setHazards] = useState([])
 
     useEffect(() => {
+        setLoading(true);
+
         const unsubscribe = Hazards.subscribe((data) => {
+            console.log("Received hazards data:", data);
             setHazards(data);
-            countByStatus(data);
-        });
-        const countByStatus = (hazardList) => {
-            setPendingCount(hazardList.filter(hazard => hazard.status == RoadHazards.Status.PENDING).length);
-            setInvestigatingCount(hazardList.filter(hazard => hazard.status == RoadHazards.Status.INVESTIGATING).length)
-            setResolvedCount(hazardList.filter(hazard => hazard.status == RoadHazards.Status.RESOLVED).length)
-            setRejectedCount(hazardList.filter(hazard => hazard.status == RoadHazards.Status.REJECTED).length)
             setLoading(false);
-        };
+        });
+
         return () => unsubscribe && unsubscribe();
     }, []);
+
+    useEffect(() => {
+        if (!hazards || hazards.length === 0) {
+            console.log("No hazards yet...");
+            return;
+        }
+        const countByStatus = (hazardList) => {
+            console.log("Counting hazards by status...", hazardList);
+            setPendingCount(
+                hazardList.filter(hazard => hazard.status === RoadHazards.Status.PENDING).length
+            );
+            setInvestigatingCount(
+                hazardList.filter(hazard => hazard.status === RoadHazards.Status.INVESTIGATING).length
+            );
+            setResolvedCount(
+                hazardList.filter(hazard => hazard.status === RoadHazards.Status.RESOLVED).length
+            );
+            setRejectedCount(
+                hazardList.filter(hazard => hazard.status === RoadHazards.Status.REJECTED).length
+            );
+        };
+        countByStatus(hazards);
+    }, [hazards]);
+
     return (
         <div className="max-w-sm bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
             <div className="p-4">
