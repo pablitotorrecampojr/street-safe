@@ -331,6 +331,7 @@ export default function HazardReport() {
                        onClick={() => {
                           setRows(allHazards); 
                           setFilter({status: null});
+                          
                         } }
                       >
                         <i className="fa-solid fa-rotate-left"></i>
