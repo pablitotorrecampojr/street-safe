@@ -41,6 +41,7 @@ export default function HazardsChartOverview() {
         } else if (currentUser?.role === UserRole.MUNICIPALITIES) {
             filterHazardsByRole = hazards
             .filter((hazard) => 
+                !hazard.isNationalFlag &&
                 HazardUtils.findBarangayInMunicipality(
                     hazard.location,
                     currentUser.municipality,
@@ -52,12 +53,12 @@ export default function HazardsChartOverview() {
         }
         
         const listOfHazards = filterHazardsByRole.map(h => h.description);
-        const frequencies = HazardUtils.countFrequencyOnType(listOfHazards, RoadHazards.Types);
-        const positiveIndices = RoadHazards.Types
+        const frequencies = HazardUtils.countFrequencyOnType(listOfHazards, RoadHazards.TypesSnake);
+        const positiveIndices = RoadHazards.TypesSnake
             .map((t, idx) => (frequencies.byType[t] > 0 ? idx : -1))
             .filter(idx => idx >= 0);
 
-        const filteredTypes = positiveIndices.map(i => RoadHazards.Types[i]);
+        const filteredTypes = positiveIndices.map(i => RoadHazards.TypesSnake[i]);
         const filteredCounts = positiveIndices.map(i => frequencies.countsOnly[i]);
         const filteredColors = positiveIndices.map(i => RoadHazards.hazardColors[i]);
         setListOfTypes(filteredTypes);

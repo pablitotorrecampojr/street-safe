@@ -41,6 +41,7 @@ export default function HazardReport() {
     } else if (currentUser?.role === UserRole.MUNICIPALITIES) {
       filterHazardsByRole = hazards
         .filter((hazard) => 
+          !hazard.isNationalFlag &&
           HazardUtils.findBarangayInMunicipality(
             hazard.location,
             currentUser.municipality,
@@ -58,7 +59,7 @@ export default function HazardReport() {
 
     setHazardFrequencies(HazardUtils.countFrequencyOnType(
       mapped.map(h => h.description),
-      RoadHazards.Types
+      RoadHazards.TypesSnake
     ).byType);
 
     setRows(mapped);
@@ -79,7 +80,6 @@ export default function HazardReport() {
     { field: 'description', headerName: 'Description', width: 250 },
     { field: 'frequency', headerName: 'Frequency', width: 300 , 
       renderCell: (params) => {
-        console.log(hazardFrequencies);
         const desc = params.row.description?.toLowerCase() || '';
         const matchedTypes = Object.entries(hazardFrequencies)
           .filter(([type]) => {
