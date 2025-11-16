@@ -41,6 +41,7 @@ export default function HazardReport() {
     } else if (currentUser?.role === UserRole.MUNICIPALITIES) {
       filterHazardsByRole = hazards
         .filter((hazard) => 
+          !hazard.isNationalFlag &&
           HazardUtils.findBarangayInMunicipality(
             hazard.location,
             currentUser.municipality,
