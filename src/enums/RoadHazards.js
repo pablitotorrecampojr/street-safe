@@ -32,6 +32,25 @@ export const Types = [
     "Unmaintained Guardrails"
 ];
 
+export const TypesSnake = [
+  "potholes",
+  "alligator_cracks",
+  "major_scalling",
+  "shoving_and_corrugation",
+  "pumping_and_depression",
+  "no_faded_road_markings",
+  "defects_on_shoulders",
+  "lush_vegetation",
+  "clogged_drains",
+  "open_manhole",
+  "no_inadequate_sealant_in_joints",
+  "cracks",
+  "raveling",
+  "unmaintained_signages_and_road_markers",
+  "unmaintained_bridges",
+  "unmaintained_guardrails"
+];
+
 export const hazardColors = [
   "#3b82f6", // Blue
   "#ef4444", // Red

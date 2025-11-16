@@ -16,7 +16,6 @@ export default function HazardsOverview() {
         setLoading(true);
 
         const unsubscribe = Hazards.subscribe((data) => {
-            console.log("Received hazards data:", data);
             setHazards(data);
             setLoading(false);
         });

@@ -128,22 +128,42 @@ export function findDistrict(address, district) {
 
 
 //TODO: count frequency based hazard type,
-export function countFrequencyOnType(inputStringType, listOfTypes) {
-    const counts = Object.fromEntries(listOfTypes.map(type => [type, 0]));
+export function countFrequencyOnType(inputStringType, TypesSnake) {
+    const counts = Object.fromEntries(TypesSnake.map(t => [t, 0]));
+
+    function toSnake(str) {
+        return str
+            .toLowerCase()
+            .replace(/[0-9.]+/g, "")        
+            .replace(/[:/]/g, " ")          
+            .replace(/and/g, "")           
+            .replace(/[^\w\s]/g, "")        
+            .replace(/\s+/g, " ")           
+            .trim()
+            .replace(/\s+/g, "_");          
+    }
 
     inputStringType.forEach(str => {
         if (!str) return;
-        const lowerStr = str.toLowerCase();
-        listOfTypes.forEach(type => {
-            const lowerType = type.toLowerCase();
-            if (lowerStr.includes(lowerType) || lowerStr.includes(lowerType.slice(0, -1))) {
-                counts[type]++;
-            }
+
+        const parts = str.split(",");
+
+        parts.forEach(part => {
+            const snake = toSnake(part);
+
+            TypesSnake.forEach(type => {
+                if (snake === type) {
+                    counts[type]++;
+                }
+            });
         });
     });
 
-     return {
-        byType:  counts,
-        countsOnly: listOfTypes.map(type => counts[type])
-     };
+    console.log(counts);
+    console.log(TypesSnake.map(type => counts[type]));
+
+    return {
+        byType: counts,
+        countsOnly: TypesSnake.map(type => counts[type])
+    };
 }

@@ -58,7 +58,7 @@ export default function HazardReport() {
 
     setHazardFrequencies(HazardUtils.countFrequencyOnType(
       mapped.map(h => h.description),
-      RoadHazards.Types
+      RoadHazards.TypesSnake
     ).byType);
 
     setRows(mapped);
@@ -79,7 +79,6 @@ export default function HazardReport() {
     { field: 'description', headerName: 'Description', width: 250 },
     { field: 'frequency', headerName: 'Frequency', width: 300 , 
       renderCell: (params) => {
-        console.log(hazardFrequencies);
         const desc = params.row.description?.toLowerCase() || '';
         const matchedTypes = Object.entries(hazardFrequencies)
           .filter(([type]) => {
@@ -331,7 +330,6 @@ export default function HazardReport() {
                        onClick={() => {
                           setRows(allHazards); 
                           setFilter({status: null});
-                          
                         } }
                       >
                         <i className="fa-solid fa-rotate-left"></i>
