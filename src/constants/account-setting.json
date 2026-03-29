@@ -1,0 +1,21 @@
+{
+    "role": [
+        "Admin",
+        "Authorities",
+        "Municipalities",
+        "User"
+    ],
+    "role_inex": [
+        0, 1, 2, 3
+    ],
+    "pending_accounts": [
+        "Pending",
+        "Active",
+        "Blocked"
+    ],
+    "pending_accounts_color": [
+        "info",
+        "success",
+        "danger"
+    ]
+}
